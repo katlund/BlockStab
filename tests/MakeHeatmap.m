@@ -14,6 +14,11 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 % All input variables should be given as either a char array or a cell of
 % char arrays (i.e., text strings with single quotes).
 %
+% XXdim = [m p s]:
+%   m - number of rows
+%   p - number of block vectors
+%   s - number of columns per block vector
+%
 % Options for mat (see also MATGEN):
 %   'rand_uniform' - random entries drawn from uniform distribution
 %   'rand_normal' - random entries drawn from normal distribution
@@ -110,6 +115,7 @@ if nargin == 0
         'MGSI+','MGS\_SVL', 'HouseQR', 'CholQR', 'CholQR+', 'ShCholQR++'};
     rpltol = 100;
     verbose = 0;
+    
 elseif nargin == 1
     mat = {'rand_uniform', 'rand_normal', 'rank_def',...
         'laeuchli', 'monomial', 'stewart', 'stewart_extreme', 'hilbert'};
@@ -121,6 +127,7 @@ elseif nargin == 1
         'MGSI+','MGS\_SVL', 'HouseQR', 'CholQR', 'CholQR+', 'ShCholQR++'};
     rpltol = 100;
     verbose = 0;
+    
 elseif nargin == 2
     skel = {'BCGS', 'BCGS_IRO', 'BCGS_SROR', 'BMGS', 'BMGS_SVL'};
     skel_str = {'BCGS', 'BCGSI+', 'BCGSS+R', 'BMGS', 'BMGS\_SVL'};
@@ -130,6 +137,7 @@ elseif nargin == 2
         'MGSI+','MGS\_SVL', 'HouseQR', 'CholQR', 'CholQR+', 'ShCholQR++'};
     rpltol = 100;
     verbose = 0;
+    
 elseif nargin == 3
     musc = {'CGS','CGS_RO', 'CGS_IRO' 'CGS_SRO', 'CGS_SROR', 'MGS', 'MGS_RO',...
         'MGS_IRO', 'MGS_SVL', 'HouseQR', 'CholQR', 'CholQR_RO', 'Sh_CholQR_RORO'};
@@ -137,11 +145,14 @@ elseif nargin == 3
         'MGSI+','MGS\_SVL', 'HouseQR', 'CholQR', 'CholQR+', 'ShCholQR++'};
     rpltol = 100;
     verbose = 0;
+    
 elseif nargin == 4
     rpltol = 100;
     verbose = 0;
+    
 elseif nargin == 5
     verbose = 0;
+    
 end
 
 if isempty(XXdim)
@@ -216,9 +227,8 @@ for i = 1:nmat
         [XX, XXstr, XXprops] = MatGen(mat{i}, XXdim);
     end
     cd ..
-    fprintf('%s\n',XXstr)
+    fprintf('%s, cond(XX) = %2.2e\n', XXstr, XXprops.cond)
     XXnorm = norm(XX, 2);
-    display(XXprops.cond)
     
     % Pre-allocate memory for measures
     loss_ortho = zeros(nmusc, nskel);
@@ -311,7 +321,8 @@ for i = 1:nmat
     end
     close all;  % frees up memory; otherwise Matlab keeps all figures open in the background
 end
-fprintf('To open figures, navigate to the appropriate folder and use OPENFIG with ''visible'' option\n');
+fprintf('To open figures, navigate to ''results'' and the desired\n');
+fprintf('subfolder therein and use OPENFIG with ''visible'' option.\n');
 
 % matProps(XXdim);    % Generate table for paper
 end

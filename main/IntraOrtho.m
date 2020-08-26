@@ -72,18 +72,18 @@ switch musc
         
 %--------------------------------------------------------------------------
     case {'cholqr'}
-        [Q, R] = cholqr(X, verbose);
+        [Q, R] = cholqr(X);
         
     case {'cholqr_ro'}
-        [Q1, R1] = cholqr(X, verbose);
-        [Q, R] = cholqr(Q1, verbose);
+        [Q1, R1] = cholqr(X);
+        [Q, R] = cholqr(Q1);
         R = R*R1;
         
     case {'iter_cholqr'}
-        [Q, R] = iter_cholqr(X, verbose);
+        [Q, R] = iter_cholqr(X);
         
     case {'sh_cholqr_roro'}
-        [Q, R] = sh_cholqr_roro(X, verbose);
+        [Q, R] = sh_cholqr_roro(X);
         
 %--------------------------------------------------------------------------
     case {'global'}

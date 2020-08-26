@@ -1,13 +1,17 @@
-function [XX, XXstr, XXprops] = MatGen(matstr, XXdim)
-% [XX, XXstr, XXprops] = MATGEN(matstr, XXdim) generates the type of matrix
-% specified by matstr with dimensions m x ps and block partitions of size s
-% given by XXdim = [m, p, s].  It also saves the output in a .mat file in
-% the format
+function [XX, XXstr, XXprops] = MatGen(matstr, XXdim, r, t)
+% [XX, XXstr, XXprops] = MATGEN(matstr, XXdim, r, t) generates the type of
+% matrix specified by matstr with dimensions m x ps and block partitions of
+% size s given by XXdim = [m, p, s].  It also saves the output in a .mat
+% file in the format
 %
 %   sprintf('%s_m%d_p%d_s%d', matstr, m, p, s)
 %
 % and generates a string (XXstr) and a struct (XXprops) for use in
 % MAKEHEATMAP and other tests.
+%
+% Parameters r and t are only necessary for glued matrices, where they
+% specify the powers of the conditioner number of different stages of the
+% matrix-building process.
 %
 % Possible options for matstr include
 %   'rand_uniform' - random entries drawn from uniform distribution
@@ -32,6 +36,7 @@ function [XX, XXstr, XXprops] = MatGen(matstr, XXdim)
 % Extract dimensions
 m = XXdim(1); p = XXdim(2); s = XXdim(3);
 n = p*s;
+
 switch matstr
     case {'rand_uniform'}
         XX = rand(m,n);
@@ -43,26 +48,27 @@ switch matstr
         
     case {'rank_def'}
         XX = randn(m,n);
-        XX(:,1:s) = 100*XX(:,end-s+1:end);
+        XX(:,1:s) = 100 * XX(:,end-s+1:end);
         XXstr = sprintf('Rank-deficient matrix from normal distribution');
         
     case {'laeuchli'}
         XX = zeros(m,n);
         XX(1,:) = 1;
         for i = 2:n
-            XX(i,i-1) = eps + (sqrt(eps)-eps)*rand(1);
+            XX(i,i-1) = eps + (sqrt(eps) - eps) * rand(1);
         end
         XXstr = sprintf('Laeuchli matrix');
         
     case {'monomial'}
-        A = spdiags(linspace(.1,10,m)',0,m,m);                              % mimics an operator
+        A = spdiags(linspace(.1,10,m)', 0, m, m);                           % mimics an operator
         pp = 1:p;
         XXhat = rand(m,p);
-        XXhat(:,pp) = XXhat(:,pp)/norm(XXhat(:,pp));
+        XXhat(:,pp) = XXhat(:,pp) / norm(XXhat(:,pp));
         for i = 2:s
             pp = pp + p;
-            XXhat(:,pp) = A*XXhat(:,pp - p);
+            XXhat(:,pp) = A * XXhat(:,pp - p);
         end
+        
         % Reshape XX
         XX = zeros(m,n);
         ind = 1:s:n;
@@ -75,20 +81,20 @@ switch matstr
         XXstr = sprintf('Monomial matrix (s-step-like block vectors)');
         
     case {'stewart'}        
-        [U,~] = qr(randn(m,n),0);
-        [V,~] = qr(randn(n,m),0);
+        [U,~] = qr(randn(m,n), 0);
+        [V,~] = qr(randn(n,m), 0);
         t = 20;                                                             % higher t leads to worse conditioning
-        S = diag(10.^(linspace(0,-t,n))');
-        XX = U*S*V';
+        S = diag(10 .^ (linspace(0, -t, n))');
+        XX = U * S * V';
         XX(:,25) = XX(:,1);
         XX(:,35) = 0;
         XXstr = sprintf('Stewart matrix');
         
     case {'stewart_extreme'}        
-        [U,~] = qr(randn(m,n),0);
-        [V,~] = qr(randn(n,m),0);
+        [U,~] = qr(randn(m,n), 0);
+        [V,~] = qr(randn(n,m), 0);
         t = 10;                                                             % higher t leads to worse conditioning
-        S = diag([10.^(linspace(0,-t,n/2)) zeros(1,n/2)]');
+        S = diag([10 .^ (linspace(0, -t, n/2)) zeros(1,n/2)]');
         XX = U*S*V';
         XXstr = sprintf('Stewart extreme matrix');
         
@@ -97,42 +103,47 @@ switch matstr
         XXstr = sprintf('Hilbert matrix');
         
     case {'s-step'}
-        A = spdiags(linspace(.1,10,m)',0,m,m);
-        x = rand(m,1); x = x/norm(x);
+        A = spdiags(linspace(.1,10,m)', 0, m, m);
+        x = rand(m,1); x = x / norm(x);
         XX = zeros(m,n);
         XX(:,1) = x;
         ind = 1:s;
         for j = 1:p
             for i = 2:s
-                x = A*XX(:,ind(i-1));
-                XX(:,ind(i)) = x/norm(x);
+                x = A * XX(:,ind(i-1));
+                XX(:, ind(i)) = x / norm(x);
             end
             if j < p
                 X = XX(:,ind);
-                x = A*X(:,end);
+                x = A * X(:,end);
                 ind = ind + s;
-                XX(:,ind(1)) = x/norm(x);
+                XX(:,ind(1)) = x / norm(x);
             end
         end
         XXstr = sprintf('s-step matrix');
         
     case {'newton'}
-        evec = linspace(.1,10,m);
-        A = spdiags(evec',0,m,m);
+        evec = linspace(.1, 10, m);
+        A = spdiags(evec', 0, m, m);
         x = rand(m,1);
-        alp = leja_order(evec,p*s+1);
+        alp = leja_order(evec, p*s+1);
 
-        XX(:,1) = (A-alp(1).*eye(m))*x;
-        XX(:,1) = XX(:,1)./norm(XX(:,1));
+        XX(:,1) = (A - alp(1) .* eye(m)) * x;
+        XX(:,1) = XX(:,1) ./ norm(XX(:,1));
 
         for i = 0:p-1
             for j = 1:s
-                XX(:,i*s+j+1) = (A-alp(i*s+j+1)*eye(m))*XX(:,i*s+j);
-                XX(:,i*s+j+1) = XX(:,i*s+j+1)./norm(XX(:,i*s+j+1));
+                ind = i*s + j + 1;
+                XX(:, ind) = (A - alp(ind) * eye(m)) * XX(:, ind-1);
+                XX(:, ind) = XX(:, ind) ./ norm(XX(:, ind));
             end
         end
-        XX = XX(:,1:p*s); 
-        XXstr = sprintf('Newton matrix');        
+        XX = XX(:,1:p*s);
+        XXstr = sprintf('Newton matrix');
+        
+    case {'glued'}
+        XX = glued(m, p, s, r, t);
+        XXstr = sprintf('glued matrix');
 end
 XXprops.cond = cond(XX);
 XXprops.sv = svd(XX);
@@ -144,21 +155,49 @@ end
 
 %% Auxiliary functions
 function z = leja_order(x,n)
-     % Leja order of the first n components of the vector x
-     m = length(x);
-     n = min(n,m);
-     z = zeros(size(x));
-     [v index] = max(abs(x));
-     z(1) = x(index);
-     temp = abs(x-z(1));
-     [v index] = max(temp);
-     z(2) = x(index);
-     for k = 2:n-1
-         for i = 1:m
-             temp(i) = temp(i)*abs(x(i)-z(k));
-         end
-         [v index] = max(temp);
-         z(k+1) = x(index);
-     end
-     z = z(1:n);
+% Leja order of the first n components of the vector x
+m = length(x);
+n = min(n,m);
+z = zeros(size(x));
+
+[~, ind] = max(abs(x));
+z(1) = x(ind);
+tmp = abs(x - z(1));
+[~, ind] = max(tmp);
+z(2) = x(ind);
+for k = 2:n-1
+    for i = 1:m
+        tmp(i) = tmp(i) * abs(x(i) - z(k));
+    end
+    [~, ind] = max(tmp);
+    z(k+1) = x(ind);
+end
+z = z(1:n);
+end
+
+function A = glued(m, p, s, r, t)
+% Example 2 matrix from [Smoktunowicz et. al., 2006]. Generates a glued
+% matrix of size m x ps, with parameters r and t specifying the powers of
+% the largest condition number of the first stage and second stages of the
+% matrix, respectively:
+%
+% Stage 1: A = U * Sigma * V'
+%
+% Stage 2: A = A * kron(I, Sigma_block) * kron(I, V_block)
+
+%%
+n = p*s;
+U = orth(randn(m,n));
+V = orth(randn(n,m));
+Sigma = diag(logspace(0, r, n));
+A = U * Sigma * V';
+
+Sigma_block = diag(logspace(0, t, s));
+V_block = orth(randn(s,s));
+
+ind = 1:s;
+for i = 1:p
+    A(:,ind) = A(:,ind) * Sigma_block * V_block';
+    ind = ind + s;
+end
 end
