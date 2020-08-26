@@ -21,8 +21,10 @@ Common parameters:
 
 To debug a specific skeleton or muscle, set `verbose = true`.  The loss of
 orthogonality (LOO) and relative residual (RelRes) will print to screen per step
-of the algorithm.  For example:
-`>> mgs(randn(100,10), true);
+of the algorithm.  Try, for example
+
+```
+mgs(randn(100,10), true);
          LOO      |    RelRes
 -----------------------------------
   1:  2.2204e-16  |  3.7634e-17
@@ -34,9 +36,11 @@ of the algorithm.  For example:
   7:  2.7442e-16  |  1.3645e-16
   8:  2.7454e-16  |  1.4435e-16
   9:  2.6734e-16  |  1.5960e-16
- 10:  2.7682e-16  |  1.5283e-16`
+ 10:  2.7682e-16  |  1.5283e-16
+ ```
 
- `>> bmgs(randn(100,20), 2, 'HouseQR', true);
+```
+bmgs(randn(100,20), 2, 'HouseQR', true);
          LOO      |    RelRes
 -----------------------------------
   1:  6.7663e-16  |  1.2409e-16
@@ -48,7 +52,8 @@ of the algorithm.  For example:
   7:  8.8906e-16  |  2.5308e-16
   8:  8.7674e-16  |  2.6215e-16
   9:  8.8764e-16  |  2.6683e-16
- 10:  9.0044e-16  |  2.5827e-16`
+ 10:  9.0044e-16  |  2.5827e-16
+ ```
 
 There are several test files.  See the header for each.  To explore some
 interesting examples, try the following:
