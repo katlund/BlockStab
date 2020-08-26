@@ -1,17 +1,17 @@
- function KappaPlot(XXdim, logcondX, musc)
-% KAPPAPLOT(XXdim, logcondX, musc) compares loss of orthogonality and
+ function KappaPlot(Xdim, logcondX, musc)
+% KAPPAPLOT(Xdim, logcondX, musc) compares loss of orthogonality and
 % relative residual for different muscles for a set of matrices of size
-% XXdim = [m s] with varying singular values specified by the vector array
+% Xdim = [m s] with varying singular values specified by the vector array
 % logcondX.
 %
 % musc should be given as either a char array or a cell of char arrays
 % (i.e., text strings with single quotes).
 %
-% Options for XXdim:
-%   XXdim = [m s], where m is the number of rows and s is the number of
+% Options for Xdim:
+%   Xdim = [m s], where m is the number of rows and s is the number of
 %   columns.
 %
-%   Default: XXdim = [1000 250]
+%   Default: Xdim = [100 20]
 %
 % Options for logcondX:
 %   logcondX should be a vector of negative powers.  Each entry of logcondX
@@ -22,15 +22,23 @@
 %   
 %   Default: logcondX = -(1:16)
 %
-% Options for musc: see INTRAORTHO
+% Options for musc: see INTRAORTHO.
+%
+% When specifying only a subset of arguments, set non-specified arguments
+% to [] to ensure the default value.  For example,
+%
+%     BlockKappaPlot([], [], 'CholQR')
+%
+% runs tests for matrices with dimensions [100 20 2], default logcondX
+% settings, and the muscle CholQR.
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines
 fstr = 'kappa_plot';
 
 % Defaults for empty arguments
-if isempty(XXdim)
-    XXdim = [1000, 250];
+if isempty(Xdim)
+    Xdim = [100, 20];
 end
 if isempty(logcondX)
     logcondX = -(1:16);
@@ -41,7 +49,7 @@ if ischar(musc)
     musc = {musc};
 end
 
-% Default strings and replace underscore with tex underscore
+% Default strings and format strings for plot legends
 musc_str = AlgString(musc);
 
 % Pre-allocate memory for measures
@@ -54,7 +62,7 @@ Xcond = zeros(1,nmat);
 Xnorm = zeros(1,nmat);
 
 % Extract dimensions
-m = XXdim(1); s = XXdim(2);
+m = Xdim(1); s = Xdim(2);
 I = eye(s);
 
 U = orth(randn(m,s));
@@ -90,6 +98,7 @@ musc_lbl = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
 x = Xcond;
 lgd_str = musc_str;
 
+% Initialize figures and axes
 fg = cell(1,3); ax = cell(1,3);
 for i = 1:3
     fg{i} = figure;
@@ -97,6 +106,7 @@ for i = 1:3
     hold on;
 end
 
+% Plot data
 for k = 1:nmusc
     plot(ax{1}, x, loss_ortho(:,k),...
         musc_lbl{k}, 'Color', musc_cmap(k,:));

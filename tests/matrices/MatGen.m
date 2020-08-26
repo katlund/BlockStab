@@ -1,17 +1,13 @@
-function [XX, XXstr, XXprops] = MatGen(matstr, XXdim, r, t)
-% [XX, XXstr, XXprops] = MATGEN(matstr, XXdim, r, t) generates the type of
-% matrix specified by matstr with dimensions m x ps and block partitions of
-% size s given by XXdim = [m, p, s].  It also saves the output in a .mat
-% file in the format
+function [XX, XXstr, XXprops] = MatGen(matstr, XXdim)
+% [XX, XXstr, XXprops] = MATGEN(matstr, XXdim) generates the type of matrix
+% specified by matstr with dimensions m x ps and block partitions of size s
+% given by XXdim = [m, p, s].  It also saves the output in a .mat file in
+% the format
 %
 %   sprintf('%s_m%d_p%d_s%d', matstr, m, p, s)
 %
 % and generates a string (XXstr) and a struct (XXprops) for use in
 % MAKEHEATMAP and other tests.
-%
-% Parameters r and t are only necessary for glued matrices, where they
-% specify the powers of the conditioner number of different stages of the
-% matrix-building process.
 %
 % Possible options for matstr include
 %   'rand_uniform' - random entries drawn from uniform distribution
@@ -30,7 +26,6 @@ function [XX, XXstr, XXprops] = MatGen(matstr, XXdim, r, t)
 %      HILB(m,p*s)
 %   's-step' - a matrix with columns spanning a Krylov subspace of size sp
 %   'newton' - like 's-step', but better conditioned
-%   'glued' - 
 
 %%
 % Extract dimensions
@@ -140,10 +135,6 @@ switch matstr
         end
         XX = XX(:,1:p*s);
         XXstr = sprintf('Newton matrix');
-        
-    case {'glued'}
-        XX = glued(m, p, s, r, t);
-        XXstr = sprintf('glued matrix');
 end
 XXprops.cond = cond(XX);
 XXprops.sv = svd(XX);
@@ -173,31 +164,4 @@ for k = 2:n-1
     z(k+1) = x(ind);
 end
 z = z(1:n);
-end
-
-function A = glued(m, p, s, r, t)
-% Example 2 matrix from [Smoktunowicz et. al., 2006]. Generates a glued
-% matrix of size m x ps, with parameters r and t specifying the powers of
-% the largest condition number of the first stage and second stages of the
-% matrix, respectively:
-%
-% Stage 1: A = U * Sigma * V'
-%
-% Stage 2: A = A * kron(I, Sigma_block) * kron(I, V_block)
-
-%%
-n = p*s;
-U = orth(randn(m,n));
-V = orth(randn(n,m));
-Sigma = diag(logspace(0, r, n));
-A = U * Sigma * V';
-
-Sigma_block = diag(logspace(0, t, s));
-V_block = orth(randn(s,s));
-
-ind = 1:s;
-for i = 1:p
-    A(:,ind) = A(:,ind) * Sigma_block * V_block';
-    ind = ind + s;
-end
 end

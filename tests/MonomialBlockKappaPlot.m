@@ -1,16 +1,8 @@
-function RunTestMonomial(XXdim, svec, skel, musc)
-% RUNTESTMONOMIAL(XXdim, svec, musc, verbose) is a wrapper function that
-% executes a series of Block Gram-Schmidt (BGS) variants for a series of
-% matrices specified by svec via the skeleton-muscle paradigm and
-% returns loss of orthogonality and residual plots.  In more detail,
-% RUNTESTMONOMIAL
-% 1. executes a loop that loads/generates the matrix or matrices specified
-%    by svec for the dimensions [m n] = XXdim;
-% 2. executes a second loop running through skeleton options specfied by
-%    skel;
-% 3. executes a third loop running through muscle options specified by
-%    musc;
-% 4. plots and saves results.
+function MonomialBlockKappaPlot(XXdim, svec, skel, musc)
+% RUNTESTMONOMIAL(XXdim, svec, musc, verbose) compares loss of
+% orthogonality and relative residual for different skeleton-muscle
+% combinationss for a set of monomial matrices of size XXdim = [m p s] with
+% varying block widths specified by the vector array svec.
 %
 % skel and musc should be given as either a char array or a cell of char
 % arrays (i.e., text strings with single quotes).
@@ -28,67 +20,24 @@ function RunTestMonomial(XXdim, svec, skel, musc)
 %       XXdim = [5000 840];
 %       svec = 2:2:14;
 %
-% Options for skel (see also BGS):
-%   'BCGS' - Block Classical Gram-Schmidt
-%   'BCGS_IRO' - Block Classical Gram-Schmidt with Inner
-%       ReOrthonormalization
-%   'BMGS' - Block Modified Gram-Schmidt
+% Options for skel: see BGS.
 %
-%   Default: skel = {'BCGS', 'BMGS', 'BCGS_IRO'}
+% Options for musc: see INTRAORTHO.
 %
-% Options for musc (see also IntraOrtho):
-%   'CGS' - Classical Gram-Schmidt.
-%   'CGS_RO' - Classical Gram-Schmidt with ReOrthonormalization. Calls CGS
-%       twice.
-%   'CGS_IRO' - Classical Gram-Schmidt with Inner ReOrthonormalization.
-%   'MGS' - Modified Gram-Schmidt.
-%   'MGS_RO' - Modified Gram-Schmidt with ReOrthonormalization. Cals MGS
-%      twice.
-%   'MGS_IRO' - Modified Gram-Schmidt with Inner ReOrthonormalization.
-%   'HouseQR' - Householder-based QR. Calls built-in QR with economic
-%       setting.
-%
-%   Default: musc = {'CGS', 'MGS', 'HouseQR'}
-%
-% When run without arguments, RUNTESTMONOMIAL returns loss of orthogonality
-% and residual plots for default settings.
-%
-% When specifying only a subset of arguments, set non-specified arguments
-% to [] to ensure the default value.  For example,
-%
-%     RunTestSingVal([1000 200], [], [], 'HouseQR')
-%
-% runs tests for matrices with dimensions [1000 200], default svec and
-% skel settings, and only the IntraOrtho HouseQR.
-%
-% (c) Kathryn Lund, Charles University, 2020
+% See also BLOCKKAPPAPLOT for more details about basic functionalities.
+% Note that these tests are particularly slow, especially since large
+% matrix sizes are needed to reveal interesting behavior.
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines
-fstr = 'monomial';
+fstr = 'monomial_block_kappa_plot';
 
 % Defaults for inputs
 if nargin == 0
     XXdim = [5000 840];
     svec = 2:2:14;
-    skel = {'BCGS', 'BCGS_PIP', 'BCGS_PIO', 'BMGS', 'BCGS_IRO'};
-    skel_str = {'BCGS', 'BCGS-PIP', 'BCGS-PIO', 'BMGS', 'BCGS2'};
-    musc = {'CGS', 'MGS', 'HouseQR'};
-    musc_str = {'CGS', 'MGS', 'HouseQR'};
 elseif nargin == 1
     svec = 2:2:14;
-    skel = {'BCGS', 'BCGS_PIP', 'BCGS_PIO', 'BMGS', 'BCGS_IRO'};
-    skel_str = {'BCGS', 'BCGS-PIP', 'BCGS-PIO', 'BMGS', 'BCGS2'};
-    musc = {'CGS', 'MGS', 'HouseQR'};
-    musc_str = {'CGS', 'MGS', 'HouseQR'};
-elseif nargin == 2
-    skel = {'BCGS', 'BCGS_PIP', 'BCGS_PIO', 'BMGS', 'BCGS_IRO'};
-    skel_str = {'BCGS', 'BCGS-PIP', 'BCGS-PIO', 'BMGS', 'BCGS2'};
-    musc = {'CGS', 'MGS', 'HouseQR'};
-    musc_str = {'CGS', 'MGS', 'HouseQR'};
-elseif nargin == 3
-    musc = {'CGS', 'MGS', 'HouseQR'};
-    musc_str = {'CGS', 'MGS', 'HouseQR'};
 end
 
 % Defaults for empty arguments
@@ -97,14 +46,6 @@ if isempty(XXdim)
 end
 if isempty(svec)
     svec = 2:2:14;
-end
-if isempty(skel)
-    skel = {'BCGS', 'BCGS_PIP', 'BCGS_PIO', 'BMGS', 'BCGS_IRO'};
-    skel_str = {'BCGS', 'BCGS-PIP', 'BCGS-PIO', 'BMGS', 'BCGS2'};
-end
-if isempty(musc)
-    musc = {'CGS', 'MGS', 'HouseQR'};
-    musc_str = {'CGS', 'MGS', 'HouseQR'};
 end
 
 % Defaults for processing a single char array
@@ -115,19 +56,9 @@ if ischar(musc)
     musc = {musc};
 end
 
-% Default strings and replace underscore with tex underscore
-if ~exist('skel_str','var')
-    skel_str = skel;
-    skel_str = strrep(skel_str, '_RO', '+');
-    skel_str = strrep(skel_str, 'RO', '+');
-    skel_str = strrep(skel_str, '_', '\_');
-end
-if ~exist('musc_str','var')
-    musc_str = musc;
-    musc_str = strrep(musc_str, '_RO', '+');
-    musc_str = strrep(musc_str, 'RO', '+');
-    musc_str = strrep(musc_str, '_', '\_');
-end
+% Default strings and format strings for plot legends
+skel_str = AlgString(skel);
+musc_str = AlgString(musc);
 
 % Pre-allocate memory for measures
 nmat = length(svec);
@@ -135,6 +66,7 @@ nskel = length(skel);
 nmusc = length(musc);
 loss_ortho = zeros(nmat, nskel, nmusc);
 res = zeros(nmat, nskel, nmusc);
+res_chol = zeros(nmat, nskel, nmusc);
 XXnorm = zeros(1,nmat);
 XXcond = zeros(1,nmat);
 
@@ -146,7 +78,7 @@ A = spdiags(linspace(.1,1,m)',0,m,m);
 for i = 1:nmat
     % Create or load XX
     s = svec(i); p = n/s;
-    matstr = sprintf('%s_m%d_p%d_s%d.mat', fstr, m, p, s);
+    matstr = sprintf('monomial_m%d_p%d_s%d.mat', m, p, s);
     
     cd matrices
     if exist(matstr, 'file')
@@ -181,76 +113,57 @@ for i = 1:nmat
             [QQ, RR] = BGS(XX, s, skel{j}, musc{k});
 
             % Compute loss of orthonormality
-            loss_ortho(i, j, k) = norm(I - QQ'*QQ, 2);
+            loss_ortho(i, j, k) = norm(I - QQ' * QQ, 2);
 
-%             % Compute relative residual
-%             res(i, j, k) = norm(XX - QQ*RR, 2)/XXnorm;
-
+            % Compute relative residual
+            res(i, j, k) = norm(XX - QQ * RR, 2) / XXnorm(i);
+            
             % Compute relative residual for Cholesky relation
-            res(i, j, k) = norm(XX'*XX - RR'*RR, 2)/XXnorm(i)^2;
+            res_chol(i, j, k) = norm(XX' * XX - RR' * RR, 2) / XXnorm(i)^2;
             
             % Clear computed variables before next run
-            clear QQ RR            
+            clear QQ RR             
         end
     end
 end
 
-%% Plot
-fig_loss_ortho = figure; ax_loss_ortho = gca; hold on;
-fig_res = figure; ax_res = gca; hold on;
-
-% Position options for nice viewing and paper image size; comment if plots
-% do not render correctly on your machine
-set(fig_loss_ortho, 'Position', [11 158 645 420])
-set(fig_res, 'Position', [613 158 645 420])
-
+%% Plots
 skel_cmap = lines(nskel);
 musc_lbl = {'s-', 'o-', '*-', 'p-', 'h-', '.-', '^-'};
 
 x = XXcond;
 lgd_str = {};
+
+% Initialize figures and axes
+fg = cell(1,3); ax = cell(1,3);
+for i = 1:3
+    fg{i} = figure;
+    ax{i} = gca;
+    hold on;
+end
+
+% Plot data
 for j = 1:nskel
     for k = 1:nmusc
-        plot(ax_loss_ortho, x, loss_ortho(:,j,k),...
+        plot(ax{1}, x, loss_ortho(:,j,k),...
             musc_lbl{k}, 'Color', skel_cmap(j,:));
-        plot(ax_res, x, res(:,j,k), ... 
+        plot(ax{2}, x, res(:,j,k),... 
+            musc_lbl{k}, 'Color', skel_cmap(j,:));
+        plot(ax{3}, x, res_chol(:,j,k),...
             musc_lbl{k}, 'Color', skel_cmap(j,:));
         lgd_str{end+1} = sprintf('%s \\circ %s', skel_str{j}, musc_str{k});
     end
 end
-plot(ax_loss_ortho, x, eps*x, 'k--', x, eps*(x.^2), 'k-')
-plot(ax_res, x, eps*XXnorm, 'k--', x, eps*XXnorm.^2, 'k-')
+plot(ax{1}, x, eps*x, 'k--', x, eps*(x.^2), 'k-')
 
-set(ax_loss_ortho, 'Yscale', 'log', 'Xscale', 'log','XGrid', 'on', 'YGrid', 'on',...
-    'XMinorGrid', 'off', 'YMinorGrid', 'off');
-ylabel(ax_loss_ortho, 'loss of orthogonality ');
-xlabel(ax_loss_ortho, '\kappa(X)')
-lgd_str{end+1} = '\epsilon_M \kappa(X)';
-lgd_str{end+1} = '\epsilon_M \kappa(X)^2';
-legend(ax_loss_ortho, lgd_str, 'Location', 'BestOutside');
+% Make plots pretty and save figures
+folder_str = sprintf('results/%s_m%d_p%d_s%d', fstr, m, p, s);
+mkdir(folder_str)
+PrettyKappaPlot(fg, ax, lgd_str, folder_str);
 
-set(ax_res, 'Yscale', 'log', 'Xscale', 'log','XGrid', 'on', 'YGrid', 'on',...
-    'XMinorGrid', 'off', 'YMinorGrid', 'off');
-ylabel(ax_res, 'relative residual');
-xlabel(ax_res, '\kappa(X)')
-lgd_str{end-1} = '\epsilon_M ||X||';
-lgd_str{end} = '\epsilon_M ||X||^2';
-legend(ax_res, lgd_str, 'Location', 'BestOutside');
-
-% Save plots
-folderstr = sprintf('results/%s_m%d_n%d', fstr, m, n);
-mkdir(folderstr)
-
-savestr = sprintf('%s/out', folderstr);
+% Save data
+savestr = sprintf('%s/out', folder_str);
 save(savestr, 'x', 'loss_ortho','res');
-
-savestr = sprintf('%s/loss_ortho', folderstr);
-savefig(fig_loss_ortho, savestr, 'compact');
-saveas(fig_loss_ortho, savestr, 'epsc')
-
-savestr = sprintf('%s/res', folderstr);
-savefig(fig_res, savestr, 'compact');
-saveas(fig_res, savestr, 'epsc')
 
 % close all;
 end

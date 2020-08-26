@@ -1,17 +1,16 @@
-function GluedKappaPlot(XXdim, logcondXX, musc)
-% RUNTESTGLUEDLOWSYNC(XXdim, glued, musc) is a wrapper function that
-% compares stability for different muscles for a set of matrices of size
-% XXdim = [m s] with varying singular values specified by the vector array
-% glued.
+function GluedKappaPlot(Xdim, logcondX, musc)
+% GLUEDKAPPAPLOT(Xdim, logcondX, musc) compares stability for different
+% muscles for a set of glued matrices of size Xdim = [m s] with varying
+% condition numbers loosely specified by the exponents in logcondX.
 %
 % musc should be given as either a char array or a cell of char arrays
 % (i.e., text strings with single quotes).
 %
-% Options for XXdim:
-%   XXdim = [m s], where m is the number of rows and s is the number of
+% Options for Xdim:
+%   Xdim = [m s], where m is the number of rows and s is the number of
 %   columns.
 %
-%   Default: XXdim = [1000 200]
+%   Default: Xdim = [1000 200]
 %
 % Options for logcondXX:
 %   logcondXX should be a vector of positive powers, where the power
@@ -19,155 +18,124 @@ function GluedKappaPlot(XXdim, logcondXX, musc)
 %   
 %   Default: logcondXX = 1:8
 %
-% Options for musc: see INTRAORTHO
+% Options for musc: see INTRAORTHO.
 %
-%   Default: musc = {'CGS', 'MGS', 'MGS_SVL', 'MGS_LTS',...
-%               'MGS_ICWY', 'MGS_CWY'};
-%
-% When run without arguments, RUNTESTGLUED returns loss of orthogonality
-% and residual plots for default settings.
-%
-% (c) Kathryn Lund, Charles University, 2020
+% See also KAPPAPLOT for more details about basic functionalities.
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines
-fstr = 'glued_low_sync';
+fstr = 'glued_kappa_plot';
 
 % Defaults for inputs
 if nargin == 0
-    XXdim = [1000, 200];
-    logcondXX = 1:8;
-    musc = {'CGS', 'MGS', 'MGS_SVL', 'MGS_LTS',... 
-        'MGS_ICWY', 'MGS_CWY'};
-    musc_str = {'CGS', 'MGS', 'MGS\_SVL (MGS2)', 'MGS\_LTS (Alg 4)',...
-        'MGS\_ICWY (Alg 5)', 'MGS\_CWY (Alg 6)'};
+    Xdim = [1000, 200];
+    logcondX = 1:8;
 elseif nargin == 1
-    logcondXX = 1:8;
-    musc = {'CGS', 'MGS', 'MGS_SVL', 'MGS_LTS',... 
-        'MGS_ICWY', 'MGS_CWY'};
-    musc_str = {'CGS', 'MGS', 'MGS\_SVL (MGS2)', 'MGS\_LTS (Alg 4)',...
-        'MGS\_ICWY (Alg 5)', 'MGS\_CWY (Alg 6)'};
-elseif nargin == 2
-    musc = {'CGS', 'MGS', 'MGS_SVL', 'MGS_LTS',... 
-        'MGS_ICWY', 'MGS_CWY'};
-    musc_str = {'CGS', 'MGS', 'MGS\_SVL (MGS2)', 'MGS\_LTS (Alg 4)',...
-        'MGS\_ICWY (Alg 5)', 'MGS\_CWY (Alg 6)'};
+    logcondX = 1:8;
 end
 
 % Defaults for empty arguments
-if isempty(XXdim)
-    XXdim = [1000, 200];
+if isempty(Xdim)
+    Xdim = [1000, 200];
 end
-if isempty(logcondXX)
-    logcondXX = 1:8;
-end
-if isempty(musc)
-    musc = {'CGS', 'MGS', 'MGS_SVL', 'MGS_LTS',... 
-        'MGS_ICWY', 'MGS_CWY'};
-    musc_str = {'CGS', 'MGS', 'MGS\_SVL (MGS2)', 'MGS\_LTS (Alg 4)',...
-        'MGS\_ICWY (Alg 5)', 'MGS\_CWY (Alg 6)'};
-end    
+if isempty(logcondX)
+    logcondX = 1:8;
+end  
 
 % Defaults for processing a single char array
 if ischar(musc)
     musc = {musc};
 end
 
-% Default strings and replace underscore with tex underscore
-if ~exist('musc_str','var')
-    musc_str = musc;
-    musc_str = strrep(musc_str, '_RO', '+');
-    musc_str = strrep(musc_str, 'RO', '+');
-    musc_str = strrep(musc_str, '_', '\_');
-end
+% Default strings and format strings for plot legends
+musc_str = AlgString(musc);
 
 % Pre-allocate memory for measures
-nmat = length(logcondXX);
+nmat = length(logcondX);
 nmusc = length(musc);
 loss_ortho = zeros(nmat, nmusc);
+res = zeros(nmat, nmusc);
+res_chol = zeros(nmat, nmusc);
+Xcond = zeros(1,nmat);
+Xnorm = zeros(1,nmat);
 
 % Extract dimensions
-m = XXdim(1); s = XXdim(2);
+m = Xdim(1); s = Xdim(2);
 I = eye(s);
-XXnorm = zeros(1,nmat);
-XXcond = zeros(1,nmat);
 
-% Plot settings
-musc_cmap = lines(nmusc);
-musc_lbl = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
+% Fix glued dimensions
+factors = factor(s);
+mid_ind = round(length(s)/2);
+r = prod(factors(1:mid_ind));
+t = prod(factors(mid_ind+1:end));
 
 for i = 1:nmat
     % Create glued matrix
-    pp = 20; ss = s/pp;
-    matstr = sprintf('%s_cond%d_m%d_p%d_s%d.mat', fstr, logcondXX(i), m, pp, ss);
+    matstr = sprintf('glued_cond%d_m%d_p%d_s%d.mat', logcondX(i), m, r, t);
     cd matrices
     if exist(matstr, 'file')
-        load(matstr, 'XX')
+        load(matstr, 'X')
     else
-        XX = create_gluedmatrix(.5*logcondXX(i), logcondXX(i), m, pp, ss);
-        
-        save(matstr, 'XX');
+        X = CreateGluedMatrix(m, r, t,...
+            .5*logcondX(i), logcondX(i));
+        save(matstr, 'X');
     end
     cd ..
-    XXnorm(i) = norm(XX);
-    XXcond(i) = cond(XX);
+    Xnorm(i) = norm(X);
+    Xcond(i) = cond(X);
     
-        for k = 1:nmusc
-            % Call BGS skeleton-muscle configuration
-            [QQ, ~] = IntraOrtho(XX, musc{k});
+    for k = 1:nmusc
+        % Call IntraOrtho
+        [Q, R] = IntraOrtho(X, musc{k});
 
-            % Compute loss of orthonormality
-            loss_ortho(i, k) = norm(I - QQ'*QQ, 2);
-            
-            % Clear computed variables before next run
-            clear QQ RR            
-        end
+        % Compute loss of orthonormality
+        loss_ortho(i, k) = norm(I - Q' * Q, 2);
+
+        % Compute relative residual
+        res(i, k) = norm(X - Q * R, 2) / Xnorm(i);
+
+        % Compute relative residual for Cholesky relation
+        res_chol(i, k) = norm(X' * X - R' * R, 2) / Xnorm(i)^2;
+
+        % Clear computed variables before next run
+        clear Q R
+    end
 end
 
-% Plot
-x = XXcond; % condition number 
+%% Plots
+musc_cmap = lines(nmusc);
+musc_lbl = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
+
+x = Xcond;
 lgd_str = musc_str;
-fig_loss_ortho = clf; ax_loss_ortho = gca; hold on;
+
+% Initialize figures and axes
+fg = cell(1,3); ax = cell(1,3);
+for i = 1:3
+    fg{i} = figure;
+    ax{i} = gca;
+    hold on;
+end
+
+% Plot data
 for k = 1:nmusc
-    plot(ax_loss_ortho, x, loss_ortho(:,k),...
+    plot(ax{1}, x, loss_ortho(:,k),...
+        musc_lbl{k}, 'Color', musc_cmap(k,:));
+    plot(ax{2}, x, res(:,k),...
+        musc_lbl{k}, 'Color', musc_cmap(k,:));
+    plot(ax{3}, x, res_chol(:,k),...
         musc_lbl{k}, 'Color', musc_cmap(k,:));
 end
-plot(ax_loss_ortho, x, eps*x, 'k--', x, eps*(x.^2), 'k-')
-set(ax_loss_ortho, 'Yscale', 'log', 'Xscale', 'log');
-title(ax_loss_ortho, 'Loss of Orthogonality ');
-xlabel(ax_loss_ortho, '\kappa(X)')
+plot(ax{1}, x, eps*x, 'k--', x, eps*(x.^2), 'k-')
 
-lgd_str{end+1} = 'O(\epsilon) \kappa(X)';
-lgd_str{end+1} = 'O(\epsilon) \kappa(X)^2';
-legend(ax_loss_ortho, lgd_str, 'Location', 'BestOutside');
+% Make plots pretty and save figures
+folder_str = sprintf('results/%s_m%d_s%d', fstr, m, s);
+mkdir(folder_str)
+PrettyKappaPlot(fg, ax, lgd_str, folder_str);
 
-% Save plots
-folderstr = sprintf('results/%s_m%d_s%d', fstr, m, s);
-mkdir(folderstr)
-
-savestr = sprintf('%s/out', folderstr);
-save(savestr,'loss_ortho');
-
-savestr = sprintf('%s/loss_ortho', folderstr);
-savefig(fig_loss_ortho, savestr, 'compact');
-saveas(fig_loss_ortho, savestr, 'epsc')
+% Save data
+save_str = sprintf('%s/out', folder_str);
+save(save_str, 'x', 'loss_ortho', 'res', 'res_chol');
 
 % close all;
-end
-
-%% Auxiliary functions
-function XX = create_gluedmatrix(logcondXX_glob, logcondXX_block, m, p, s)
-% Example 2 matrix from [Smoktunowicz et. al., 2006]
-n = p*s;
-XX = orth(rand(m,n));
-XX = XX*diag(10.^(0:logcondXX_glob/(n-1):logcondXX_glob)) * orth(randn(n,n));
-ibeg = 1;
-iend = s;
-for i = 1:p
-    XX(:,ibeg:iend) = XX(:,ibeg:iend)*...
-        diag(10.^(0:logcondXX_block/(s-1):logcondXX_block))*...
-        orth(randn(s,s));
-    ibeg = ibeg + s;
-    iend = iend + s;
-end
 end

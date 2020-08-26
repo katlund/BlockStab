@@ -12,7 +12,7 @@ function BlockKappaPlot(XXdim, logcondXX, skel, musc)
 %   block vectors, and s is the number of columns per block vector.  The
 %   resulting matrix XX has dimensions m x p*s.
 %
-%   Default: XXdim = [1000 50 5]
+%   Default: XXdim = [100 10 2]
 %
 % Options for logcondXX:
 %   logcondXX should be a vector of negative powers.  Each entry of
@@ -24,14 +24,14 @@ function BlockKappaPlot(XXdim, logcondXX, skel, musc)
 %   
 %   Default: logcondXX = -(1:16)
 %
-% Options for skel: see BGS
+% Options for skel: see BGS.
 %
-% Options for musc: see INTRAORTHO
+% Options for musc: see INTRAORTHO.
 %
 % When specifying only a subset of arguments, set non-specified arguments
 % to [] to ensure the default value.  For example,
 %
-%     BlockKappaPlot([100 20 2], [], 'BCGS', 'HouseQR')
+%     BlockKappaPlot([], [], 'BCGS', 'HouseQR')
 %
 % runs tests for matrices with dimensions [100 20 2], default logcondXX
 % settings, and the skeleton-muscle combination BCGS \circ HouseQR.
@@ -40,7 +40,7 @@ function BlockKappaPlot(XXdim, logcondXX, skel, musc)
 % options, since all possible combinations of skel/musc are performed.  For
 % example,
 %
-%     BlockKappaPlot([100 20 2], [], {'BCGS', 'BCGS_PIP', 'BCGS_PIO'}, {'CGS', 'MGS', 'HouseQR'})
+%     BlockKappaPlot([], [], {'BCGS', 'BCGS_PIP', 'BCGS_PIO'}, {'CGS', 'MGS', 'HouseQR'})
 %
 % runs 9 BGS combinations in total, given the 3 skeletons and 3 muscles.
 
@@ -50,7 +50,7 @@ fstr = 'block_kappa_plot';
 
 % Defaults for empty arguments
 if isempty(XXdim)
-    XXdim = [1000 50 5];
+    XXdim = [100 20 2];
 end
 if isempty(logcondXX)
     logcondXX = -(1:16);
@@ -64,7 +64,7 @@ if ischar(musc)
     musc = {musc};
 end
 
-% Default strings and replace underscore with tex underscore
+% Default strings and format strings for plot legends
 skel_str = AlgString(skel);
 musc_str = AlgString(musc);
 
@@ -118,6 +118,7 @@ musc_lbl = {'s-', 'o-', '*-', 'p-', 'h-', '.-', '^-'};
 x = XXcond;
 lgd_str = {};
 
+% Initialize figures and axes
 fg = cell(1,3); ax = cell(1,3);
 for i = 1:3
     fg{i} = figure;
@@ -125,6 +126,7 @@ for i = 1:3
     hold on;
 end
 
+% Plot data
 for j = 1:nskel
     for k = 1:nmusc
         plot(ax{1}, x, loss_ortho(:,j,k),...

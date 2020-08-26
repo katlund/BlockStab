@@ -21,6 +21,9 @@ switch musc
     case {'cgs'}
         [Q, R] = cgs(X, verbose);
         
+    case {'cgs_p'}
+        [Q, R] = cgs_p(X, verbose);
+        
     case {'cgs_ro'}
         [Q1, R1] = cgs(X, verbose);
         [Q, R] = cgs(Q1, verbose);
