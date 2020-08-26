@@ -1,7 +1,10 @@
-function [Q, R] = cgs_iro_ls(X)
-% [Q, R] = CGS_IRO_LS(X) performs Classical Gram-Schmidt with
+function [Q, R] = cgs_iro_ls(X, verbose)
+% [Q, R] = CGS_IRO_LS(X, verbose) performs Classical Gram-Schmidt with
 % Low-Synchronzation and Reorthogonalization on the m x s matrix X.
-% CGS_IRO_LS is Algorithm 3 from [Swirydowicz, et. al., 2020].
+% CGS_IRO_LS is Algorithm 3 from [Swirydowicz, et. al., 2020], with some
+% cosmetic modifications.
+%
+% See INTRAORTHO for more details about the parameters.
 
 % Note: as much as possible, we avoid calling entries of R or vectors of X
 % or Q to keep MATLAB from copying these structures when doing arithmetic.
@@ -11,12 +14,23 @@ function [Q, R] = cgs_iro_ls(X)
 % "finished products."
 
 %%
+% Default: debugging off
+if nargin < 2
+    verbose = 0;
+end
+
 % Pre-allocate memory for Q and R
 [m,s] = size(X);
 Q = zeros(m,s);
 R = zeros(s,s);
 
 q_tmp = X(:,1);
+
+if verbose
+    fprintf('         LOO      |    RelRes\n');
+    fprintf('-----------------------------------\n');
+end
+
 for k = 2:s
     % Pull out vector (keeps MATLAB from copying full X repeatedly)
     xk = X(:,k);
@@ -53,8 +67,13 @@ for k = 2:s
     % Set up temporary vector for next iteration
     q_tmp = xk - Q(:,1:k-1) * R(1:k-1,k);
     
-    fprintf('%d: LOO: %2.4e |', k-1, norm( eye(k-1) - Q(:, 1:k-1)' * Q(:, 1:k-1) ) );
-    fprintf('  Res: %2.4e\n', norm( X(:,1:k-1) - Q(:,1:k-1) * R(1:k-1,1:k-1) ) / norm(X(:,1:k-1)) );
+    if verbose
+        fprintf('%3.0d:', k-1);
+        fprintf('  %2.4e  |',...
+            norm( eye(k-1) - Q(:,1:k-1)' * Q(:,1:k-1) ) );
+        fprintf('  %2.4e\n',...
+            norm( X(:,1:k-1) - Q(:,1:k-1) * R(1:k-1,1:k-1) ) / norm(X(:,1:k-1)) );
+    end
 end
 
 % Finish normalizing last basis vector and assign last diagonal entry of R.
@@ -67,6 +86,9 @@ R(s,s) = r_diag;
 R(1:s-1,s) = R(1:s-1,s) + w;
 Q(:,s) = (q_tmp - Q(:,1:s-1) * w) / r_diag;
 
-fprintf('%d: LOO: %2.4e |', s, norm( eye(s) - Q' * Q ) );
-fprintf('  Res: %2.4e\n', norm( X - Q * R ) / norm(X) );
+if verbose
+    fprintf('%3.0d:', k+1);
+    fprintf('  %2.4e  |', norm( eye(s) - Q' * Q ) );
+    fprintf('  %2.4e\n', norm( X - Q * R ) / norm(X) );
+end
 end

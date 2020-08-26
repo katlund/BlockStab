@@ -4,17 +4,13 @@ function [Q, R] = cholqr(X)
 
 %%
 [m, s] = size(X);
-A = X'*X;
-[~, p] = chol(A);
-if ~p
+A = X' * X;
+[~, flag] = chol(A);
+if ~flag
     R = chol(A);
-    Q = X/R;
+    Q = X / R;
 else
     Q = NaN(m,s);
     R = NaN(s);
 end
-
-% fprintf('%s:\n',mfilename);
-% fprintf('||I - Q''*Q|| = %0.5e\n', norm(eye(s) - Q'*Q));
-% fprintf('||Q*R - X|| = %0.5e\n', norm(Q*R - X));
 end

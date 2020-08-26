@@ -11,7 +11,7 @@ R = I;
 normX2 = norm(X,2)^2;
 
 iter = 0;
-loss_ortho = norm(Q'*Q - I, 'fro');
+loss_ortho = norm(Q' * Q - I, 'fro');
 if isnan(loss_ortho)
     Q = NaN(m,s);
     R = NaN(s,s);
@@ -20,15 +20,15 @@ if isnan(loss_ortho)
 end
 while loss_ortho > sqrt(s)*eps
     iter = iter + 1;
-    A = Q'*Q;
+    A = Q' * Q;
     [R2, flag] = chol(A);
-    if flag
-        sh = 11*(m*s + s*(s+1))*eps*normX2;
+    if flag ~= 0 % need to shift
+        sh = 11 * (m*s + s * (s+1)) *eps * normX2;
         R2 = chol(A + sh*I);
     end
     Q = Q/R2;
     R = R2*R;
-    loss_ortho = norm(Q'*Q - I, 'fro');
+    loss_ortho = norm(Q' * Q - I, 'fro'); % sync point!
     if loss_ortho == 1
         % then there's probably a zero column and the difference will never
         % be less than 1
@@ -39,8 +39,4 @@ while loss_ortho > sqrt(s)*eps
     end
 end
 fprintf('%s converged in %d iterations\n', mfilename, iter);
-
-% fprintf('%s:\n',mfilename);
-% fprintf('||I - Q''*Q|| = %0.5e\n', norm(eye(s) - Q'*Q));
-% fprintf('||Q*R - X|| = %0.5e\n', norm(Q*R - X));
 end

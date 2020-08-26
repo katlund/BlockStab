@@ -17,7 +17,7 @@ addpath(genpath('../'))
 if nargin < 4
     verbose = 0;
 end
-%%
+
 % Pre-allocate memory for QQ and RR
 [m, n] = size(XX);
 p = n/s;

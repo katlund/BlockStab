@@ -1,9 +1,16 @@
-function [Q, R, T] = mgs_icwy(X)
-% [Q, R, T] = MGS_ICWY(X) performs Modified Gram-Schmidt with Inverse
-% Compact WY form on the m x s matrix X. Same as Algorithm 5 from
+function [Q, R, T] = mgs_icwy(X, verbose)
+% [Q, R, T] = MGS_ICWY(X, verbose) performs Modified Gram-Schmidt with
+% Inverse Compact WY form on the m x s matrix X. Same as Algorithm 5 from
 % [Swirydowicz et. al. 2020].
+%
+% See INTRAORTHO for more details about the parameters.
 
 %%
+% Default: debugging off
+if nargin < 2
+    verbose = 0;
+end
+
 % Pre-allocate memory for Q, R, and T
 [m, s] = size(X);
 Q = zeros(m,s);
@@ -11,6 +18,12 @@ R = zeros(s,s);
 T = eye(s,s);
 
 q_tmp = X(:,1);
+
+if verbose
+    fprintf('         LOO      |    RelRes\n');
+    fprintf('-----------------------------------\n');
+end
+
 for k = 1:s-1
     % Pull out vector (keeps MATLAB from copying full X repeatedly)
     xk = X(:,k+1);
@@ -32,12 +45,20 @@ for k = 1:s-1
     Q(:,k) = q_tmp / r_diag;
     q_tmp = xk - Q(:,1:k) * R(1:k,k+1);
     
-    fprintf('%d: LOO: %2.4e |', k, norm( eye(k) - Q(:, 1:k)' * Q(:, 1:k) ) );
-    fprintf('  Res: %2.4e\n', norm( X(:,1:k) - Q(:,1:k) * R(1:k,1:k) ) / norm(X(:,1:k)) );
+    if verbose
+        fprintf('%3.0d:', k);
+        fprintf('  %2.4e  |',...
+            norm( eye(k) - Q(:,1:k)' * Q(:,1:k) ) );
+        fprintf('  %2.4e\n',...
+            norm( X(:,1:k) - Q(:,1:k) * R(1:k,1:k) ) / norm(X(:,1:k)) );
+    end
 end
 R(s,s) = norm(q_tmp);
 Q(:,s) = q_tmp / R(s,s);
 
-fprintf('%d: LOO: %2.4e |', k+1, norm( eye(s) - Q' * Q ) );
-fprintf('  Res: %2.4e\n', norm( X - Q * R ) / norm(X) );
+if verbose
+    fprintf('%3.0d:', k+1);
+    fprintf('  %2.4e  |', norm( eye(s) - Q' * Q ) );
+    fprintf('  %2.4e\n', norm( X - Q * R ) / norm(X) );
+end
 end

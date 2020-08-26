@@ -11,19 +11,25 @@ function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, rpltol, verbose)
 % For all possible muscle options, see INTRAORTHO.
 
 %%
+% Defaults
+if nargin == 4
+    rpltol = [];
+    verbose = 0;
+elseif nargin == 5
+    verbose = 0;
+end
+
 skel = lower(skel);
 switch skel
     case {'bcgs'}
         tic;
         [QQ, RR] = bcgs(XX, s, musc, verbose);
         TotTime = toc;
-        TT = eye(size(RR));
         
     case {'bcgs_iro'}
         tic;
         [QQ, RR] = bcgs_iro(XX, s, musc, verbose);
         TotTime = toc;
-        TT = eye(size(RR));
         
     case {'bcgs_sror'}
         if nargin == 5
@@ -35,7 +41,6 @@ switch skel
             [QQ, RR] = bcgs_sror(XX, s, [], verbose);
             TotTime = toc;
         end
-        TT = eye(size(RR));
         
     case {'bcgs_iro_ls'}
         tic;
@@ -46,7 +51,6 @@ switch skel
         tic;
         [QQ, RR] = bmgs(XX, s, musc, verbose);
         TotTime = toc;
-        TT = eye(size(RR));
         
     case {'bmgs_svl'}
         tic;
@@ -84,21 +88,21 @@ switch skel
         tic;
         [QQ, RR] = bcgs_iro_1(XX, s, musc, verbose);
         TotTime = toc;
-        TT = eye(size(RR));
         
 % P-variants --------------------------------------------------------------
     case {'bcgs_pio'}
         tic;
         [QQ, RR] = bcgs_pio(XX, s, musc, verbose);
         TotTime = toc;
-        TT = eye(size(RR));
         
     case {'bcgs_pip'}
         tic;
         [QQ, RR] = bcgs_pip(XX, s, musc, verbose);
         TotTime = toc;
-        TT = eye(size(RR));
         
     otherwise
         error('%s is not a viable skeleton option', skel);
+end
+if ~exist('TT', 'var')
+    TT = eye(size(RR));
 end

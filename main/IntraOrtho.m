@@ -1,98 +1,89 @@
-function [Q, R, T] = IntraOrtho(X, musc, rpltol)
-% [Q, R, T] = INTRAORTHO(X, musc, rpltol) is a wrapper function for
-% switching between intra-orthonormalization algorithms. musc is a char
+function [Q, R, T] = IntraOrtho(X, musc, rpltol, verbose)
+% [Q, R, T] = INTRAORTHO(X, musc, rpltol, verbose) is a wrapper function
+% for switching between intra-orthonormalization algorithms. musc is a char
 % specifying the algorithm, and rpltol is an optional argument determining
-% the replacement tolerance in CGS_SROR.
-%
-% For all possible muscle options, see the header of RUNTEST.
+% the replacement tolerance in CGS_SROR. verbose is a Boolean for whether
+% to print intermediate loss of orthogonality (LOO) or relative residual
+% (RelRes) computations.
 
 %%
+% Defaults
+if nargin == 2
+    rpltol = [];
+    verbose = 0;
+elseif nargin == 3
+    verbose = 0;
+end
+
 addpath(genpath('muscles'))
 musc = lower(musc);
 switch musc        
     case {'cgs'}
-        [Q, R] = cgs(X);
+        [Q, R] = cgs(X, verbose);
         
     case {'cgs_ro'}
-        [Q1, R1] = cgs(X);
-        [Q, R] = cgs(Q1);
+        [Q1, R1] = cgs(X, verbose);
+        [Q, R] = cgs(Q1, verbose);
         R = R*R1;
         
     case {'cgs_iro'}
-        [Q, R] = cgs_iro(X);
+        [Q, R] = cgs_iro(X, verbose);
         
     case {'cgs_sro'}
-        [Q, R] = cgs_sror(X, 0);    % rpltol = 0 ensures no replacement
+        [Q, R] = cgs_sror(X, 0, verbose);    % rpltol = 0 ensures no replacement
         
     case {'cgs_sror'}
         if nargin == 2
             rpltol = 10;
         end
-        [Q, R] = cgs_sror(X, rpltol);
+        [Q, R] = cgs_sror(X, rpltol, verbose);
         
     case {'cgs_iro_ls'}
-        [Q, R] = cgs_iro_ls(X);
+        [Q, R] = cgs_iro_ls(X, verbose);
         
-    case {'cgs_iro_ls_v2'}
-        [Q, R] = cgs_iro_ls_v2(X);
-        
+%--------------------------------------------------------------------------
     case {'mgs'}
-        [Q, R] = mgs(X);
+        [Q, R] = mgs(X, verbose);
         
     case {'mgs_ro'}
-        [Q1, R1] = mgs(X);
-        [Q, R] = mgs(Q1);
+        [Q1, R1] = mgs(X, verbose);
+        [Q, R] = mgs(Q1, verbose);
         R = R*R1;
         
     case {'mgs_iro'}
-        [Q, R] = mgs_iro(X);
-        
-    case {'mgs_svl'}
-        [Q, R, T] = mgs_svl(X);
-        
-    case {'mgs_lts'}
-        [Q, R, T] = mgs_lts(X);
-        
-    case {'mgs_icwy'}
-        [Q, R, T] = mgs_icwy(X);
-        
-    case {'mgs_cwy'}
-        [Q, R, T] = mgs_cwy(X);
+        [Q, R] = mgs_iro(X, verbose);
         
 %--------------------------------------------------------------------------
-
-    case {'mgs_svl_trans'}
-        [Q, R, T] = mgs_svl_trans(X);
+    case {'mgs_svl'}
+        [Q, R, T] = mgs_svl(X, verbose);
         
-    case {'mgs_lts_trans'}
-        [Q, R, T] = mgs_lts_trans(X);
+    case {'mgs_lts'}
+        [Q, R, T] = mgs_lts(X, verbose);
         
-    case {'mgs_icwy_trans'}
-        [Q, R, T] = mgs_icwy_trans(X);  % this is identical to UTS!
+    case {'mgs_icwy'}
+        [Q, R, T] = mgs_icwy(X, verbose);
         
-    case {'mgs_cwy_trans'}
-        [Q, R, T] = mgs_cwy_trans(X);
+    case {'mgs_cwy'}
+        [Q, R, T] = mgs_cwy(X, verbose);
         
-%--------------------------------------------------------------------------        
+%--------------------------------------------------------------------------
     case {'houseqr'}
         [Q, R] = qr(X,0);
         
+%--------------------------------------------------------------------------
     case {'cholqr'}
-        [Q, R] = cholqr(X);
+        [Q, R] = cholqr(X, verbose);
         
     case {'cholqr_ro'}
-        [Q1, R1] = cholqr(X);
-        [Q, R] = cholqr(Q1);
+        [Q1, R1] = cholqr(X, verbose);
+        [Q, R] = cholqr(Q1, verbose);
         R = R*R1;
         
     case {'iter_cholqr'}
-        [Q, R] = iter_cholqr(X);
+        [Q, R] = iter_cholqr(X, verbose);
         
     case {'sh_cholqr_roro'}
-        [Q, R] = sh_cholqr_roro(X);
-        
-    case {'svqb'}
-        [Q, R] = svqb(X);
+        [Q, R] = sh_cholqr_roro(X, verbose);
         
 %--------------------------------------------------------------------------
     case {'global'}

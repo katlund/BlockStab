@@ -38,11 +38,11 @@ end
 % normalized random vector.
 if nq == 0
     if nux == 0
-        y = rand(n,1)-0.5;
-        y = y/norm(y);
+        y = rand(n,1) - 0.5;
+        y = y / norm(y);
         rho = 0;
     else
-        y = x/nux;
+        y = x / nux;
         rho = nux;
     end
     return
@@ -65,12 +65,12 @@ end
 % the flag zeronorm.
 if nux ~= 0
     zeronorm = false;
-    y = x/nux;
-    nu = nu/nux;
+    y = x / nux;
+    nu = nu / nux;
 else
     zeronorm = true;
     y = rand(n,1) - 0.5;
-    y = y/norm(y);
+    y = y / norm(y);
     nu = 1;
 end
 
@@ -81,9 +81,9 @@ while true
     if nargout == 4
         northog = northog + 1;
     end
-    s = Q'*y;
+    s = Q' * y;
     r = r + s;
-    y = y - Q*s;
+    y = y - Q * s;
     nu2 = norm(y);
 
     % Return if y is orthogonal.
@@ -92,24 +92,24 @@ while true
     end
 
     % Continue orthogonalizing if nu2 is not too small.
-    if nu2 > rpltol*nu*eps
+    if nu2 > rpltol * nu * eps
         nu1 = nu2;
     else % Replace y by a random vector.
-        nu = nu*eps;
+        nu = nu * eps;
         nu1 = nu;
         y = rand(n,1) - 0.5;
-        y = nu*y/norm(y);
+        y = nu * (y / norm(y));
     end
 end
 
 % Calculate rho and normalize y.
 if ~zeronorm
     rho = norm(y);
-    y = y/rho;
-    rho = rho*nux;
-    r = r*nux;
+    y = y / rho;
+    rho = rho * nux;
+    r = r * nux;
 else
-    y = y/norm(y);
+    y = y / norm(y);
     r = zeros(nq, 1);
     rho = 0;
 end
