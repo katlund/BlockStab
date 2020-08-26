@@ -76,18 +76,18 @@ switch matstr
         XXstr = sprintf('Monomial matrix (s-step-like block vectors)');
         
     case {'stewart'}        
-        [U,~] = qr(randn(m,n), 0);
-        [V,~] = qr(randn(n,m), 0);
+        U = orth(randn(m,n));
+        V = orth(randn(n,n));
         t = 20;                                                             % higher t leads to worse conditioning
         S = diag(10 .^ (linspace(0, -t, n))');
         XX = U * S * V';
-        XX(:,25) = XX(:,1);
-        XX(:,35) = 0;
+        XX(:,5) = XX(:,1);
+        XX(:,15) = 0;
         XXstr = sprintf('Stewart matrix');
         
     case {'stewart_extreme'}        
-        [U,~] = qr(randn(m,n), 0);
-        [V,~] = qr(randn(n,m), 0);
+        U = orth(randn(m,n));
+        V = orth(randn(n,n));
         t = 10;                                                             % higher t leads to worse conditioning
         S = diag([10 .^ (linspace(0, -t, n/2)) zeros(1,n/2)]');
         XX = U*S*V';

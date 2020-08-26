@@ -24,6 +24,7 @@ function GluedKappaPlot(Xdim, logcondX, musc)
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines
+addpath(genpath('../auxiliary'))
 fstr = 'glued_kappa_plot';
 
 % Defaults for inputs
@@ -74,28 +75,28 @@ for i = 1:nmat
     matstr = sprintf('glued_cond%d_m%d_p%d_s%d.mat', logcondX(i), m, r, t);
     cd matrices
     if exist(matstr, 'file')
-        load(matstr, 'X')
+        load(matstr, 'XX')
     else
-        X = CreateGluedMatrix(m, r, t,...
+        XX = CreateGluedMatrix(m, r, t,...
             .5*logcondX(i), logcondX(i));
-        save(matstr, 'X');
+        save(matstr, 'XX');
     end
     cd ..
-    Xnorm(i) = norm(X);
-    Xcond(i) = cond(X);
+    Xnorm(i) = norm(XX);
+    Xcond(i) = cond(XX);
     
     for k = 1:nmusc
         % Call IntraOrtho
-        [Q, R] = IntraOrtho(X, musc{k});
+        [Q, R] = IntraOrtho(XX, musc{k});
 
         % Compute loss of orthonormality
         loss_ortho(i, k) = norm(I - Q' * Q, 2);
 
         % Compute relative residual
-        res(i, k) = norm(X - Q * R, 2) / Xnorm(i);
+        res(i, k) = norm(XX - Q * R, 2) / Xnorm(i);
 
         % Compute relative residual for Cholesky relation
-        res_chol(i, k) = norm(X' * X - R' * R, 2) / Xnorm(i)^2;
+        res_chol(i, k) = norm(XX' * XX - R' * R, 2) / Xnorm(i)^2;
 
         % Clear computed variables before next run
         clear Q R

@@ -34,6 +34,7 @@
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines
+addpath(genpath('../auxiliary'))
 fstr = 'kappa_plot';
 
 % Defaults for empty arguments

@@ -30,6 +30,7 @@ function MonomialBlockKappaPlot(XXdim, svec, skel, musc)
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines
+addpath(genpath('../auxiliary'))
 fstr = 'monomial_block_kappa_plot';
 
 % Defaults for inputs

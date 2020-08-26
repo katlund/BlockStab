@@ -30,6 +30,7 @@ function GluedBlockKappaPlotVaryS(XXdim, logcondXX, s_bgs, skel)
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines
+addpath(genpath('../auxiliary'))
 fstr = 'glued_block_kappa_plot_vary_s';
 
 % Defaults for inputs

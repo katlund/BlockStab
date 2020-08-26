@@ -4,30 +4,67 @@
 Follow the download options from the Git repository main page.
 
 ## Usage
-The main purpose of this software is to study stability properties of different versions of Block Gram-Schmidt (BGS) and Block GMRES (BGMRES) via a skeleton-muscle paradigm.
+The main purpose of this software is to study, verify, and conjecture the
+stability properties of different versions of Block Gram-Schmidt (BGS) and
+Block GMRES (BGMRES) via a skeleton-muscle paradigm.
 
-RunTest.m and related variants are functions for running tests, and they allow for specifying different matrices and skeleton-muscle combinations.  For every matrix, RunTest produces a series of heatmaps corresponding to loss of orthonormality, backward error, and runtimes for the specified skeleton-muscle combinations.  Such a format allows one to quickly identify stability patterns for BGS variations.
-
-Basic use-case:
-`RunTest([m p s], mat, skel, musc, rpltol, verbose)`
+Common parameters:
 * `m` - number of rows
 * `p` - number of block vectors
 * `s` - number of columns per block vector
+* `n` - p*s
 * `mat` - char specifying matrix type
 * `skel` - char specifying BGS skeleton
 * `musc` - char specifying intra-orthonormalization muscle
 * `rpltol` - replacement tolerance (only for `cgs_sror` and `bgs_sror`)
-* `verbose` - true to print tables to screen; default is false
+* `verbose` - true to print information to screen; false to mute
 
-Examples:
-* `RunTest([1000 20 10], 'laeuchli', {'BCGS_SROR', 'BMGS'}, {'CGS', 'HouseQR'})` will produce and save three 2 x 2 heatmaps: one for loss of orthogonality, one for relative backward error, and one for runtimes, all for computing a QR decomposition of a Läuchli matrix of size 1000 x 200 (partitioned implicitly into 20 block vectors each with 10 columns).
-* `RunTest([1000 20 10], 'laeuchli', {'BCGS_SROR', 'BMGS'}, {'CGS', 'HouseQR'}, [], 1)` will do the same, but also print the tables to screen.
+To debug a specific skeleton or muscle, set `verbose = true`.  The loss of
+orthogonality (LOO) and relative residual (RelRes) will print to screen per step
+of the algorithm.  For example:
+`>> mgs(randn(100,10), true);
+         LOO      |    RelRes
+-----------------------------------
+  1:  2.2204e-16  |  3.7634e-17
+  2:  2.3515e-16  |  4.1141e-17
+  3:  2.3984e-16  |  9.1624e-17
+  4:  2.4010e-16  |  8.9259e-17
+  5:  2.2531e-16  |  1.1044e-16
+  6:  2.3365e-16  |  1.2696e-16
+  7:  2.7442e-16  |  1.3645e-16
+  8:  2.7454e-16  |  1.4435e-16
+  9:  2.6734e-16  |  1.5960e-16
+ 10:  2.7682e-16  |  1.5283e-16`
 
-See the header of each RunTest script for the specific options that can be set.
+ `>> bmgs(randn(100,20), 2, 'HouseQR', true);
+         LOO      |    RelRes
+-----------------------------------
+  1:  6.7663e-16  |  1.2409e-16
+  2:  5.8765e-16  |  1.5998e-16
+  3:  7.9980e-16  |  1.5196e-16
+  4:  8.0337e-16  |  1.9282e-16
+  5:  8.0743e-16  |  1.9774e-16
+  6:  8.1551e-16  |  2.4859e-16
+  7:  8.8906e-16  |  2.5308e-16
+  8:  8.7674e-16  |  2.6215e-16
+  9:  8.8764e-16  |  2.6683e-16
+ 10:  9.0044e-16  |  2.5827e-16`
+
+There are several test files.  See the header for each.  To explore some
+interesting examples, try the following:
+* `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1)`
+* `KappaPlot([100 10], [], {'MGS', 'MGS_SVL', 'MGS_LTS', 'MGS_CWY', 'MGS_ICWY'})`
+* `BlockKappaPlot([100 20 2], [], {'BCGS', 'BCGS_IRO', 'BCGS_IRO_LS'}, {'CGS', 'MGS', 'HouseQR'})`
+* `GluedKappaPlot([], [], {'CGS', 'CGS_P', 'MGS', 'CGS_IRO', 'CGS_IRO_LS'})`
+* `GluedBlockKappaPlot([], [], {'BCGS', 'BCGS_PIP', 'BCGS_PIO'}, 'HouseQR')`
+* `GluedBlockKappaPlotVaryS([], [], [2 5], {'BCGS', 'BMGS'})`
+* `MonomialBlockKappaPlot([1000 100],[1 2 5 10],{'BCGS', 'BMGS', 'BCGS_IRO'}, {'CholQR', 'MGS', 'HouseQR'})`
 
 ## Documentation
 Each file contains a descriptive header.  See especially the following core files:
-* `RunTest.m` and variants
+* `MakeHeatmap.m` - generates heatmaps for skeleton-muscle combinations; verbose = `true` prints tables to screen
+* `KappaPlot.m` - generates kappa plots for muscles
+* `BlockKappaPlot.m` - generates kappa plots for skeleton-muscle combinations
 * `MatGen.m` - generates matrices used for tests
 * `BGS.m` - switches between skeletons
 * `IntraOrtho.m` - switches between muscles

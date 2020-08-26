@@ -243,8 +243,8 @@ for i = 1:nmat
                 elseif strcmpi(musc{k}, 'cgs_sro')
                     [QQ, RR, ~, tt] = BGS(XX, s, 'bcgs_sror', 'cgs_sro', 0);
                 else
-                    QQ = NaN;
-                    RR = NaN;
+                    QQ = NaN(m, n);
+                    RR = NaN(n, n);
                     tt = NaN;
                 end
             else
