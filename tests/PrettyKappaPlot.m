@@ -23,15 +23,15 @@ for i = 1:3
         lgd_str_loo{end+1} = 'O(\epsilon) \kappa(X)';
         lgd_str_loo{end+1} = 'O(\epsilon) \kappa(X)^2';
         legend(axi, lgd_str_loo, 'Location', 'BestOutside');
-        title(axi, 'Loss of Orthogonality ');
+        title(axi, 'Loss of Orthogonality: ||I - Q''*Q||');
         save_str = sprintf('%s/loss_ortho', folder_str);
     else
         legend(axi, lgd_str, 'Location', 'BestOutside');
         if i == 2
-            title(axi, 'Relative Residual');
+            title(axi, 'Relative Residual: ||X - Q*R||/||X||');
             save_str = sprintf('%s/res', folder_str);
         elseif i == 3
-            title(axi, 'Relative Cholesky Residual');
+            title(axi, 'Relative Cholesky Residual: ||X''*X - R''*R||/||X||^2');
             save_str = sprintf('%s/res_chol', folder_str);
         end
     end

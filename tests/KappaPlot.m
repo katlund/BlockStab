@@ -11,7 +11,7 @@
 %   XXdim = [m s], where m is the number of rows and s is the number of
 %   columns.
 %
-%   Default: XXdim = [1000 200]
+%   Default: XXdim = [1000 250]
 %
 % Options for logcondX:
 %   logcondX should be a vector of negative powers.  Each entry of logcondX
@@ -30,7 +30,7 @@ fstr = 'kappa_plot';
 
 % Defaults for empty arguments
 if isempty(XXdim)
-    XXdim = [1000, 200];
+    XXdim = [1000, 250];
 end
 if isempty(logcondX)
     logcondX = -(1:16);
@@ -57,10 +57,6 @@ Xnorm = zeros(1,nmat);
 m = XXdim(1); s = XXdim(2);
 I = eye(s);
 
-% Plot settings
-musc_cmap = lines(nmusc);
-musc_lbl = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
-
 U = orth(randn(m,s));
 V = orth(randn(s,s));
 for i = 1:nmat
@@ -80,22 +76,27 @@ for i = 1:nmat
         res(i, k) = norm(X - Q * R, 2) / Xnorm(i);
 
         % Compute relative residual for Cholesky relation
-        res_chol(i, k) = norm(X'*X - R'*R, 2) / Xnorm(i)^2;
+        res_chol(i, k) = norm(X' * X - R' * R, 2) / Xnorm(i)^2;
 
         % Clear computed variables before next run
-        clear QQ RR
+        clear Q R
     end
 end
 
-% Plot
+%% Plots
+musc_cmap = lines(nmusc);
+musc_lbl = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
+
 x = Xcond;
 lgd_str = musc_str;
+
 fg = cell(1,3); ax = cell(1,3);
 for i = 1:3
     fg{i} = figure;
     ax{i} = gca;
     hold on;
 end
+
 for k = 1:nmusc
     plot(ax{1}, x, loss_ortho(:,k),...
         musc_lbl{k}, 'Color', musc_cmap(k,:));
@@ -113,7 +114,7 @@ PrettyKappaPlot(fg, ax, lgd_str, folder_str);
 
 % Save data
 save_str = sprintf('%s/out', folder_str);
-save(save_str,'loss_ortho', 'res', 'res_chol');
+save(save_str, 'x', 'loss_ortho', 'res', 'res_chol');
 
-close all;
+% close all;
 end

@@ -1,4 +1,4 @@
-function RunTestGluedLowSync(XXdim, logcondXX, musc)
+function GluedKappaPlot(XXdim, logcondXX, musc)
 % RUNTESTGLUEDLOWSYNC(XXdim, glued, musc) is a wrapper function that
 % compares stability for different muscles for a set of matrices of size
 % XXdim = [m s] with varying singular values specified by the vector array
