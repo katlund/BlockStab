@@ -1,0 +1,11 @@
+*.png
+*.jpg
+*.pdf
+*.synctex.gz
+*.asv
+*.mat
+*.fig
+
+poop
+results
+mwe
