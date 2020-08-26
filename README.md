@@ -21,7 +21,7 @@ Common parameters:
 
 To debug a specific skeleton or muscle, set `verbose = true`.  The loss of
 orthogonality (LOO) and relative residual (RelRes) will print to screen per step
-of the algorithm.  Try, for example
+of the algorithm.  Try, the following examples:
 
 ```
 mgs(randn(100,10), true);
@@ -78,6 +78,9 @@ Each file contains a descriptive header.  See especially the following core file
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to
 discuss what you would like to change.
+
+## Future Work
+There are some block GMRES tests in the work.
 
 ## How we cite things
 Several papers are foundational for our subroutines.  We provide the full citations here and use abbreviated ones (given as [Author YYYY]) throughout the documentation.
