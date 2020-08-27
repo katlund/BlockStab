@@ -69,7 +69,7 @@ for k = 1:p-1
         TT(1:sk-s,kk) = -TT(1:sk-s,1:sk-s) * (tmp(1:sk-s,s1) / R_diag);
     end
     
-    RR(kk,kk) = chol(tmp(kk,s1));
+    RR(kk,kk) = R_diag;
     tmp(kk,s2) = tmp(kk,s2) / R_diag;
     RR(1:sk,kk+s) = TT(1:sk,1:sk)' * tmp(:,s2);
     
