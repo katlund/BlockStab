@@ -6,25 +6,34 @@ Follow the download options from the Git repository main page.
 ## Usage
 The main purpose of this software is to study, verify, and conjecture the
 stability properties of different versions of Block Gram-Schmidt (BGS) and
-Block GMRES (BGMRES) via a skeleton-muscle paradigm.
-
-Common parameters:
-* `m` - number of rows
-* `p` - number of block vectors
-* `s` - number of columns per block vector
-* `n` - p*s
+Block GMRES (BGMRES) via a skeleton-muscle paradigm.  Each skeleton and muscle
+can be run individually or via the drivers
+`BGS(XX, s, skel, musc, rpltol, verbose)`  
+and  
+`IntraOrtho(X, musc, rpltol, verbose)`.  
+The variable `XX` typically denotes a block vector with `m` rows, `p` block vectors,
+and `s` columns per block vector.  `X` typically denotes a single block vector
+(or tall-and-skinny matrix) with `m` rows and `s` columns. As for the other parameters:  
 * `mat` - char specifying matrix type
 * `skel` - char specifying BGS skeleton
-* `musc` - char specifying intra-orthonormalization muscle
+* `musc` - char specifying intra-orthogonalization muscle
 * `rpltol` - replacement tolerance (only for `cgs_sror` and `bgs_sror`)
 * `verbose` - true to print information to screen; false to mute
 
-To debug a specific skeleton or muscle, set `verbose = true`.  The loss of
+For all currently implemented skeletons and muscles, see the headers to `BGS` and
+`IntraOrtho`. To debug a specific skeleton or muscle, set `verbose = true`.  The loss of
 orthogonality (LOO) and relative residual (RelRes) will print to screen per step
-of the algorithm.  Try, the following examples:
+of the algorithm.  Try, for example, the following:
 
 ```
 mgs(randn(100,10), true);
+```
+or
+```
+IntraOrtho(randn(100,10), 'MGS', [], true);
+```
+Example output:
+```
          LOO      |    RelRes
 -----------------------------------
   1:  2.2204e-16  |  3.7634e-17
@@ -41,6 +50,13 @@ mgs(randn(100,10), true);
 
 ```
 bmgs(randn(100,20), 2, 'HouseQR', true);
+```
+or
+```
+BGS(randn(100,20), 2, 'BMGS', 'HouseQR', [], true);
+```
+Example output:
+```
          LOO      |    RelRes
 -----------------------------------
   1:  6.7663e-16  |  1.2409e-16
@@ -55,8 +71,13 @@ bmgs(randn(100,20), 2, 'HouseQR', true);
  10:  9.0044e-16  |  2.5827e-16
  ```
 
-There are several test files.  See the header for each.  To explore some
-interesting examples, try the following:
+There are several test files.  `MakeHeatmap` generates heatmaps comparing loss of
+orthogonality and residual across many skeleton-muscle combinations for the same
+test matrix.  `KappaPlot` and similar test files plot loss of orthogonality and
+residual trends against matrices with a range of condition numbers; since the Greek
+letter $\kappa$ is used to denote the 2-norm condition number, we refer to these
+plots as "kappa plots."  See the header for each for full descriptions of
+their functionalities.  To explore some interesting examples, try the following:
 * `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1)`
 * `KappaPlot([100 10], [], {'MGS', 'MGS_SVL', 'MGS_LTS', 'MGS_CWY', 'MGS_ICWY'})`
 * `BlockKappaPlot([100 20 2], [], {'BCGS', 'BCGS_IRO', 'BCGS_IRO_LS'}, {'CGS', 'MGS', 'HouseQR'})`
@@ -67,13 +88,14 @@ interesting examples, try the following:
 
 ## Documentation
 Each file contains a descriptive header.  See especially the following core files:
-* `MakeHeatmap.m` - generates heatmaps for skeleton-muscle combinations; verbose = `true` prints tables to screen
-* `KappaPlot.m` - generates kappa plots for muscles
-* `BlockKappaPlot.m` - generates kappa plots for skeleton-muscle combinations
-* `MatGen.m` - generates matrices used for tests
 * `BGS.m` - switches between skeletons
 * `IntraOrtho.m` - switches between muscles
 * `InnerProd.m` - switches between inner products
+* `MatGen.m` - generates matrices used for tests
+* `CreateGluedMatrix.m` - generates glued matrices
+* `MakeHeatmap.m` - generates heatmaps for skeleton-muscle combinations; verbose = `true` prints tables to screen
+* `KappaPlot.m` - generates kappa plots for muscles
+* `BlockKappaPlot.m` - generates kappa plots for skeleton-muscle combinations
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to
