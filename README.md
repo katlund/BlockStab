@@ -23,7 +23,7 @@ and `s` columns per block vector.  `X` typically denotes a single block vector
 For all currently implemented skeletons and muscles, see the headers to `BGS` and
 `IntraOrtho`. To debug a specific skeleton or muscle, set `verbose = true`.  The loss of
 orthogonality (LOO) and relative residual (RelRes) will print to screen per step
-of the algorithm.  Try, for example, the following:
+of the algorithm.  Try, for example:
 
 ```
 mgs(randn(100,10), true);
@@ -47,7 +47,7 @@ Example output:
   9:  2.6734e-16  |  1.5960e-16
  10:  2.7682e-16  |  1.5283e-16
  ```
-
+For block methods, try:
 ```
 bmgs(randn(100,20), 2, 'HouseQR', true);
 ```
@@ -75,7 +75,7 @@ There are several test files.  `MakeHeatmap` generates heatmaps comparing loss o
 orthogonality and residual across many skeleton-muscle combinations for the same
 test matrix.  `KappaPlot` and similar test files plot loss of orthogonality and
 residual trends against matrices with a range of condition numbers; since the Greek
-letter $\kappa$ is used to denote the 2-norm condition number, we refer to these
+letter κ is used to denote the 2-norm condition number, we refer to these
 plots as "kappa plots."  See the header for each for full descriptions of
 their functionalities.  To explore some interesting examples, try the following:
 * `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1)`
