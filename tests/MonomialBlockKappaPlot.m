@@ -17,8 +17,8 @@ function MonomialBlockKappaPlot(XXdim, svec, skel, musc)
 %       X_k = [v_k A*v_k ... A^(s-1)*v_k].
 %
 %   Defaults:
-%       XXdim = [5000 840];
-%       svec = 2:2:14;
+%       XXdim = [1000 60 2];
+%       svec = 2:2:12;
 %
 % Options for skel: see BGS.
 %
@@ -35,18 +35,18 @@ fstr = 'monomial_block_kappa_plot';
 
 % Defaults for inputs
 if nargin == 0
-    XXdim = [5000 840];
-    svec = 2:2:14;
+    XXdim = [1000 60 2];
+    svec = 2:2:12;
 elseif nargin == 1
-    svec = 2:2:14;
+    svec = 2:2:12;
 end
 
 % Defaults for empty arguments
 if isempty(XXdim)
-    XXdim = [5000 840];
+    XXdim = [1000 60 2];
 end
 if isempty(svec)
-    svec = 2:2:14;
+    svec = 2:2:12;
 end
 
 % Defaults for processing a single char array
@@ -72,34 +72,34 @@ XXnorm = zeros(1,nmat);
 XXcond = zeros(1,nmat);
 
 % Extract dimensions
-m = XXdim(1); n = XXdim(2);
+m = XXdim(1); p = XXdim(2); s = XXdim(3); n = p*s;
 I = eye(n);
 
 A = spdiags(linspace(.1,1,m)',0,m,m);
 for i = 1:nmat
     % Create or load XX
-    s = svec(i); p = n/s;
-    matstr = sprintf('monomial_m%d_p%d_s%d.mat', m, p, s);
+    mat_s = svec(i); mat_p = n/mat_s;
+    matstr = sprintf('monomial_m%d_p%d_s%d.mat', m, mat_p, mat_s);
     
     cd matrices
     if exist(matstr, 'file')
         load(matstr, 'XX');
     else
-        XXhat = rand(m,p);
-        pp = 1:p;
+        XXhat = rand(m,mat_p);
+        pp = 1:mat_p;
         XXhat(:,pp) = XXhat(:,pp)/norm(XXhat(:,pp));
-        for k = 2:s
-            pp = pp + p;
-            XXhat(:,pp) = A*XXhat(:,pp - p);
+        for k = 2:mat_s
+            pp = pp + mat_p;
+            XXhat(:,pp) = A*XXhat(:,pp - mat_p);
         end
         % Reshape XX
         XX = zeros(m,n);
-        ind = 1:s:n;
-        kk = 1:p;
-        for k = 1:s
+        ind = 1:mat_s:n;
+        kk = 1:mat_p;
+        for k = 1:mat_s
             XX(:,ind) = XXhat(:,kk);
             ind = ind + 1;
-            kk = kk + p;
+            kk = kk + mat_p;
         end
         
         save(matstr, 'XX');
@@ -111,7 +111,7 @@ for i = 1:nmat
     for j = 1:nskel
         for k = 1:nmusc
             % Call BGS skeleton-muscle configuration
-            [QQ, RR] = BGS(XX, s, skel{j}, musc{k});
+            [QQ, RR] = BGS(XX, 2, skel{j}, musc{k});
 
             % Compute loss of orthonormality
             loss_ortho(i, j, k) = norm(I - QQ' * QQ, 2);
@@ -158,7 +158,7 @@ end
 plot(ax{1}, x, eps*x, 'k--', x, eps*(x.^2), 'k-')
 
 % Make plots pretty and save figures
-folder_str = sprintf('results/%s_m%d_n%d', fstr, m, n);
+folder_str = sprintf('results/%s_m%d_p%d_s%d', fstr, m, mat_p, s);
 mkdir(folder_str)
 PrettyKappaPlot(fg, ax, lgd_str, folder_str);
 
