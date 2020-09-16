@@ -17,7 +17,7 @@ function MonomialBlockKappaPlot(XXdim, svec, skel, musc)
 %       X_k = [v_k A*v_k ... A^(s-1)*v_k].
 %
 %   Defaults:
-%       XXdim = [1000 60 2];
+%       XXdim = [1000 120 2];
 %       svec = 2:2:12;
 %
 % Options for skel: see BGS.
@@ -35,7 +35,7 @@ fstr = 'monomial_block_kappa_plot';
 
 % Defaults for inputs
 if nargin == 0
-    XXdim = [1000 60 2];
+    XXdim = [1000 120 2];
     svec = 2:2:12;
 elseif nargin == 1
     svec = 2:2:12;
@@ -43,7 +43,7 @@ end
 
 % Defaults for empty arguments
 if isempty(XXdim)
-    XXdim = [1000 60 2];
+    XXdim = [1000 120 2];
 end
 if isempty(svec)
     svec = 2:2:12;
