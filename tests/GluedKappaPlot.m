@@ -24,7 +24,7 @@ function GluedKappaPlot(Xdim, logcondX, musc)
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines
-addpath(genpath('../auxiliary'))
+addpath(genpath('auxiliary/'))
 fstr = 'glued_kappa_plot';
 
 % Defaults for inputs

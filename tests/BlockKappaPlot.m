@@ -46,7 +46,7 @@ function BlockKappaPlot(XXdim, logcondXX, skel, musc)
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines
-addpath(genpath('../auxiliary'))
+addpath(genpath('auxiliary/'))
 fstr = 'block_kappa_plot';
 
 % Defaults for empty arguments

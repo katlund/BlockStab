@@ -48,7 +48,7 @@ for k = 2:p
         tmp = [QQ(:, 1:sk-2*s) Q_tmp]' * [Q_tmp Xk];
         W = tmp(1:sk-2*s, s1);
         Z = tmp(1:sk-2*s, s2);
-        R_tmp = tmp(end-s+1:end,:) - W'*[W Z];
+        R_tmp = tmp(end-s+1:end,:) - W' * [W Z];
     end
     
     % Pythagorean trick for RR diagonals; assign finished entry
@@ -61,7 +61,7 @@ for k = 2:p
     
     % Assign finished entries of RR
     RR(kk-s, kk-s) = R_diag;
-    RR(kk-s, kk) = R_tmp(:, s2) / R_diag;
+    RR(kk-s, kk) = R_diag'\ R_tmp(:, s2);
     
     if k == 2
         % Finish normalizing QQ(:,k-1)

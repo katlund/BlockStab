@@ -40,11 +40,11 @@ for k = 1:p-1
     sk = s*k;
     
     % Pull out vectors (keeps MATLAB from copying full X repeatedly)
-    Xk = XX(:,kk+s);
+    W = XX(:,kk+s);
     
     % Compute temporary quantities-- only sync point!
     if k == 1
-        tmp = Q_tmp' * [Q_tmp Xk];
+        tmp = Q_tmp' * [Q_tmp W];
         
         [~, flag] = chol(tmp(kk, s1));
         if flag == 0
@@ -54,12 +54,7 @@ for k = 1:p-1
         end
         
     else
-        % I think the problem with LOO stability is here: we are not
-        % updating TT(kk,kk), but rather assuming it is identity.  Perhaps
-        % PIO version of Pythagorean trick will work?
-        
-        tmp = [QQ(:,1:sk-s) Q_tmp]' * [Q_tmp Xk];
-
+        tmp = [QQ(:,1:sk-s) Q_tmp]' * [Q_tmp W];
         
         [~, flag] = chol(tmp(kk, s1));
         if flag == 0
@@ -72,11 +67,11 @@ for k = 1:p-1
     end
     
     RR(kk,kk) = R_diag;
-    tmp(kk,s2) = tmp(kk,s2) / R_diag;
+    tmp(kk,s2) =  R_diag' \ tmp(kk,s2);  % tmp(kk,s2) = Q_tmp' * W and R_diag is block norm of Q_tmp, so we pre-multiply by the inverse of the transpose
     RR(1:sk,kk+s) = TT(1:sk,1:sk)' \ tmp(:,s2);
     
     QQ(:,kk) = Q_tmp / R_diag;
-    Q_tmp = Xk - QQ(:,1:sk) * RR(1:sk,kk+s);
+    Q_tmp = W - QQ(:,1:sk) * RR(1:sk,kk+s);
     
     % Update block index
     kk = kk + s;
