@@ -19,6 +19,8 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 %   p - number of block vectors
 %   s - number of columns per block vector
 %
+%   Default is [1000 100 5].
+%
 % Options for mat (see also MATGEN):
 %   'rand_uniform' - random entries drawn from uniform distribution
 %   'rand_normal' - random entries drawn from normal distribution
@@ -36,6 +38,8 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 %      HILB(m,p*s)
 %   's-step' - a matrix with columns spanning a Krylov subspace of size sp
 %   'newton' - like 's-step', but better conditioned
+%
+%   Default is 'laeuchli'.
 %
 % Options for skel (see also BGS):
 %   'BCGS' - Block Classical Gram-Schmidt (1-sync/block)
@@ -55,6 +59,9 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 %   'BMGS_LTS' - BMGS with Lower Triangular Solve (2-sync/block)
 %   'BMGS_CWY' - BMGS with Compact WY reformulation (1-sync/block)
 %   'BMGS_ICWY' - BMGS with Inverse Compact WY reformulation (1-sync/block)
+%
+%   Default is {'BCGS', 'BCGS_IRO', 'BCGS_SROR', 'BCGS_IRO_LS', 'BMGS',...
+%       'BMGS_SVL', 'BMGS_CWY'}.
 %
 % Options for musc (see also IntraOrtho):
 %   'CGS' - Classical Gram-Schmidt (1-sync/col)
@@ -79,6 +86,10 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 %      twice. (2-sync)
 %   'Sh_CholQR_RORO' - Shifted Cholesky QR with double ReOrthonormalization
 %      (3-sync)
+%   
+%   Default is {'CGS','CGS_RO', 'CGS_IRO', 'CGS_SRO', 'CGS_SROR',...
+%       'CGS_IRO_LS', 'MGS', 'MGS_SVL', 'MGS_CWY', 'HouseQR', 'CholQR',...
+%       'CholQR_RO', 'Sh_CholQR_RORO'};
 %
 % When verbose is set to 1, a table for every matrix will print to screen.
 % The default is 0.
@@ -89,95 +100,37 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 % -------------------------------------------------------------------------
 % Examples:
 %
-% MAKEHEATMAP([], 'laeuchli', 'T', {'mgs', 'mgs_svl'}, []) will run
-% the specified tests with T-variants of BCGS_IRO and BMGS, as well as
-% BMGS_SVL.  Note that BMGS_SVL does not have a T-variant, because it
-% already incorporates the "error sponge" matrix T.
+% MAKEHEATMAP([], [], [], []) will generate a heatmap for the laeuchli
+% matrix and a wide sampling of skeletons and muscles.
 %
-% MAKEHEATMAP([], {'monomial', 'stewart_extreme'}, 'BCGS_IRO_1') will run
-% the specified tests with the variant of BCGS_IRO that reorthogonalizes
-% the first step.
+% MAKEHEATMAP([], 'monomial', {'BCGS', 'BCGS_IRO'}, {'HouseQR', 'CGS_RO'})
+% will generate a heatmap for the monomial matrix and the four specified
+% skeleton-muscle combinations.
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines
 addpath(genpath('matrices/'))                                               % path to matrix files
 
 % Defaults for inputs
-if nargin == 0
-    XXdim = [10000, 50, 10];
-    mat = {'rand_uniform', 'rand_normal', 'rank_def',...
-        'laeuchli', 'monomial', 'stewart', 'stewart_extreme', 'hilbert'};
-    skel = {'BCGS', 'BCGS_IRO', 'BCGS_SROR', 'BMGS', 'BMGS_SVL'};
-    skel_str = {'BCGS', 'BCGSI+', 'BCGSS+R', 'BMGS', 'BMGS\_SVL'};
-    musc = {'CGS','CGS_RO', 'CGS_IRO' 'CGS_SRO', 'CGS_SROR', 'MGS', 'MGS_RO',...
-        'MGS_IRO', 'MGS_SVL', 'HouseQR', 'CholQR', 'CholQR_RO', 'Sh_CholQR_RORO'};
-    musc_str = {'CGS','CGS+', 'CGSI+', 'CGSS+', 'CGSS+R', 'MGS', 'MGS+',...
-        'MGSI+','MGS\_SVL', 'HouseQR', 'CholQR', 'CholQR+', 'ShCholQR++'};
+if nargin == 4
     rpltol = 100;
     verbose = 0;
-    
-elseif nargin == 1
-    mat = {'rand_uniform', 'rand_normal', 'rank_def',...
-        'laeuchli', 'monomial', 'stewart', 'stewart_extreme', 'hilbert'};
-    skel = {'BCGS', 'BCGS_IRO', 'BCGS_SROR', 'BMGS', 'BMGS_SVL'};
-    skel_str = {'BCGS', 'BCGSI+', 'BCGSS+R', 'BMGS', 'BMGS\_SVL'};
-    musc = {'CGS','CGS_RO', 'CGS_IRO' 'CGS_SRO', 'CGS_SROR', 'MGS', 'MGS_RO',...
-        'MGS_IRO', 'MGS_SVL', 'HouseQR', 'CholQR', 'CholQR_RO', 'Sh_CholQR_RORO'};
-    musc_str = {'CGS','CGS+', 'CGSI+', 'CGSS+', 'CGSS+R', 'MGS', 'MGS+',...
-        'MGSI+','MGS\_SVL', 'HouseQR', 'CholQR', 'CholQR+', 'ShCholQR++'};
-    rpltol = 100;
-    verbose = 0;
-    
-elseif nargin == 2
-    skel = {'BCGS', 'BCGS_IRO', 'BCGS_SROR', 'BMGS', 'BMGS_SVL'};
-    skel_str = {'BCGS', 'BCGSI+', 'BCGSS+R', 'BMGS', 'BMGS\_SVL'};
-    musc = {'CGS','CGS_RO', 'CGS_IRO' 'CGS_SRO', 'CGS_SROR', 'MGS', 'MGS_RO',...
-        'MGS_IRO', 'MGS_SVL', 'HouseQR', 'CholQR', 'CholQR_RO', 'Sh_CholQR_RORO'};
-    musc_str = {'CGS','CGS+', 'CGSI+', 'CGSS+', 'CGSS+R', 'MGS', 'MGS+',...
-        'MGSI+','MGS\_SVL', 'HouseQR', 'CholQR', 'CholQR+', 'ShCholQR++'};
-    rpltol = 100;
-    verbose = 0;
-    
-elseif nargin == 3
-    musc = {'CGS','CGS_RO', 'CGS_IRO' 'CGS_SRO', 'CGS_SROR', 'MGS', 'MGS_RO',...
-        'MGS_IRO', 'MGS_SVL', 'HouseQR', 'CholQR', 'CholQR_RO', 'Sh_CholQR_RORO'};
-    musc_str = {'CGS','CGS+', 'CGSI+', 'CGSS+', 'CGSS+R', 'MGS', 'MGS+',...
-        'MGSI+','MGS\_SVL', 'HouseQR', 'CholQR', 'CholQR+', 'ShCholQR++'};
-    rpltol = 100;
-    verbose = 0;
-    
-elseif nargin == 4
-    rpltol = 100;
-    verbose = 0;
-    
 elseif nargin == 5
     verbose = 0;
-    
 end
 
 if isempty(XXdim)
-    XXdim = [10000, 50, 10];
+    XXdim = [1000 100 5];
 end
 if isempty(mat)
-    mat = {'rand_uniform', 'rand_normal', 'rank_def',...
-        'laeuchli', 'monomial', 'stewart', 'stewart_extreme', 'hilbert'};
+    mat = {'laeuchli'};
 end
 if isempty(skel)
-    skel = {'BCGS', 'BCGS_IRO', 'BCGS_SROR', 'BMGS', 'BMGS_SVL'};
-    skel_str = {'BCGS', 'BCGSI+', 'BCGSS+R', 'BMGS', 'BMGS\_SVL'};
-end
-if strcmp(skel, 'T')
-    skel = {'BCGS_IRO_T', 'BMGS_T', 'BMGS_SVL'};
-    skel_str = {'BCGSI+T', 'BMGST', 'BMGS\_SVL'};
-end
-if strcmp(skel, 'BCGS_IRO_1')
-    skel_str = {'BCGSI+1'};
+    skel = {'BCGS', 'BCGS_IRO', 'BCGS_SROR', 'BCGS_IRO_LS', 'BMGS', 'BMGS_SVL', 'BMGS_CWY'};
 end
 if isempty(musc)
-    musc = {'CGS','CGS_RO', 'CGS_IRO' 'CGS_SRO', 'CGS_SROR', 'MGS', 'MGS_RO',...
-        'MGS_IRO', 'MGS_SVL', 'HouseQR', 'CholQR', 'CholQR_RO', 'Sh_CholQR_RORO'};
-    musc_str = {'CGS','CGS+', 'CGSI+', 'CGSS+', 'CGSS+R', 'MGS', 'MGS+',...
-        'MGSI+','MGS\_SVL', 'HouseQR', 'CholQR', 'CholQR+', 'ShCholQR++'};
+    musc = {'CGS','CGS_RO', 'CGS_IRO', 'CGS_SRO', 'CGS_SROR', 'CGS_IRO_LS',...
+        'MGS', 'MGS_SVL', 'MGS_CWY', 'HouseQR', 'CholQR', 'CholQR_RO', 'Sh_CholQR_RORO'};
 end
 if isempty(rpltol)
     rpltol = 100;
@@ -194,19 +147,9 @@ if ischar(musc)
     musc = {musc};
 end
 
-% Default strings and replace underscore with tex underscore
-if ~exist('skel_str','var')
-    skel_str = skel;
-    skel_str = strrep(skel_str, '_RO', '+');
-    skel_str = strrep(skel_str, 'RO', '+');
-    skel_str = strrep(skel_str, '_', '\_');
-end
-if ~exist('musc_str','var')
-    musc_str = musc;
-    musc_str = strrep(musc_str, '_RO', '+');
-    musc_str = strrep(musc_str, 'RO', '+');
-    musc_str = strrep(musc_str, '_', '\_');
-end
+% Default strings and format strings for plot legends
+skel_str = AlgString(skel);
+musc_str = AlgString(musc);
 
 nmat = length(mat);
 nskel = length(skel);
