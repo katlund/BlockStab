@@ -27,9 +27,9 @@
 % When specifying only a subset of arguments, set non-specified arguments
 % to [] to ensure the default value.  For example,
 %
-%     BlockKappaPlot([], [], 'CholQR')
+%     KappaPlot([], [], 'CholQR')
 %
-% runs tests for matrices with dimensions [100 20 2], default logcondX
+% runs tests for matrices with dimensions [100 20], default logcondX
 % settings, and the muscle CholQR.
 
 %%

@@ -61,4 +61,9 @@ if verbose
     fprintf('  %2.4e  |', norm( eye(s) - Q' * Q ) );
     fprintf('  %2.4e\n', norm( X - Q * R ) / norm(X) );
 end
+
+% Barlow check
+% for k = 1:s
+%    fprintf('Gamma: %2.4e\n', norm( (eye(k) - T(1:k,1:k) ) * R(1:k,1:k) ));
+% end
 end

@@ -44,6 +44,11 @@ for k = 1:s-1
             norm( eye(k+1) - Q(:,1:k+1)' * Q(:,1:k+1) ) );
         fprintf('  %2.4e\n',...
             norm( X(:,1:k+1) - Q(:,1:k+1) * R(1:k+1,1:k+1) ) / norm(X(:,1:k+1)) );
-    end    
+    end
 end
+
+% Barlow check
+% for k = 1:s
+%    fprintf('Gamma: %2.4e\n', norm( (eye(k) - inv(T(1:k,1:k)) ) * R(1:k,1:k) )); 
+% end
 end

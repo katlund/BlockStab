@@ -77,7 +77,7 @@ for k = 2:s
 end
 
 % Finish normalizing last basis vector and assign last diagonal entry of R.
-%  We can do this in one sync, no norm needed.
+% We can do this in one sync, no norm needed.
 tmp = [Q(:,1:s-1) q_tmp]' * q_tmp;
 w = tmp(1:s-1,1);
 r_tmp = tmp(end,1) - w'*w;
