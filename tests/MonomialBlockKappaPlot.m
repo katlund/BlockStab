@@ -1,5 +1,5 @@
 function MonomialBlockKappaPlot(XXdim, svec, skel, musc)
-% RUNTESTMONOMIAL(XXdim, svec, musc, verbose) compares loss of
+% MONOMIALBLOCKKAPPAPLOT(XXdim, svec, skel, musc) compares loss of
 % orthogonality and relative residual for different skeleton-muscle
 % combinationss for a set of monomial matrices of size XXdim = [m p s] with
 % varying block widths specified by the vector array svec.
@@ -8,13 +8,14 @@ function MonomialBlockKappaPlot(XXdim, svec, skel, musc)
 % arrays (i.e., text strings with single quotes).
 %
 % Options for XXdim and svec:
-%   XXdim = [m n], where m is the number of rows and n the number of
-%   columns. svec is a vector of scalars that divide n.  With s denoting
-%   one such scalar, a matrix XX is produced with m rows and p = n/s block
-%   vectors each with s columns.  Each block vector X_k of XX is built from
-%   a random vector v_k like
+%   XXdim = [m p s], where m is the number of rows, p the number of block
+%   vectors, and s the number of columns per block vector. svec is a vector
+%   of scalars that divide n = p*s.  With s0 denoting one such scalar, a
+%   matrix XX is produced with m rows and p = n/s0 block vectors each with
+%   s0 columns. Each block vector X_k of XX is built from a random vector
+%   v_k like
 %
-%       X_k = [v_k A*v_k ... A^(s-1)*v_k].
+%       X_k = [v_k A*v_k ... A^(s0-1)*v_k].
 %
 %   Defaults:
 %       XXdim = [1000 120 2];
@@ -32,14 +33,6 @@ function MonomialBlockKappaPlot(XXdim, svec, skel, musc)
 addpath(genpath('../main/'))                                                % path to main routines
 addpath(genpath('auxiliary/'))
 fstr = 'monomial_block_kappa_plot';
-
-% Defaults for inputs
-if nargin == 0
-    XXdim = [1000 120 2];
-    svec = 2:2:12;
-elseif nargin == 1
-    svec = 2:2:12;
-end
 
 % Defaults for empty arguments
 if isempty(XXdim)
@@ -111,7 +104,7 @@ for i = 1:nmat
     for j = 1:nskel
         for k = 1:nmusc
             % Call BGS skeleton-muscle configuration
-            [QQ, RR] = BGS(XX, 2, skel{j}, musc{k});
+            [QQ, RR] = BGS(XX, s, skel{j}, musc{k});
 
             % Compute loss of orthonormality
             loss_ortho(i, j, k) = norm(I - QQ' * QQ, 2);
@@ -123,14 +116,14 @@ for i = 1:nmat
             res_chol(i, j, k) = norm(XX' * XX - RR' * RR, 2) / XXnorm(i)^2;
             
             % Clear computed variables before next run
-            clear QQ RR             
+            clear QQ RR
         end
     end
 end
 
 %% Plots
 skel_cmap = lines(nskel);
-musc_lbl = {'s-', 'o-', '*-', 'p-', 'h-', '.-', '^-'};
+musc_lbl = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
 
 x = XXcond;
 lgd_str = {};

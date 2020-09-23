@@ -116,7 +116,7 @@ end
 
 %% Plot
 skel_cmap = lines(nskel);
-s_bgs_lbl = {'s-', 'o-', '*-', 'p-', 'h-', '.-', '^-'};
+s_bgs_lbl = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
 
 x = XXcond;
 lgd_str = {};

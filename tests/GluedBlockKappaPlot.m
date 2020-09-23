@@ -119,7 +119,7 @@ end
 
 %% Plots
 skel_cmap = lines(nskel);
-musc_lbl = {'s-', 'o-', '*-', 'p-', 'h-', '.-', '^-'};
+musc_lbl = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
 
 x = XXcond;
 lgd_str = {};
