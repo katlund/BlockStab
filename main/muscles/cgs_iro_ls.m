@@ -87,7 +87,7 @@ R(1:s-1,s) = R(1:s-1,s) + w;
 Q(:,s) = (q_tmp - Q(:,1:s-1) * w) / r_diag;
 
 if verbose
-    fprintf('%3.0d:', k+1);
+    fprintf('%3.0d:', k);
     fprintf('  %2.4e  |', norm( eye(s) - Q' * Q ) );
     fprintf('  %2.4e\n', norm( X - Q * R ) / norm(X) );
 end
