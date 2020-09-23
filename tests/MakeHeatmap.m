@@ -60,8 +60,8 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 %   'BMGS_CWY' - BMGS with Compact WY reformulation (1-sync/block)
 %   'BMGS_ICWY' - BMGS with Inverse Compact WY reformulation (1-sync/block)
 %
-%   Default is {'BCGS', 'BCGS_IRO', 'BCGS_SROR', 'BCGS_IRO_LS', 'BMGS',...
-%       'BMGS_SVL', 'BMGS_CWY'}.
+%   Default is {'BCGS', 'BCGS_IRO', 'BCGS_SROR', 'BCGS_IRO_LS', 'BMGS',
+%   'BMGS_SVL', 'BMGS_CWY'}.
 %
 % Options for musc (see also IntraOrtho):
 %   'CGS' - Classical Gram-Schmidt (1-sync/col)
@@ -87,9 +87,9 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 %   'Sh_CholQR_RORO' - Shifted Cholesky QR with double ReOrthonormalization
 %      (3-sync)
 %   
-%   Default is {'CGS','CGS_RO', 'CGS_IRO', 'CGS_SRO', 'CGS_SROR',...
-%       'CGS_IRO_LS', 'MGS', 'MGS_SVL', 'MGS_CWY', 'HouseQR', 'CholQR',...
-%       'CholQR_RO', 'Sh_CholQR_RORO'};
+%   Default is {'CGS', 'CGS_IRO', 'CGS_SRO', 'CGS_SROR', 'CGS_IRO_LS',
+%   'MGS', 'MGS_SVL', 'MGS_CWY', 'HouseQR', 'CholQR', 'CholQR_RO',
+%   'Sh_CholQR_RORO'};
 %
 % When verbose is set to 1, a table for every matrix will print to screen.
 % The default is 0.
@@ -110,6 +110,7 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 %%
 addpath(genpath('../main/'))                                                % path to main routines
 addpath(genpath('matrices/'))                                               % path to matrix files
+addpath(genpath('axiliary/'))                                               % path to auxiliary files
 
 % Defaults for inputs
 if nargin == 4
