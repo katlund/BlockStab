@@ -110,7 +110,7 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 %%
 addpath(genpath('../main/'))                                                % path to main routines
 addpath(genpath('matrices/'))                                               % path to matrix files
-addpath(genpath('axiliary/'))                                               % path to auxiliary files
+addpath(genpath('auxiliary/'))                                              % path to auxiliary files
 
 % Defaults for inputs
 if nargin == 4
