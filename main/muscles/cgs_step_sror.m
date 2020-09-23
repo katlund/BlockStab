@@ -100,6 +100,10 @@ while true
         y = rand(n,1) - 0.5;
         y = nu * (y / norm(y));
     end
+    if isnan(y)
+        rho = NaN;
+        return
+    end
 end
 
 % Calculate rho and normalize y.
