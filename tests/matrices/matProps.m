@@ -6,8 +6,8 @@ function matProps(XXdim)
 
 m = XXdim(1); p = XXdim(2); s = XXdim(3);
 sizestr = sprintf('m%d_p%d_s%d', m, p, s);
-mat = {'rand_uniform', 'rand_normal', 'rank_def','laeuchli', 'monomial', 'stewart', 'stewart_extreme', 'hilbert'};
-matstr = {'\randuniform', '\randnormal', '\rankdef','\laeuchli', '\monomial', '\stewart', '\stewartextreme', '\hilbert'};
+mat = {'rand_uniform', 'rand_normal', 'rank_def','laeuchli', 'monomial', 'stewart', 'stewart_extreme', 'hilbert', 's-step', 'newton'};
+matstr = {'\randuniform', '\randnormal', '\rankdef','\laeuchli', '\monomial', '\stewart', '\stewartextreme', '\hilbert', '\sstep', '\newton'};
 loadstr = mat;
 nummat = length(mat);
 for i = 1:nummat
