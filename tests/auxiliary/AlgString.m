@@ -33,6 +33,8 @@ for i = 1:nalg
                 str = 'CholQR+';
             case 'houseqr'
                 str = 'HouseQR';
+            case 'cholqr_free'
+                str = 'CholQR-FREE';
         end
     end
     alg_str{i} = str;

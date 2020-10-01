@@ -100,6 +100,16 @@ switch skel
         [QQ, RR] = bcgs_pip(XX, s, musc, verbose);
         TotTime = toc;
         
+    case {'bcgs_pio_free'}
+        tic;
+        [QQ, RR] = bcgs_pio_free(XX, s, musc, verbose);
+        TotTime = toc;
+        
+    case {'bcgs_pip_free'}
+        tic;
+        [QQ, RR] = bcgs_pip_free(XX, s, musc, verbose);
+        TotTime = toc;
+        
     otherwise
         error('%s is not a viable skeleton option', skel);
 end

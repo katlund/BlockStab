@@ -77,6 +77,9 @@ switch musc
     case {'cholqr'}
         [Q, R] = cholqr(X);
         
+    case {'cholqr_free'}
+        [Q, R] = cholqr_free(X);
+        
     case {'cholqr_ro'}
         [Q1, R1] = cholqr(X);
         [Q, R] = cholqr(Q1);
