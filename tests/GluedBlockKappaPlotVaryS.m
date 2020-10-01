@@ -1,6 +1,6 @@
 function GluedBlockKappaPlotVaryS(XXdim, logcondXX, s_bgs, skel)
-% GLUEDBLOCKKAPPAPLOTVARYS(XXdim, logcondXX, skel, s_bgs) compares loss of
-% orthogonality and relative residual for different skeleton-muscle
+% GLUEDBLOCKKAPPAPLOTVARYS(XXdim, logcondXX, skel, s_bgs, skel) compares
+% loss of orthogonality and relative residual for different skeleton-muscle
 % combinationss for a set of glued matrices of size XXdim = [m n] with
 % varying condition numbers loosely specified by the exponents in
 % logcondXX.

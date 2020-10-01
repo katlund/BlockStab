@@ -48,7 +48,7 @@ for k = 1:p-1
     S = QQ(:,1:sk)' * W;
 
     [~, RXS] = IntraOrtho([W zeros(size(W)); zeros(size(S)) S], IOstr);
-    RXS = RXS'*RXS;
+    RXS = RXS' * RXS;
     diff = RXS(1:s,1:s) - RXS(end-s+1:end, end-s+1:end);
     
     [~, flag] = chol(diff);
@@ -61,7 +61,7 @@ for k = 1:p-1
     W = W - QQ(:,1:sk) * S;
     
     RR(1:sk,kk) = S;
-    QQ(:,kk) = W/RR(kk,kk);
+    QQ(:,kk) = W / RR(kk,kk);
     
     sk = sk + s;
     if verbose
