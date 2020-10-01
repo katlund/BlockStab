@@ -6,5 +6,5 @@ function [Q, R] = cholqr_free(X)
 %%
 A = X' * X;
 R = chol_free(A);
-Q = X / R;
+Q = (X / A) * R'; % moore-penrose pseudoinverse; avoids recomputing anything
 end

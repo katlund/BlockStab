@@ -16,7 +16,7 @@
 % Options for eps_vec:
 %   eps_vec should be a vector of values strictly between 0 and 1
 %   
-%   Default: eps_vec = logspace(-1, -16, 10);
+%   Default: eps_vec = logspace(-1, -16, 16);
 %
 % Options for musc: see INTRAORTHO.
 %
@@ -39,7 +39,7 @@ if isempty(Xdim)
     Xdim = [100, 20];
 end
 if isempty(eps_vec)
-    eps_vec = logspace(-1, -16, 10);
+    eps_vec = logspace(-1, -16, 16);
 end 
 
 % Defaults for processing a single char array
@@ -85,6 +85,9 @@ for i = 1:nmat
         clear Q R
     end
 end
+% eps_vec = kron(eps_vec', ones(nmusc,1));
+% T = table(eps_vec, loss_ortho, res, res_chol);
+% display(T)
 
 %% Plots
 musc_cmap = lines(nmusc);
@@ -111,6 +114,7 @@ for k = 1:nmusc
         musc_lbl{k}, 'Color', musc_cmap(k,:));
 end
 plot(ax{1}, x, eps*x, 'k--', x, eps*(x.^2), 'k-')
+plot(ax{2}, x, eps*x, 'k--')
 
 % Make plots pretty and save figures
 folder_str = sprintf('results/%s_m%d_s%d', fstr, m, s);

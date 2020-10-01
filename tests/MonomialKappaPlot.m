@@ -138,6 +138,7 @@ for k = 1:nmusc
         musc_lbl{k}, 'Color', musc_cmap(k,:));
 end
 plot(ax{1}, x, eps*x, 'k--', x, eps*(x.^2), 'k-')
+plot(ax{2}, x, eps*x, 'k--')
 
 % Make plots pretty and save figures
 folder_str = sprintf('results/%s_m%d_s%d', fstr, m, s);

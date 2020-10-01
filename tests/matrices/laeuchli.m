@@ -6,6 +6,6 @@ function XX = laeuchli(m, n, eps_val)
 XX = zeros(m,n);
 XX(1,:) = 1;
 for i = 2:n
-    XX(i,i-1) = eps_val + (sqrt(eps_val) - eps_val) * rand(1);
+    XX(i,i-1) = eps_val;
 end
 end
