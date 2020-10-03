@@ -58,6 +58,7 @@ res = zeros(nmat, nmusc);
 res_chol = zeros(nmat, nmusc);
 Xcond = zeros(1,nmat);
 Xnorm = zeros(1,nmat);
+Qnorm = [];
 
 % Extract dimensions
 m = Xdim(1); s = Xdim(2);
