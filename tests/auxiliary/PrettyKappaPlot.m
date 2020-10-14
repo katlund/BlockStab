@@ -21,7 +21,7 @@ for i = 1:3
     if i == 1
         lgd_str_loo = lgd_str;
         lgd_str_loo{end+1} = 'O(\epsilon) \kappa(X)';
-        lgd_str_loo{end+1} = 'O(\epsilon) \kappa(X)^2';
+        lgd_str_loo{end+1} = 'O(\epsilon) \kappa^2(X)';
         legend(axi, lgd_str_loo, 'Location', 'BestOutside');
         title(axi, 'Loss of Orthogonality: ||I - Q''*Q||');
         save_str = sprintf('%s/loss_ortho', folder_str);
