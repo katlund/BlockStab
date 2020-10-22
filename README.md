@@ -116,7 +116,9 @@ Several papers are foundational for our subroutines.  We provide the full citati
 * [Swirydowicz, et al. 2020]: Świrydowicz, K., Langou, J., Ananthan, S., Yang, U., & Thomas, S. Low synchronization Gram-Schmidt and GMRES algorithms. Technical report, 2020.
 
 ## How to cite us
-[TBD]
+Erin Carson, Kathryn Lund, Miro Rozložník, and Stephen Thomas. An overview of block Gram-Schmidt methods and their stability properties. Technical report, 2020.
+
+[arXiv link to be added soon.]
 
 ## License
 Creative Commons Attribution 4.0 International Public License: https://creativecommons.org/licenses/by/4.0/legalcode.
