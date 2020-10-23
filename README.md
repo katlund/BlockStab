@@ -102,7 +102,7 @@ Pull requests are welcome. For major changes, please open an issue first to
 discuss what you would like to change.
 
 ## Future Work
-There are some block GMRES tests in the work.
+There are some block GMRES tests in the works.
 
 ## How we cite things
 Several papers are foundational for our subroutines.  We provide the full citations here and use abbreviated ones (given as [Author YYYY]) throughout the documentation.
