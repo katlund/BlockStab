@@ -101,9 +101,6 @@ Each file contains a descriptive header.  See especially the following core file
 Pull requests are welcome. For major changes, please open an issue first to
 discuss what you would like to change.
 
-## Future Work
-There are some block GMRES tests in the works.
-
 ## How we cite things
 Several papers are foundational for our subroutines.  We provide the full citations here and use abbreviated ones (given as [Author YYYY]) throughout the documentation.
 * [Barlow 2019]: Barlow, J. Block modified Gram-Schmidt algorithms and their analysis. SIAM Journal on Matrix Analysis and Applications. Vol. 40, 4, pp. 1257--1290, 2019.
@@ -116,9 +113,7 @@ Several papers are foundational for our subroutines.  We provide the full citati
 * [Swirydowicz, et al. 2020]: Świrydowicz, K., Langou, J., Ananthan, S., Yang, U., & Thomas, S. Low synchronization Gram-Schmidt and GMRES algorithms. Technical report, 2020.
 
 ## How to cite us
-Erin Carson, Kathryn Lund, Miro Rozložník, and Stephen Thomas. An overview of block Gram-Schmidt methods and their stability properties. Technical report, 2020.
-
-[arXiv link to be added soon.]
+Erin Carson, Kathryn Lund, Miro Rozložník, and Stephen Thomas. An overview of block Gram-Schmidt methods and their stability properties. Technical report, 2020. https://arxiv.org/abs/2010.12058
 
 ## License
 Creative Commons Attribution 4.0 International Public License: https://creativecommons.org/licenses/by/4.0/legalcode.
