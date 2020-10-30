@@ -12,6 +12,7 @@ alg_str = lower(alg);
 for i = 1:nalg
     str = alg_str{i};
     if ~contains(str, 'qr')
+        str = strrep(str, '_free', '');
         str = strrep(str, '_iro_', 'i+');
         str = strrep(str, '_iro', 'i+');
         str = strrep(str, '_sro', 's+');
