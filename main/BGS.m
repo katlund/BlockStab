@@ -109,7 +109,10 @@ switch skel
         tic;
         [QQ, RR] = bcgs_pip_free(XX, s, musc, verbose);
         TotTime = toc;
-        
+    case {'breducegs'}
+        tic;
+        [QQ,RR] = breducegs(XX,s, 10*s, 'mgs');
+        TotTime = toc;
     otherwise
         error('%s is not a viable skeleton option', skel);
 end
