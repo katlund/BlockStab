@@ -7,7 +7,7 @@ classdef ReduceBlockGS  < handle
     GS2
     recursionEnd = 200
   end
-  
+
   methods
     function self = ReduceBlockGS(recursionEnd)
       self.recursionEnd = recursionEnd;
@@ -31,13 +31,13 @@ classdef ReduceBlockGS  < handle
           self.GS1 = ReduceBlockGS(self.recursionEnd);
           self.GS2 = ReduceBlockGS(self.recursionEnd);
         end
-        
+
         % divide
         m = floor(n/2);
         [X(1:m,:), R1] = self.GS1.orthogonalize(X(1:m,:));
         [X(m+1:end, :), R2] = self.GS2.orthogonalize(X(m+1:end,:));
         self.QX = horzcat(self.QX,X);
-        
+
         % and conquer
         R = zeros((k+1)*s,s);
         for i = 1:k
