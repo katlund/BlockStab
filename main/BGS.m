@@ -111,7 +111,7 @@ switch skel
         TotTime = toc;
     case {'breducegs'}
         tic;
-        [QQ,RR] = breducegs(XX,s, 'mgs');
+        [QQ,RR] = breducegs(XX,s, musc);
         TotTime = toc;
     otherwise
         error('%s is not a viable skeleton option', skel);
