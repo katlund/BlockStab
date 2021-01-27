@@ -87,13 +87,11 @@ function [XX,RR] = breducegs(XX, s, IOstr)
       if k > 0
         Rbasis_stretched = zeros(0,k);
         for i = 1:rf
-          Rbasis_stretched = vertcat(Rbasis_stretched,Q.Rbasis(1+(i-1)*(k):i*k,:),
-                  zeros(s, k));
+          Rbasis_stretched = vertcat(Rbasis_stretched,Q.Rbasis(1+(i-1)*(k):i*k,:), zeros(s, k));
         end
         Q.Rbasis = Rbasis_stretched;
       end
-      [Q.Rbasis, r] = gs_step(Q.Rbasis, Rstack, para.reduction_gs_it,
-                              para.reduction_mus, para.recursion_gs_block);
+      [Q.Rbasis, r] = gs_step(Q.Rbasis, Rstack, para.reduction_gs_it, para.reduction_mus, para.recursion_gs_block);
     end
   end
 
@@ -105,7 +103,7 @@ function [XX,RR] = breducegs(XX, s, IOstr)
     else
       k = length(Q.Qbasis);
       m = size(Q.Rbasis,2);
-      Qgcell = cell();
+      Qgcell = {};
       for i = 1:k
         Ql = recursive2global(Q.Qbasis{i});
         Qgcell{end+1} = Ql*Q.Rbasis(1+(i-1)*m:i*m,:);
