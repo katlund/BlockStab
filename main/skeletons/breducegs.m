@@ -14,8 +14,10 @@ function [XX,RR] = breducegs(XX, s, IOstr)
   Q = [];
   para.local_gs_it = 2;
   para.local_mus = IOstr;
+  para.local_gs_block = s;
   para.reduction_gs_it = 2;
   para.reduction_mus = IOstr;
+  para.recursion_gs_block = 0;
   para.recursionFactor = 2;
   para.recursionThreshold = n;
   RR = zeros(n,n);
@@ -27,9 +29,9 @@ function [XX,RR] = breducegs(XX, s, IOstr)
 
   XX = recursive2global(Q);
 
-  function [X, r] = cgs_step(Q, X, it, mus)
+  function [X, r] = gs_step(Q, X, it, mus, bl)
     %% [X, r] = cgs_step Adds the block vector X to the orthonormal basis Q by
-    %% appling CGS using the inner orthogonalization procedure determined by mus.
+    %% appling GS using the inner orthogonalization procedure determined by mus.
     if nargin < 3
       it = 2;
     end
@@ -38,13 +40,19 @@ function [XX,RR] = breducegs(XX, s, IOstr)
     end
     k = size(Q,2);
     [m,s] = size(X);
+    if nargin < 5 || bl <= 0
+      bl = k;
+    end
     r = zeros(k, s);
     rd = eye(s,s);
     for i = 1:it
       if k > 0
-        r1 = InnerProd(Q,X,mus);
-        X = X - Q*r1;
-        r = r + r1*rd;
+        for c = 1:bl:k
+          cc = c:c+bl-1;
+          r1 = InnerProd(Q(:,cc),X,mus);
+          X = X - Q(:,cc)*r1;
+          r(cc,:) = r(cc,:) + r1*rd;
+        end
       end
       [X, rd1] = IntraOrtho(X, mus);
       rd = rd1*rd;
@@ -62,7 +70,7 @@ function [XX,RR] = breducegs(XX, s, IOstr)
     [m,s] = size(X);
     rf = para.recursionFactor;
     if m/rf <= para.recursionThreshold
-      [Q,r] = cgs_step(Q,X, para.local_gs_it, para.local_mus);
+      [Q,r] = gs_step(Q,X, para.local_gs_it, para.local_mus, para.local_gs_block);
     else
       if ~isfield(Q,"Rbasis")
         Q.Rbasis = zeros(rf*s,0);
@@ -72,23 +80,20 @@ function [XX,RR] = breducegs(XX, s, IOstr)
       mr = floor(m/rf);
       local_r = {};
       for i = 1:rf-1
-        [Q.Qbasis{i}, local_r{i}] =
-        recursivegs_step(Q.Qbasis{i}, X(1+(i-1)*mr:i*mr,:), para);
+        [Q.Qbasis{i}, local_r{i}] = recursivegs_step(Q.Qbasis{i}, X(1+(i-1)*mr:i*mr,:), para);
       end
-      [Q.Qbasis{rf}, local_r{rf}] =
-      recursivegs_step(Q.Qbasis{rf}, X(1+(rf-1)*mr:end,:), para);
+      [Q.Qbasis{rf}, local_r{rf}] = recursivegs_step(Q.Qbasis{rf}, X(1+(rf-1)*mr:end,:), para);
       Rstack = cell2mat(local_r');
       if k > 0
         Rbasis_stretched = zeros(0,k);
         for i = 1:rf
-          Rbasis_stretched =
-          vertcat(Rbasis_stretched,Q.Rbasis(1+(i-1)*(k):i*k,:),
+          Rbasis_stretched = vertcat(Rbasis_stretched,Q.Rbasis(1+(i-1)*(k):i*k,:),
                   zeros(s, k));
         end
         Q.Rbasis = Rbasis_stretched;
       end
-      [Q.Rbasis, r] = cgs_step(Q.Rbasis, Rstack, para.reduction_gs_it,
-                               para.reduction_mus);
+      [Q.Rbasis, r] = gs_step(Q.Rbasis, Rstack, para.reduction_gs_it,
+                              para.reduction_mus, para.recursion_gs_block);
     end
   end
 
