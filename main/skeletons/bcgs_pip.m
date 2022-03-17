@@ -60,7 +60,7 @@ for k = 1:p-1
     W = W - QQ(:,1:sk) * Y;
     
     RR(1:sk,kk) = Y;
-    QQ(:,kk) = W/RR(kk,kk);
+    QQ(:,kk) = W / RR(kk,kk);
     
     sk = sk + s;
     if verbose

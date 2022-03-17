@@ -1,7 +1,7 @@
 function [QQ, RR] = bcgs_pio(XX, s, IOstr, verbose)
-% [QQ, RR] = BCGS_PIO(XX, s, IOstr, verbose)performs Block Classical Gram-Schmidt
-% with Pythagorean Intra-Orthogonalization modification on the m x n matrix
-% XX with p = n/s block partitions each of size s with
+% [QQ, RR] = BCGS_PIO(XX, s, IOstr, verbose) performs Block Classical
+% Gram-Schmidt with Pythagorean Intra-Orthogonalization modification on the
+% m x n matrix XX with p = n/s block partitions each of size s with
 % intra-orthogonalization procedure determined by IOstr.  BCGS_PIO is a
 % block generalization of CGS-P/Algorithm 2 from [Smoktunowicz et. al.
 % 2006].
