@@ -118,8 +118,18 @@ switch skel
     case {'bcgs_pip_mp'}
         tic;
         [QQ, RR] = bcgs_pip_mp(XX, s, musc, verbose);
-        TotTime = toc;    
-		
+        TotTime = toc;  
+        
+    case {'bcgs_pio_vpa'}
+        tic;
+        [QQ, RR] = bcgs_pio_vpa(XX, s, musc, verbose);
+        TotTime = toc;
+        
+    case {'bcgs_pip_vpa'}
+        tic;
+        [QQ, RR] = bcgs_pip_vpa(XX, s, musc, verbose);
+        TotTime = toc; 
+        
     case {'bcgs_pip_iro'}
         tic;
         [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose);
@@ -139,7 +149,17 @@ switch skel
         tic;
         [QQ, RR] = bcgs_pio_iro_mp(XX, s, musc, verbose);
         TotTime = toc;
-	
+
+    case {'bcgs_pip_iro_vpa'}
+        tic;
+        [QQ, RR] = bcgs_pip_iro_vpa(XX, s, musc, verbose);
+        TotTime = toc;
+        
+    case {'bcgs_pio_iro_vpa'}
+        tic;
+        [QQ, RR] = bcgs_pio_iro_vpa(XX, s, musc, verbose);
+        TotTime = toc;
+        
     otherwise
         error('%s is not a viable skeleton option', skel);
 end

@@ -3,7 +3,7 @@
 ## Installation
 Follow the download options from the Git repository main page.
 
-Note: The mixed precision functionality in this branch requires the Advanpix Multiprecision Computing Toolbox
+Note: Some mixed precision functionality (functions ending with `_mp`) in this branch requires the Advanpix Multiprecision Computing Toolbox. If this is not available, use instead the analogous functions ending with `_vpa`, which uses the (slower) built-in MATLAB vpa. 
 
 ## Usage
 The main purpose of this software is to study, verify, and conjecture the

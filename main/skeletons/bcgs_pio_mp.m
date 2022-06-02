@@ -4,7 +4,7 @@ function [QQ, RR] = bcgs_pio_mp(XX, s, IOstr, verbose)
 % m x n matrix XX with p = n/s block partitions each of size s with
 % intra-orthogonalization procedure determined by IOstr.  The computation 
 % of the input to the calls to Cholesky and the Cholesky factorization itself 
-% are both performed in simulated quadruple precision. 
+% are both performed in simulated quadruple precision using Advanpix. 
 % BCGS_PIO is a
 % block generalization of CGS-P/Algorithm 2 from [Smoktunowicz et. al.
 % 2006].

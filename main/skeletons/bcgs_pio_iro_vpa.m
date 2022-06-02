@@ -1,5 +1,5 @@
-function [QQ, RR] = bcgs_pio_iro_mp(XX, s, IOstr, verbose)
-% [QQ, RR] = BCGS_PIO_IRO_MP(XX, s, IOstr, verbose) performs Block Classical Gram-Schmidt
+function [QQ, RR] = bcgs_pio_iro_vpa(XX, s, IOstr, verbose)
+% [QQ, RR] = BCGS_PIO_IRO_VPA(XX, s, IOstr, verbose) performs Block Classical Gram-Schmidt
 % on the m x n matrix XX with p = n/s block partitions each of size s with
 % Inner ReOrthonormalization as described in [Barlow & Smoktunowicz 2013] but with 
 % the PIO-variant of BCGS
@@ -7,7 +7,7 @@ function [QQ, RR] = bcgs_pio_iro_mp(XX, s, IOstr, verbose)
 %
 % The computation of the input to the calls to Cholesky and the Cholesky 
 % factorization itself are both performed in simulated quadruple precision
-% using Advanpix. 
+% using MATLAB vpa. 
 %
 %
 % See BGS for more details about the parameters, and INTRAORTHO for IOstr
@@ -53,11 +53,11 @@ for k = 1:p-1
     % First BCGSPIO step
     S = QQ(:,1:sk)' * W;
 
-    [~, RXS] = IntraOrtho(mp([W zeros(size(W)); zeros(size(S)) S],34), IOstr); % quad precision
-    RXS = mp(RXS',34) * mp(RXS,34); % quad precision
-    diff = mp(RXS(1:s,1:s),34) - mp(RXS(end-s+1:end, end-s+1:end),34); % quad precision
+    [~, RXS] = IntraOrtho(vpa([W zeros(size(W)); zeros(size(S)) S],32), IOstr); % quad precision
+    RXS = vpa(RXS',32) * vpa(RXS,32); % quad precision
+    diff = vpa(RXS(1:s,1:s),32) - vpa(RXS(end-s+1:end, end-s+1:end),32); % quad precision
     
-    R1 = double(chol_free_mp(diff)); % block version of the Pythagorean theorem; quad precision
+    R1 = double(chol_free_vpa(diff)); % block version of the Pythagorean theorem; quad precision
    
     
     W = W - QQ(:,1:sk) * S;
@@ -81,11 +81,11 @@ for k = 1:p-1
     % Second BCGSPIO step
     S = QQ(:,1:sk)' * W;
 
-    [~, RXS] = IntraOrtho(mp([W zeros(size(W)); zeros(size(S)) S],34), IOstr); % quad precision
-    RXS = mp(RXS',34) * mp(RXS,34); % quad precision
-    diff = mp(RXS(1:s,1:s),34) - mp(RXS(end-s+1:end, end-s+1:end),34); % quad precision
+    [~, RXS] = IntraOrtho(vpa([W zeros(size(W)); zeros(size(S)) S],32), IOstr); % quad precision
+    RXS = vpa(RXS',32) * vpa(RXS,32); % quad precision
+    diff = vpa(RXS(1:s,1:s),32) - vpa(RXS(end-s+1:end, end-s+1:end),32); % quad precision
     
-     RR(kk,kk) = double(chol_free_mp(diff)); % block version of the Pythagorean theorem; quad precision
+     RR(kk,kk) = double(chol_free_vpa(diff)); % block version of the Pythagorean theorem; quad precision
 
     
     W = W - QQ(:,1:sk) * S;

@@ -6,7 +6,8 @@ function [QQ, RR] = bcgs_pip_iro_mp(XX, s, IOstr, verbose)
 % Intra-orthonormalization procedure determined by IOstr.
 %
 % The computation of the input to the calls to Cholesky and the Cholesky 
-% factorization itself % are both performed in simulated quadruple precision. 
+% factorization itself are both performed in simulated quadruple precision 
+% using Advanpix. 
 %
 % See BGS for more details about the parameters, and INTRAORTHO for IOstr
 % options.

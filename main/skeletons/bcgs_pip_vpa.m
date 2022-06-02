@@ -1,11 +1,11 @@
-function [QQ, RR] = bcgs_pip_mp(XX, s, IOstr, verbose)
+function [QQ, RR] = bcgs_pip_vpa(XX, s, IOstr, verbose)
 % [QQ, RR] = BCGS_PIP(XX, s, IOstr, verbose) performs Block Classical
 % Gram-Schmidt with Pythagorean Inner Product modification on the m x n
 % matrix XX with p = n/s block partitions each of size s with
 % intra-orthogonalization procedure determined by IOstr. 
 % The computation of the input to the calls to Cholesky and the Cholesky 
 % factorization itself are both performed in simulated quadruple precision
-% using Advanpix.
+% Using MATLAB vpa
 % BCGS_PIP is a block generalization of CGS-P/Algorithm 2 from 
 % [Smoktunowicz et. al. 2006].
 
@@ -50,10 +50,10 @@ for k = 1:p-1
     
     W = XX(:,kk);
     
-    S = mp([QQ(:,1:sk) W]',34) * mp(W,34); % quad precision
-    Y = mp(S(1:sk,:),34); % quad precision  
-    diff = mp(S(kk,:),34)-mp(Y',34)*mp(Y,34); % quad precision
-    RR(kk,kk) = double(chol_free_mp(diff)); % block version of the Pythagorean theorem; quad precision
+    S = vpa([QQ(:,1:sk) W]',32) * vpa(W,32); % quad precision
+    Y = vpa(S(1:sk,:),32); % quad precision  
+    diff = vpa(S(kk,:),32)-vpa(Y',32)*vpa(Y,32); % quad precision
+    RR(kk,kk) = double(chol_free_vpa(diff)); % block version of the Pythagorean theorem; quad precision
 
     
     W = W - QQ(:,1:sk) * Y;

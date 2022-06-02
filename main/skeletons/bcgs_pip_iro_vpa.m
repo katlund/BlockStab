@@ -1,14 +1,13 @@
-function [QQ, RR] = bcgs_pio_iro_mp(XX, s, IOstr, verbose)
-% [QQ, RR] = BCGS_PIO_IRO_MP(XX, s, IOstr, verbose) performs Block Classical Gram-Schmidt
+function [QQ, RR] = bcgs_pip_iro_vpa(XX, s, IOstr, verbose)
+% [QQ, RR] = BCGS_PIP_IRO_VPA(XX, s, IOstr, verbose) performs Block Classical Gram-Schmidt
 % on the m x n matrix XX with p = n/s block partitions each of size s with
 % Inner ReOrthonormalization as described in [Barlow & Smoktunowicz 2013] but with 
-% the PIO-variant of BCGS
+% the PIP-variant of BCGS.
 % Intra-orthonormalization procedure determined by IOstr.
 %
 % The computation of the input to the calls to Cholesky and the Cholesky 
-% factorization itself are both performed in simulated quadruple precision
-% using Advanpix. 
-%
+% factorization itself are both performed in simulated quadruple precision 
+% using MATLAB vpa. 
 %
 % See BGS for more details about the parameters, and INTRAORTHO for IOstr
 % options.
@@ -50,60 +49,52 @@ for k = 1:p-1
     
     W = XX(:,kk);
     
-    % First BCGSPIO step
-    S = QQ(:,1:sk)' * W;
+    % First BCGSPIP step
+    S = vpa([QQ(:,1:sk) W]',32) * vpa(W,32); % quad precision
+    Y = vpa(S(1:sk,:),32); % quad precision
+    diff = vpa(S(kk,:),32) - vpa(Y',32)*vpa(Y,32); % quad precision
+    
+    R1 = double(chol_free_vpa(diff)); % block version of the Pythagorean theorem; quad precision
 
-    [~, RXS] = IntraOrtho(mp([W zeros(size(W)); zeros(size(S)) S],34), IOstr); % quad precision
-    RXS = mp(RXS',34) * mp(RXS,34); % quad precision
-    diff = mp(RXS(1:s,1:s),34) - mp(RXS(end-s+1:end, end-s+1:end),34); % quad precision
     
-    R1 = double(chol_free_mp(diff)); % block version of the Pythagorean theorem; quad precision
-   
+    W = W - QQ(:,1:sk) * Y;
     
-    W = W - QQ(:,1:sk) * S;
-    
-    RR1 = S;
-    QQ(:,kk) = W / R1;
-%      S = QQ(:,1:sk)' * W;
-% 
-%     [~, RXS] = IntraOrtho([W zeros(size(W)); zeros(size(S)) S], IOstr);
-%     RXS = RXS' * RXS;
-%     diff = RXS(1:s,1:s) - RXS(end-s+1:end, end-s+1:end);
+    RR1 = Y;
+    QQ(:,kk) = W/R1;
+%     S = [QQ(:,1:sk) W]' * W;
+%     Y = S(1:sk,:);
+%     diff = S(kk,:) - Y'*Y;    
 %     
 %     R1 = chol_free(diff); % block version of the Pythagorean theorem
 %     
-%     W = W - QQ(:,1:sk) * S;
+%     W = W - QQ(:,1:sk) * Y;
 %     
-%     RR1 = S;
-%     QQ(:,kk) = W / R1;
+%     RR1 = Y;
+%     QQ(:,kk) = W/R1;
     
     
-    % Second BCGSPIO step
-    S = QQ(:,1:sk)' * W;
-
-    [~, RXS] = IntraOrtho(mp([W zeros(size(W)); zeros(size(S)) S],34), IOstr); % quad precision
-    RXS = mp(RXS',34) * mp(RXS,34); % quad precision
-    diff = mp(RXS(1:s,1:s),34) - mp(RXS(end-s+1:end, end-s+1:end),34); % quad precision
+    % Second BCGSPIP step
+    S = vpa([QQ(:,1:sk) W]',32) * vpa(W,32);
+    Y = vpa(S(1:sk,:),32);
+    diff = vpa(S(kk,:),32) - vpa(Y',32)*vpa(Y,32);    
     
-     RR(kk,kk) = double(chol_free_mp(diff)); % block version of the Pythagorean theorem; quad precision
+    RR(kk,kk) = double(chol_free_vpa(diff)); % block version of the Pythagorean theorem; quad precision
 
     
-    W = W - QQ(:,1:sk) * S;
+    W = W - QQ(:,1:sk) * Y;
     
-    RR(1:sk,kk) = S;
-    QQ(:,kk) = W / RR(kk,kk);
-%     S = QQ(:,1:sk)' * W;
-% 
-%     [~, RXS] = IntraOrtho([W zeros(size(W)); zeros(size(S)) S], IOstr);
-%     RXS = RXS' * RXS;
-%     diff = RXS(1:s,1:s) - RXS(end-s+1:end, end-s+1:end);
+    RR(1:sk,kk) = Y;
+    QQ(:,kk) = W/RR(kk,kk);
+%     S = [QQ(:,1:sk) W]' * W;
+%     Y = S(1:sk,:);
+%     diff = S(kk,:) - Y'*Y;    
 %     
 %     RR(kk,kk) = chol_free(diff); % block version of the Pythagorean theorem
 %     
-%     W = W - QQ(:,1:sk) * S;
+%     W = W - QQ(:,1:sk) * Y;
 %     
-%     RR(1:sk,kk) = S;
-%     QQ(:,kk) = W / RR(kk,kk);
+%     RR(1:sk,kk) = Y;
+%     QQ(:,kk) = W/RR(kk,kk);
     
     % Combine both steps
     RR(1:sk,kk) = RR1 + RR(1:sk,kk) * R1;
