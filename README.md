@@ -3,6 +3,8 @@
 ## Installation
 Follow the download options from the Git repository main page.
 
+Note: The mixed precision functionality in this branch requires the Advanpix Multiprecision Computing Toolbox
+
 ## Usage
 The main purpose of this software is to study, verify, and conjecture the
 stability properties of different versions of Block Gram-Schmidt (BGS) and
