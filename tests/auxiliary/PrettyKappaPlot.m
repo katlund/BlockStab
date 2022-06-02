@@ -22,7 +22,6 @@ for i = 1:3
         lgd_str_loo = lgd_str;
         lgd_str_loo{end+1} = '$O(\varepsilon) \kappa(\mathcal{X})$';
         lgd_str_loo{end+1} = '$O(\varepsilon) \kappa^2(\mathcal{X})$';
-        lgd_str_loo{end+1} = '$O(\varepsilon) \kappa^3(\mathcal{X})$';
         legend(axi, lgd_str_loo, 'Location', 'NorthWest','Interpreter','Latex','FontSize',10,'EdgeColor','none','Color','none');
         title(axi, 'Loss of Orthogonality: $\Vert I - \bar\mathcal{Q}^T \bar\mathcal{Q}\Vert$','Interpreter','Latex','FontSize',16);
         save_str = sprintf('%s/loss_ortho', folder_str);
