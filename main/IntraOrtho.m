@@ -76,7 +76,13 @@ switch musc
 %--------------------------------------------------------------------------
     case {'cholqr'}
         [Q, R] = cholqr(X);
-        
+
+    case {'cholqr_mp'}
+        [Q, R] = cholqr_mp(X);
+
+    case {'cholqr_vpa'}
+        [Q, R] = cholqr_vpa(X);
+
     case {'cholqr_pinv'}
         [Q, R] = cholqr_pinv(X);
         
