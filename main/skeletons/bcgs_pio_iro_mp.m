@@ -53,58 +53,35 @@ for k = 1:p-1
     % First BCGSPIO step
     S = QQ(:,1:sk)' * W;
 
-    [~, RXS] = IntraOrtho(mp([W zeros(size(W)); zeros(size(S)) S],34), IOstr); % quad precision
-    RXS = mp(RXS',34) * mp(RXS,34); % quad precision
-    diff = mp(RXS(1:s,1:s),34) - mp(RXS(end-s+1:end, end-s+1:end),34); % quad precision
+    [~, RXS] = IntraOrtho([W zeros(size(W)); zeros(size(S)) S], IOstr); 
+    RXS = mp(RXS',34)*mp(RXS,34); % quad precision
+    diff = RXS(1:s,1:s) - RXS(end-s+1:end, end-s+1:end); % quad precision
     
-    R1 = double(chol_free_mp(diff)); % block version of the Pythagorean theorem; quad precision
+    R1 = chol_free_mp(diff); % block version of the Pythagorean theorem; quad precision
    
     
     W = W - QQ(:,1:sk) * S;
     
     RR1 = S;
-    QQ(:,kk) = W / R1;
-%      S = QQ(:,1:sk)' * W;
-% 
-%     [~, RXS] = IntraOrtho([W zeros(size(W)); zeros(size(S)) S], IOstr);
-%     RXS = RXS' * RXS;
-%     diff = RXS(1:s,1:s) - RXS(end-s+1:end, end-s+1:end);
-%     
-%     R1 = chol_free(diff); % block version of the Pythagorean theorem
-%     
-%     W = W - QQ(:,1:sk) * S;
-%     
-%     RR1 = S;
-%     QQ(:,kk) = W / R1;
+    QQ(:,kk) = double( mp(W,34) / mp(R1,34) ); % quad precision
+
     
     
     % Second BCGSPIO step
     S = QQ(:,1:sk)' * W;
 
-    [~, RXS] = IntraOrtho(mp([W zeros(size(W)); zeros(size(S)) S],34), IOstr); % quad precision
-    RXS = mp(RXS',34) * mp(RXS,34); % quad precision
-    diff = mp(RXS(1:s,1:s),34) - mp(RXS(end-s+1:end, end-s+1:end),34); % quad precision
+    [~, RXS] = IntraOrtho([W zeros(size(W)); zeros(size(S)) S], IOstr); 
+    RXS = mp(RXS',34)*mp(RXS,34);  % quad precision
+    diff = RXS(1:s,1:s) - RXS(end-s+1:end, end-s+1:end); % quad precision
     
-     RR(kk,kk) = double(chol_free_mp(diff)); % block version of the Pythagorean theorem; quad precision
-
+    RRkkkk = chol_free_mp(diff); % block version of the Pythagorean theorem; quad precision
+    RR(kk,kk) = double(RRkkkk);
     
     W = W - QQ(:,1:sk) * S;
     
     RR(1:sk,kk) = S;
-    QQ(:,kk) = W / RR(kk,kk);
-%     S = QQ(:,1:sk)' * W;
-% 
-%     [~, RXS] = IntraOrtho([W zeros(size(W)); zeros(size(S)) S], IOstr);
-%     RXS = RXS' * RXS;
-%     diff = RXS(1:s,1:s) - RXS(end-s+1:end, end-s+1:end);
-%     
-%     RR(kk,kk) = chol_free(diff); % block version of the Pythagorean theorem
-%     
-%     W = W - QQ(:,1:sk) * S;
-%     
-%     RR(1:sk,kk) = S;
-%     QQ(:,kk) = W / RR(kk,kk);
-    
+    QQ(:,kk) = double(mp(W,34) / mp(RRkkkk,34)); %quad precision
+
     % Combine both steps
     RR(1:sk,kk) = RR1 + RR(1:sk,kk) * R1;
     RR(kk,kk) = RR(kk,kk) * R1;

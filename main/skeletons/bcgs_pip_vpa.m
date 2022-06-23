@@ -50,16 +50,16 @@ for k = 1:p-1
     
     W = XX(:,kk);
     
-    S = vpa([QQ(:,1:sk) W]',32) * vpa(W,32); % quad precision
+    S = vpa([QQ(:,1:sk) W]',32) * vpa(W,32); % quad precision ?
     Y = vpa(S(1:sk,:),32); % quad precision  
     diff = vpa(S(kk,:),32)-vpa(Y',32)*vpa(Y,32); % quad precision
-    RR(kk,kk) = double(chol_free_vpa(diff)); % block version of the Pythagorean theorem; quad precision
-
+    RRkkkk = chol_free_vpa(diff); % block version of the Pythagorean theorem; quad precision
+    RR(kk,kk) = double(RRkkkk);
     
     W = W - QQ(:,1:sk) * Y;
     
     RR(1:sk,kk) = Y;
-    QQ(:,kk) = W / RR(kk,kk);
+    QQ(:,kk) = double(vpa(W,32) / vpa(RRkkkk,32)); % quad precision
     
     sk = sk + s;
     if verbose

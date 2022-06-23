@@ -47,6 +47,16 @@ switch skel
         [QQ, RR] = bcgs_iro_ls(XX, s, musc, verbose);
         TotTime = toc;
         
+    case {'bcgs_iro_ls_mp'}
+        tic;
+        [QQ, RR] = bcgs_iro_ls_mp(XX, s, musc, verbose);
+        TotTime = toc;    
+
+    case {'bcgs_iro_ls_vpa'}
+        tic;
+        [QQ, RR] = bcgs_iro_ls_vpa(XX, s, musc, verbose);
+        TotTime = toc; 
+        
     case {'bmgs'}
         tic;
         [QQ, RR] = bmgs(XX, s, musc, verbose);
@@ -87,6 +97,16 @@ switch skel
     case {'bcgs_iro_1'}
         tic;
         [QQ, RR] = bcgs_iro_1(XX, s, musc, verbose);
+        TotTime = toc;
+        
+    case {'bcgs_pio_iro_1'}
+        tic;
+        [QQ, RR] = bcgs_pio_iro_1(XX, s, musc, verbose);
+        TotTime = toc;   
+        
+    case {'bcgs_pip_iro_1'}
+        tic;
+        [QQ, RR] = bcgs_pip_iro_1(XX, s, musc, verbose);
         TotTime = toc;
         
 % P-variants --------------------------------------------------------------

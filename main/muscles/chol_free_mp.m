@@ -7,7 +7,7 @@ function R = chol_free_mp(A)
 % definite.
 
 %%
-A=mp(A,34);
+A = mp(A,34);
 s = size(A,1);
 R = mp(zeros(s,s),34);
 for j = 1:s

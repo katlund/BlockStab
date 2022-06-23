@@ -50,18 +50,18 @@ for k = 1:p-1
     W = XX(:,kk);     
     S = QQ(:,1:sk)' * W;
 
-    [~, RXS] = IntraOrtho(vpa([W zeros(size(W)); zeros(size(S)) S],32), IOstr); % quad precision
+    [~, RXS] = IntraOrtho([W zeros(size(W)); zeros(size(S)) S], IOstr);
     RXS = vpa(RXS',32) * vpa(RXS,32); % quad precision
     diff = vpa(RXS(1:s,1:s),32)-vpa(RXS(end-s+1:end, end-s+1:end),32); % quad precision
-    RR(kk,kk) = double(chol_free_vpa(diff)); % block version of the Pythagorean theorem; quad precision
-
+    RRkkkk = chol_free_vpa(diff); % block version of the Pythagorean theorem; quad precision
+    RR(kk,kk) = double(RRkkkk);
     
     W = W - QQ(:,1:sk)*S; 
 
     
     RR(1:sk,kk) = S;
     
-    QQ(:,kk) = W / RR(kk,kk); 
+    QQ(:,kk) = double(vpa(W,32) / vpa(RRkkkk,32)); % quad precision
     
     sk = sk + s;
     if verbose
