@@ -26,6 +26,10 @@ for i = 1:nalg
         switch str
             case 'cholqr'
                 str = 'CholQR';
+            case 'cholqr_mp'
+                str = 'CholQR-MP';
+            case 'cholqr_vpa'
+                str = 'CholQR-VPA';
             case 'iter_cholqr'
                 str = 'IterCholQR';
             case 'sh_cholqr_roro'

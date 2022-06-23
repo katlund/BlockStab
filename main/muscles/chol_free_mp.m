@@ -1,10 +1,10 @@
 function R = chol_free_mp(A)
-% R = CHOL_FREE_MP(A) computes the Cholesky factor of A according to Algorithm
-% 10.2 from [Higham 2002], using simulated quadruple precision via the Advanpix 
-% Multiprecision Computing Toolbox.  Unlike Matlab's built-in CHOL, there is no
-% fail-safe for numerical stability, so that we may more freely observe the
-% algorithm's behavior for matrices that are not numerically positive
-% definite.
+% R = CHOL_FREE_MP(A) computes the Cholesky factor of A according to
+% Algorithm 10.2 from [Higham 2002], using simulated quadruple precision
+% via the Advanpix Multiprecision Computing Toolbox.  Unlike Matlab's
+% built-in CHOL, there is no fail-safe for numerical stability, so that we
+% may more freely observe the algorithm's behavior for matrices that are
+% not numerically positive definite.
 
 %%
 A = mp(A,34);

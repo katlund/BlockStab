@@ -1,10 +1,9 @@
 function R = chol_free_vpa(A)
-% R = CHOL_FREE_VPA(A) computes the Cholesky factor of A according to Algorithm
-% 10.2 from [Higham 2002], using simulated quadruple precision via MATLAB vpa.  
-% Unlike Matlab's built-in CHOL, there is no
-% fail-safe for numerical stability, so that we may more freely observe the
-% algorithm's behavior for matrices that are not numerically positive
-% definite.
+% R = CHOL_FREE_VPA(A) computes the Cholesky factor of A according to
+% Algorithm 10.2 from [Higham 2002], using simulated quadruple precision
+% via MATLAB vpa. Unlike Matlab's built-in CHOL, there is no fail-safe for
+% numerical stability, so that we may more freely observe the algorithm's
+% behavior for matrices that are not numerically positive definite.
 
 %%
 A = vpa(A,32);
