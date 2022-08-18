@@ -11,6 +11,9 @@ function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, rpltol, verbose)
 % For all possible muscle options, see INTRAORTHO.
 
 %%
+addpath(genpath('skeletons/'))
+addpath(genpath('muscles/'))
+
 % Defaults
 if nargin == 4
     rpltol = [];
