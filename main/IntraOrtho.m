@@ -43,6 +43,9 @@ switch musc
         
     case {'cgs_iro_ls'}
         [Q, R] = cgs_iro_ls(X, verbose);
+
+    case {'cgs_iro_bl'}
+        [Q, R] = cgs_iro_bl(X, verbose);
         
 %--------------------------------------------------------------------------
     case {'mgs'}

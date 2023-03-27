@@ -61,7 +61,7 @@ for k = 2:p
     
     % Assign finished entries of RR
     RR(kk-s, kk-s) = R_diag;
-    RR(kk-s, kk) = R_diag'\ R_tmp(:, s2);
+    RR(kk-s, kk) = R_diag' \ R_tmp(:, s2);
     
     if k == 2
         % Finish normalizing QQ(:,k-1)
