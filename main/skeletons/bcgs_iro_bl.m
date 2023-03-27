@@ -94,12 +94,9 @@ if k >= 3
 
     R(1:sk-2*s, s1) = RR(1:sk-2*s, s1) + W;
     R(1:sk-2*s, s2) = Z;
-    
-    QQ(:, kk-s) = QQ(:, kk-s) - QQ(:, 1:sk-2*s) * W; 
-    QQ(:, kk) = QQ(:, kk) - QQ(:, 1:sk-2*s) * R(1:sk-2*s, s2);
-    
-    Q(:, s1) = QQ(:, kk-s) / R_diag;
-    Q(:, s2) = QQ(:, kk) - Q(:, s1) * R(kk-s, s2);
+        
+    Q(:, s1) = ( QQ(:, kk-s) - QQ(:, 1:sk-2*s) * W ) / R_diag;
+    Q(:, s2) = QQ(:, kk) - [QQ(:, 1:sk-2*s) Q(:, s1)] * R(1:sk-s, s2);
 end
 end
 
@@ -114,16 +111,19 @@ ps = n;
 pp = ps-s+1:ps;
 
 R(:, s1) = QQ' * QQ(:, pp);
-R(pp, s1) = R(pp, s1) - R(1:ps-s, s1)' * R(1:ps-s, s1);
-[~, flag] = chol( R(pp, s1) );
-if flag == 0
-    R(pp, s1) = chol( R(pp, s1) );
-else
-    R(pp, s1) = NaN(s);
-end
-      
-QQ(:, pp) = QQ(:, pp) - QQ(:, 1:ps-s) * R(1:ps-s, s1);
-R(1:ps-s, s1) = RR(1:ps-s, s1) + R(1:ps-s, s1);  
+tmp = QQ' * QQ(:, pp);
+W = tmp(1:ps-s, s1);
+R_tmp = tmp(pp, s1) - W' * W;
 
-Q(:,s1) = QQ(:,pp) / R(pp, s1); 
-end 
+[~, flag] = chol( R_tmp );
+if flag == 0
+    R_diag = chol( R_tmp );
+else
+    R_diag = NaN(s);
+end
+
+R(pp, s1) = R_diag;
+R(1:ps-s, s1) = RR(1:ps-s, s1) + W;
+
+Q(:,s1) = ( QQ(:, pp) - QQ(:, 1:ps-s) * W ) / R_diag;
+end
