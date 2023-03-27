@@ -59,7 +59,7 @@ Q = zeros(m, 2*s);
 s1 = 1:s;
 s2 = s+1:2*s;
 if k == 2
-    R_tmp = QQ(:, s1)' * QQ(:, [s1 s2]);
+    R_tmp = QQ(:, s1)' * QQ;
 
     [~, flag] = chol( R_tmp(:, s1) );
     if flag == 0
@@ -69,7 +69,7 @@ if k == 2
     end
 
     R(s1, s1) = R_diag;
-    R(s1, s2) = R_tmp(:, s2) / R_diag;
+    R(s1, s2) = R_diag' \ R_tmp(:, s2);
 
     Q(:,s1) = QQ(:,s1) / R_diag;
     Q(:,s2) = QQ(:,s2) - Q(:,s1) * R(s1,s2); 
