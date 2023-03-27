@@ -68,7 +68,7 @@ XXcond = zeros(1,nmat);
 m = XXdim(1); p = XXdim(2); s = XXdim(3); n = p*s;
 I = eye(n);
 
-A = spdiags(linspace(1e-3,1e3,m)',0,m,m);
+A = spdiags((linspace(1e-2,1e2,m) + randn(1,m))',0,m,m);
 for i = 1:nmat
     % Create or load XX
     mat_s = 2*svec(i)-1; mat_p = n/mat_s;

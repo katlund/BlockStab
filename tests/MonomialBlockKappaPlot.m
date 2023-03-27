@@ -1,5 +1,5 @@
-function MonomialBlockKappaPlot(XXdim, svec, skel, musc)
-% MONOMIALBLOCKKAPPAPLOT(XXdim, svec, skel, musc) compares loss of
+function MonomialBlockKappaPlot(XXdim, svec, skel, musc, A)
+% MONOMIALBLOCKKAPPAPLOT(XXdim, svec, skel, musc, A) compares loss of
 % orthogonality and relative residual for different skeleton-muscle
 % combinationss for a set of monomial matrices of size XXdim = [m p s] with
 % varying block widths specified by the vector array svec.
@@ -24,6 +24,8 @@ function MonomialBlockKappaPlot(XXdim, svec, skel, musc)
 % Options for skel: see BGS.
 %
 % Options for musc: see INTRAORTHO.
+%
+% Options for A: any m x m matrix or operation on vectors.
 %
 % See also BLOCKKAPPAPLOT for more details about basic functionalities.
 % Note that these tests are particularly slow, especially since large
@@ -68,7 +70,11 @@ XXcond = zeros(1,nmat);
 m = XXdim(1); p = XXdim(2); s = XXdim(3); n = p*s;
 I = eye(n);
 
-A = spdiags(linspace(.1,1,m)',0,m,m);
+% Default A
+if nargin <= 4
+    A = spdiags(linspace(.1,1,m)',0,m,m);
+end
+
 for i = 1:nmat
     % Create or load XX
     mat_s = svec(i); mat_p = n/mat_s;
