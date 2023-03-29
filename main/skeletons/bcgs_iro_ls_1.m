@@ -25,7 +25,8 @@ kk = 1:s;
 s1 = 1:s;
 s2 = s+1:2*s;
 
-[Q_tmp, R1] = IntraOrtho(XX(:,kk), musc);
+% Initialize
+Q_tmp = XX(:,kk);
 
 if verbose
     fprintf('         LOO      |    RelRes\n');
@@ -40,44 +41,45 @@ for k = 2:p
     % Pull out block vector (keeps MATLAB from copying full X repeatedly)
     Xk = XX(:,kk);
     
-    % Compute temporary quantities -- the only sync point!
     if k == 2
-        R_tmp = Q_tmp' * [Q_tmp Xk];
-    else
+        % Sync point split to help with stability
+        % 1
+        [QQ(:,kk-s), RR(kk-s, kk-s)] = IntraOrtho(Q_tmp, musc);
+
+        % 2
+        S = RR(kk-s, kk-s)' \ ( Q_tmp' * Xk );
+        
+        % Set up temporary block vector for next iteration
+        Q_tmp = Xk - QQ(:, 1:sk-s) * S;
+
+    elseif k >= 3
+        % Only sync point from now on
         tmp = [QQ(:, 1:sk-2*s) Q_tmp]' * [Q_tmp Xk];
         W = tmp(1:sk-2*s, s1);
         Z = tmp(1:sk-2*s, s2);
         R_tmp = tmp(end-s+1:end,:) - W' * [W Z];
-    end
-    
-    % Pythagorean trick for RR diagonals; assign finished entry
-    [~, flag] = chol(R_tmp(:, s1));
-    if flag == 0
-        R_diag = chol(R_tmp(:, s1));
-    else
-        R_diag = NaN(s);
-    end
-    
-    if k == 2
-    	% Account for help from extra first step
-        RR(kk-s, kk-s) = R_diag * R1;
-        RR(kk-s, kk) = R_diag' \ R_tmp(:, s2);
 
-        % Finish normalizing QQ(:,k-1)
-        QQ(:,kk-s) = Q_tmp / R_diag;
-    else
+        % Pythagorean trick for RR diagonals
+        [~, flag] = chol(R_tmp(:, s1));
+        if flag == 0
+            R_diag = chol(R_tmp(:, s1));
+        else
+            R_diag = NaN(s);
+        end
+
         % Assign finished entries of RR
+        RR(1:sk-2*s, kk-s) = S + W;
         RR(kk-s, kk-s) = R_diag;
-        RR(kk-s, kk) = R_diag' \ R_tmp(:, s2);
-        RR(1:sk-2*s, kk-s) = RR(1:sk-2*s, kk-s) + W;
-        RR(1:sk-2*s, kk) = Z;
         
         % Finish normalizing QQ(:,k-1)
         QQ(:,kk-s) = (Q_tmp - QQ(:, 1:sk-2*s) * W) / R_diag;
-    end
 
-    % Set up temporary block vector for next iteration
-    Q_tmp = Xk - QQ(:, 1:sk-s) * RR(1:sk-s, kk);
+        % Update S (note that it increases by an s x s block)
+        S = [Z; R_diag' \ R_tmp(:, s2)];
+        
+        % Set up temporary block vector for next iteration
+        Q_tmp = Xk - QQ(:, 1:sk-s) * S;
+    end
     
     if verbose
         fprintf('%3.0d:', k-1);
@@ -99,8 +101,12 @@ if flag == 0
 else
     R_diag = NaN(s);
 end
+
+% Assign finished RR entries
 RR(kk, kk) = R_diag;
-RR(1:n-s, kk) = RR(1:n-s, kk) + W;
+RR(1:n-s, kk) = S + W;
+
+% Final basis vector
 QQ(:,kk) = (Q_tmp - QQ(:,1:n-s) * W) / R_diag;
 
 if verbose

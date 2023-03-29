@@ -7,8 +7,8 @@ function [QQ, RR] = bcgs_iro_ls_play(XX, s, ~, verbose)
 %
 % See BGS for more details about the parameters.
 
-% This script has been modified to extract the "raw RR" matrix as TT, which
-% we hope will simplify the backward error analysis.
+% This script has been modified to separate the raw RR entries from the
+% final ones, which we hope will simplify the backward error analysis.
 
 %%
 addpath(genpath('../'))
@@ -22,7 +22,6 @@ end
 [m, n] = size(XX);
 QQ = zeros(m,n);
 RR = zeros(n,n);
-TT = zeros(n,n);
 p = n/s;
 
 % Set up block indices
@@ -50,25 +49,24 @@ for k = 2:p
         R_tmp = Q_tmp' * [Q_tmp Xk];
 
         % Pythagorean trick for RR diagonals; assign finished entry
-%         [~, flag] = chol(R_tmp(:, s1));
-%         if flag == 0
-%             R_diag = chol(R_tmp(:, s1));
-%         else
-%             R_diag = NaN(s);
-%         end
-        R_diag = chol_free(R_tmp(:, s1));
+        [~, flag] = chol(R_tmp(:, s1));
+        if flag == 0
+            R_diag = chol(R_tmp(:, s1));
+        else
+            R_diag = NaN(s);
+        end
 
         % Assign finished entries of RR
         RR(kk-s, kk-s) = R_diag;
 
-        % Update auxiliary matrix TT
-        TT(kk-s, kk) = R_diag' \ R_tmp(:, s2);
-
         % Finish normalizing QQ(:,k-1)
         QQ(:,kk-s) = Q_tmp / R_diag;
+
+        % Update S
+        S = R_diag' \ R_tmp(:, s2);
         
         % Set up temporary block vector for next iteration
-        Q_tmp = Xk - QQ(:, 1:sk-s) * TT(1:sk-s, kk);
+        Q_tmp = Xk - QQ(:, 1:sk-s) * S;
 
     elseif k >= 3
         tmp = [QQ(:, 1:sk-2*s) Q_tmp]' * [Q_tmp Xk];
@@ -76,30 +74,26 @@ for k = 2:p
         Z = tmp(1:sk-2*s, s2);
         R_tmp = tmp(end-s+1:end,:) - W' * [W Z];
 
-        % Pythagorean trick for RR diagonals; assign finished entry
-%         [~, flag] = chol(R_tmp(:, s1));
-%         if flag == 0
-%             R_diag = chol(R_tmp(:, s1));
-%         else
-%             R_diag = NaN(s);
-%         end
-        R_diag = chol_free(R_tmp(:, s1));
+        % Pythagorean trick for RR diagonals
+        [~, flag] = chol(R_tmp(:, s1));
+        if flag == 0
+            R_diag = chol(R_tmp(:, s1));
+        else
+            R_diag = NaN(s);
+        end
 
         % Assign finished entries of RR
+        RR(1:sk-2*s, kk-s) = S + W;
         RR(kk-s, kk-s) = R_diag;
-
-        % Assign finished entries of RR
-        RR(1:sk-2*s, kk-s) = TT(1:sk-2*s, kk-s) + W;
-
-        % Update auxiliary matrix TT
-        TT(kk-s, kk) = R_diag' \ R_tmp(:, s2);
-        TT(1:sk-2*s, kk) = Z;
         
         % Finish normalizing QQ(:,k-1)
         QQ(:,kk-s) = (Q_tmp - QQ(:, 1:sk-2*s) * W) / R_diag;
+
+        % Update S (note that it increases by an s x s block)
+        S = [Z; R_diag' \ R_tmp(:, s2)];
         
         % Set up temporary block vector for next iteration
-        Q_tmp = Xk - QQ(:, 1:sk-s) * TT(1:sk-s, kk);
+        Q_tmp = Xk - QQ(:, 1:sk-s) * S;
     end
     
     if verbose
@@ -125,7 +119,7 @@ end
 
 % Assign finished RR entries
 RR(kk, kk) = R_diag;
-RR(1:n-s, kk) = TT(1:n-s, kk) + W;
+RR(1:n-s, kk) = S + W;
 
 % Final basis vector
 QQ(:,kk) = (Q_tmp - QQ(:,1:n-s) * W) / R_diag;
