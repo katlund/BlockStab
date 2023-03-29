@@ -62,6 +62,11 @@ switch skel
         [QQ, RR] = bcgs_iro_ls_1(XX, s, musc, verbose);
         TotTime = toc;
 
+    case {'bcgs_iro_2s'}
+        tic;
+        [QQ, RR] = bcgs_iro_2s(XX, s, musc, verbose);
+        TotTime = toc;
+
     case {'bcgs_iro_bl'}
         tic;
         [QQ, RR] = bcgs_iro_bl(XX, s, musc, verbose);
