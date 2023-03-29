@@ -62,7 +62,7 @@ for k = 1:p-1
     % Second step
     tmp = [QQ(:,1:sk) W]' * W;
     S2 = tmp(1:sk,:);
-    diff = tmp(kk,:) - S2'*S2;    
+    diff = tmp(kk,:) - S2' * S2;    
     
     [~, flag] = chol(diff);
     if ~flag
@@ -73,7 +73,7 @@ for k = 1:p-1
     
     QQ(:,kk) = ( W - QQ(:,1:sk) * S2 ) / R2;
     
-    RR(1:sk,kk) = S2 * R1 + S1;
+    RR(1:sk,kk) = S1 + S2 * R1;
     RR(kk,kk) = R2 * R1;
     
     sk = sk + s;
