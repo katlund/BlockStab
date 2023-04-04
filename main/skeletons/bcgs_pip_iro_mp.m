@@ -60,7 +60,7 @@ for k = 1:p-1
     W = W - QQ(:,1:sk) * Y;
     
     RR1 = Y;
-    QQ(:,kk) = double(mp(W,34)/mp(R1,34)); % quad precision
+    W = double(mp(W,34)/mp(R1,34)); % quad precision % QQ(:,kk) = double(mp(W,34)/mp(R1,34));
 
     
     % Second BCGSPIP step

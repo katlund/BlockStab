@@ -60,7 +60,7 @@ for k = 1:p-1
     W = W - QQ(:,1:sk) * Y;
     
     RR1 = Y;
-    QQ(:,kk) = W/R1;
+    W = W/R1; % QQ(:,kk) = W/RR(kk,kk);
 %     S = [QQ(:,1:sk) W]' * W;
 %     Y = S(1:sk,:);
 %     diff = S(kk,:) - Y'*Y;    
