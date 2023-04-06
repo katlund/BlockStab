@@ -1,11 +1,11 @@
-function [QQ, RR] = bcgs_iro(XX, s, IOstr, verbose)
-% [QQ, RR] = BCGS_IRO(XX, s, IOstr, verbose) performs Block Classical Gram-Schmidt
+function [QQ, RR] = bcgs_iro(XX, s, musc, verbose)
+% [QQ, RR] = BCGS_IRO(XX, s, musc, verbose) performs Block Classical Gram-Schmidt
 % on the m x n matrix XX with p = n/s block partitions each of size s with
 % Inner ReOrthonormalization as described in [Barlow & Smoktunowicz 2013]
-% and with intra-orthonormalization procedure determined by IOstr.
+% and with intra-orthonormalization procedure determined by musc.
 % BCGS_IRO is the block generalization of CGS_IRO.
 %
-% See BGS for more details about the parameters, and INTRAORTHO for IOstr
+% See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
 
 %%
@@ -27,7 +27,7 @@ kk = 1:s;
 sk = s;
 
 W = XX(:,kk);
-[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, IOstr);
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
 
 if verbose
     fprintf('         LOO      |    RelRes\n');
@@ -46,14 +46,14 @@ for k = 1:p-1
     W = XX(:,kk);
     
     % First BCGS step
-    RR1 = InnerProd(QQ(:,1:sk), W, IOstr);
+    RR1 = InnerProd(QQ(:,1:sk), W, musc);
     W = W - QQ(:,1:sk) * RR1;
-    [W, R1] = IntraOrtho(W, IOstr);
+    [W, R1] = IntraOrtho(W, musc);
     
     % Second BCGS step
-    RR(1:sk,kk) = InnerProd(QQ(:,1:sk), W, IOstr);
+    RR(1:sk,kk) = InnerProd(QQ(:,1:sk), W, musc);
     W = W - QQ(:,1:sk) * RR(1:sk,kk);
-    [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, IOstr);
+    [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
     
     % Combine both steps
     RR(1:sk,kk) = RR1 + RR(1:sk,kk) * R1;

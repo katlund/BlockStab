@@ -57,9 +57,19 @@ switch skel
         [QQ, RR] = bcgs_iro_ls(XX, s, musc, verbose);
         TotTime = toc;
 
+    case {'bcgs_iro_ls_play'}
+        tic;
+        [QQ, RR] = bcgs_iro_ls_play(XX, s, musc, verbose);
+        TotTime = toc;
+
     case {'bcgs_iro_ls_1'}
         tic;
         [QQ, RR] = bcgs_iro_ls_1(XX, s, musc, verbose);
+        TotTime = toc;
+
+    case {'bcgs_iro_ls_2'}
+        tic;
+        [QQ, RR] = bcgs_iro_ls_2(XX, s, musc, verbose);
         TotTime = toc;
 
     case {'bcgs_iro_2s'}
@@ -70,11 +80,6 @@ switch skel
     case {'bcgs_iro_bl'}
         tic;
         [QQ, RR] = bcgs_iro_bl(XX, s, musc, verbose);
-        TotTime = toc;
-
-    case {'bcgs_iro_ls_play'}
-        tic;
-        [QQ, RR] = bcgs_iro_ls_play(XX, s, musc, verbose);
         TotTime = toc;
 
     case {'bcgs_pip_ro'}

@@ -29,7 +29,7 @@ kk = 1:s;
 s1 = 1:s;
 s2 = s+1:2*s;
 
-Q_tmp = XX(:,kk);
+U = XX(:,kk);
 
 if verbose
     fprintf('         LOO      |    RelRes\n');
@@ -46,7 +46,7 @@ for k = 2:p
     
     % Compute temporary quantities -- the only sync point!
     if k == 2
-        R_tmp = Q_tmp' * [Q_tmp Xk];
+        R_tmp = U' * [U Xk];
 
         % Pythagorean trick for RR diagonals; assign finished entry
         [~, flag] = chol(R_tmp(:, s1));
@@ -60,16 +60,16 @@ for k = 2:p
         RR(kk-s, kk-s) = R_diag;
 
         % Finish normalizing QQ(:,k-1)
-        QQ(:,kk-s) = Q_tmp / R_diag;
+        QQ(:,kk-s) = U / R_diag;
 
         % Update S
         S = R_diag' \ R_tmp(:, s2);
         
         % Set up temporary block vector for next iteration
-        Q_tmp = Xk - QQ(:, 1:sk-s) * S;
+        U = Xk - QQ(:, 1:sk-s) * S;
 
     elseif k >= 3
-        tmp = [QQ(:, 1:sk-2*s) Q_tmp]' * [Q_tmp Xk];
+        tmp = [QQ(:, 1:sk-2*s) U]' * [U Xk];
         W = tmp(1:sk-2*s, s1);
         Z = tmp(1:sk-2*s, s2);
         R_tmp = tmp(end-s+1:end,:) - W' * [W Z];
@@ -87,13 +87,13 @@ for k = 2:p
         RR(kk-s, kk-s) = R_diag;
         
         % Finish normalizing QQ(:,k-1)
-        QQ(:,kk-s) = (Q_tmp - QQ(:, 1:sk-2*s) * W) / R_diag;
+        QQ(:,kk-s) = (U - QQ(:, 1:sk-2*s) * W) / R_diag;
 
         % Update S (note that it increases by an s x s block)
         S = [Z; R_diag' \ R_tmp(:, s2)];
         
         % Set up temporary block vector for next iteration
-        Q_tmp = Xk - QQ(:, 1:sk-s) * S;
+        U = Xk - QQ(:, 1:sk-s) * S;
     end
     
     if verbose
@@ -107,7 +107,7 @@ end
 
 % Finish renormalizing last basis vector and assign last diagonal entry of
 % RR.  Note that this requires just one more sync, no IntraOrtho needed.
-tmp = [QQ(:,1:n-s) Q_tmp]' * Q_tmp;
+tmp = [QQ(:,1:n-s) U]' * U;
 W = tmp(1:n-s,:);
 R_tmp = tmp(end-s+1:end,:) - W' * W;
 [~, flag] = chol(R_tmp);
@@ -122,7 +122,7 @@ RR(kk, kk) = R_diag;
 RR(1:n-s, kk) = S + W;
 
 % Final basis vector
-QQ(:,kk) = (Q_tmp - QQ(:,1:n-s) * W) / R_diag;
+QQ(:,kk) = (U - QQ(:,1:n-s) * W) / R_diag;
 
 if verbose
     fprintf('%3.0d:', k+1);

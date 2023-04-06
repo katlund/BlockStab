@@ -47,7 +47,7 @@ for k = 2:p
         [QQ(:,kk-s), RR(kk-s, kk-s)] = IntraOrtho(Q_tmp, musc);
 
         % 2
-        S = RR(kk-s, kk-s)' \ ( Q_tmp' * Xk );
+        S = QQ(:,kk-s)' * Xk;
         
         % Set up temporary block vector for next iteration
         Q_tmp = Xk - QQ(:, 1:sk-s) * S;
