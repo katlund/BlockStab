@@ -1,10 +1,10 @@
-function [QQ, RR] = bcgs_iro_1(XX, s, IOstr, verbose)
-% [QQ, RR] = BCGS_IRO_1(XX, s, IOstr, verbose) performs BCGS_IRO on the m
+function [QQ, RR] = bcgs_iro_1(XX, s, musc, verbose)
+% [QQ, RR] = BCGS_IRO_1(XX, s, musc, verbose) performs BCGS_IRO on the m
 % x n matrix XX with p = n/s block partitions each of size s and
-% with intra-orthogonalization procedure determined by IOstr.  This
+% with intra-orthogonalization procedure determined by musc.  This
 % version also reorthogonalizes the first block vector.
 %
-% See BGS for more details about the parameters, and INTRAORTHO for IOstr
+% See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
 
 %%
@@ -27,8 +27,8 @@ sk = s;
 
 W = XX(:,kk);
 
-[W, RR1] = IntraOrtho(W, IOstr);
-[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, IOstr);   % reorthogonalize first step
+[W, RR1] = IntraOrtho(W, musc);
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);   % reorthogonalize first step
 RR(kk,kk) = RR(kk,kk) * RR1;
 
 if verbose
@@ -48,14 +48,14 @@ for k = 1:p-1
     W = XX(:,kk);
     
     % First BCGS step
-    RR1 = InnerProd(QQ(:,1:sk), W, IOstr);
+    RR1 = InnerProd(QQ(:,1:sk), W, musc);
     W = W - QQ(:,1:sk) * RR1;
-    [W, R1] = IntraOrtho(W, IOstr);
+    [W, R1] = IntraOrtho(W, musc);
     
     % Second BCGS step
-    RR(1:sk,kk) = InnerProd(QQ(:,1:sk), W, IOstr);
+    RR(1:sk,kk) = InnerProd(QQ(:,1:sk), W, musc);
     W = W - QQ(:,1:sk) * RR(1:sk,kk);
-    [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, IOstr);
+    [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
     
     % Combine both steps
     RR(1:sk,kk) = RR1 + RR(1:sk,kk) * R1;
