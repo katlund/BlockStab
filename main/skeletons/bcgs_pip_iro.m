@@ -1,11 +1,11 @@
-function [QQ, RR] = bcgs_pip_iro(XX, s, IOstr, verbose)
-% [QQ, RR] = BCGS_PIP_IRO(XX, s, IOstr, verbose) performs Block Classical
+function [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose)
+% [QQ, RR] = BCGS_PIP_IRO(XX, s, musc, verbose) performs Block Classical
 % Gram-Schmidt with Pythagorean Inner Product modification and Inner
 % ReOrthogonalization on the m x n matrix XX with p = n/s block partitions
 % each of size s with intra-orthogonalization procedure determined by
-% IOstr.
+% musc.
 %
-% See BGS for more details about the parameters, and INTRAORTHO for IOstr
+% See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
 
 %%
@@ -26,8 +26,9 @@ p = n/s;
 kk = 1:s;
 sk = s;
 
-W = XX(:,kk);
-[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, IOstr);
+[U, S_diag] = IntraOrtho(XX(:,kk), musc);
+[QQ(:,kk), T_diag] = IntraOrtho(U, musc);
+RR(kk,kk) = T_diag * S_diag;
 
 if verbose
     fprintf('         LOO      |    RelRes\n');
@@ -39,46 +40,31 @@ if verbose
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
 
-for k = 1:p-1
+for k = 2:p
     % Update block indices
     kk = kk + s;
-    
+    sk = sk + s;
+
     % First step
-    W = XX(:,kk);
-    
-    tmp = [QQ(:,1:sk) W]' * W;
-    S1 = tmp(1:sk,:);
-    diff = tmp(kk,:) - S1'*S1;    
-    
-    [~, flag] = chol(diff);
-    if ~flag
-        R1 = chol(diff); % block version of the Pythagorean theorem
-    else
-        R1 = NaN;
-    end
-    
-    W = ( W - QQ(:,1:sk) * S1 ) / R1;
+    tmp = [QQ(:,1:sk-s) XX(:,kk)]' * XX(:,kk);
+    S_col = tmp(1:sk-s,:);
+    diff = tmp(kk,:) - S_col'*S_col;
+    S_diag = chol_free(diff);
+    U = ( XX(:,kk) - QQ(:,1:sk-s) * S_col ) / S_diag;
 
     % Second step
-    tmp = [QQ(:,1:sk) W]' * W;
-    S2 = tmp(1:sk,:);
-    diff = tmp(kk,:) - S2' * S2;    
+    tmp = [QQ(:,1:sk-s) U]' * U;
+    T_col = tmp(1:sk-s,:);
+    diff = tmp(kk,:) - T_col' * T_col;
+    T_diag = chol_free(diff);
+    QQ(:,kk) = ( U - QQ(:,1:sk-s) * T_col ) / T_diag;
     
-    [~, flag] = chol(diff);
-    if ~flag
-        R2 = chol(diff); % block version of the Pythagorean theorem
-    else
-        R2 = NaN;
-    end
+    % Finalize R
+    RR(1:sk-s,kk) = S_col + T_col * S_diag;
+    RR(kk,kk) = T_diag * S_diag;
     
-    QQ(:,kk) = ( W - QQ(:,1:sk) * S2 ) / R2;
-    
-    RR(1:sk,kk) = S1 + S2 * R1;
-    RR(kk,kk) = R2 * R1;
-    
-    sk = sk + s;
     if verbose
-        fprintf('%3.0d:', k+1);
+        fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - QQ(:, 1:sk)' * QQ(:, 1:sk) ) );
         fprintf('  %2.4e\n',...

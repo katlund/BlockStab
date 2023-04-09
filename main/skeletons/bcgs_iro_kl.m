@@ -1,11 +1,12 @@
-function [QQ, RR] = bcgs_iro_kl(XX, s, ~, verbose)
-% [QQ, RR] = BCGS_IRO_KL(XX, s, ~, verbose) performs Block Classical
-% Gram-Schmidt on the m x n matrix XX with p = n/s block partitions each of
-% size s with Inner ReOrthonormalization (including the first step) and a
-% low-sync reformulation derived by KLund.
-% 
-% See BGS for more details about the parameters, and INTRAORTHO for
-% musc options.
+function [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose)
+% [QQ, RR] = BCGS_PIP_IRO(XX, s, musc, verbose) performs Block Classical
+% Gram-Schmidt with Pythagorean Inner Product modification and Inner
+% ReOrthogonalization on the m x n matrix XX with p = n/s block partitions
+% each of size s with intra-orthogonalization procedure determined by
+% musc.
+%
+% See BGS for more details about the parameters, and INTRAORTHO for musc
+% options.
 
 %%
 addpath(genpath('../'))
@@ -15,37 +16,24 @@ if nargin < 4
     verbose = 0;
 end
 
-% Pre-allocate memory for QQ and RR and auxiliary matrices
+% Pre-allocate memory for QQ and RR
 [m, n] = size(XX);
-QQ = zeros(m,n);
 RR = zeros(n,n);
+QQ = zeros(m,n);
 p = n/s;
 
 % Set up block indices
 kk = 1:s;
-s1 = 1:s;
-s2 = s1 + s;
+sk = s;
 
-%% First step + 2.1
-% Step 1.1
-tmp = XX(:,kk)' * XX(:,kk);
-S_diag = chol_free(tmp);
-U = XX(:,kk) / S_diag;
+% 1.1
+[U, S_diag] = IntraOrtho(XX(:,kk), musc);
 
-% Compute combined inner product (2s x 2s)
-tmp = [U, XX(:,kk+s)]' * [U, XX(:,kk+s)];
+% 1.2
+[QQ(:,kk), T_diag] = IntraOrtho(U, musc);
 
-% Step 1.2
-T_diag = chol_free(tmp(s1,s1));
-QQ(:,kk) = U / T_diag;
-
-% Step 1.3
+% 1.3
 RR(kk,kk) = T_diag * S_diag;
-
-% Step 2.1
-S_col = (tmp(s2,s1) / T_diag)';
-S_diag = chol_free( tmp(s2,s2) - S_col'*S_col );
-U = ( XX(:,kk+s) - QQ(:,kk) * S_col ) / S_diag;
 
 if verbose
     fprintf('         LOO      |    RelRes\n');
@@ -57,30 +45,29 @@ if verbose
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
 
-%% Steps k.2, k.3, and (k+1).1
-for k = 2:p-1
-    % Update block indices
-    kk = kk + s;
-    sk = k*s;
+% Update block indices
+kk = kk + s;
+sk = sk + s;
 
-    % Compute combined inner product (ks+s x 2s)
-    tmp = [QQ(:,1:sk-s), U, XX(:,kk+s)]' * [U, XX(:,kk+s)];
+% k.1
+tmp = [QQ(:,1:sk-s) XX(:,kk)]' * XX(:,kk);
+S_col = tmp(1:sk-s,:);
+diff = tmp(kk,:) - S_col'*S_col;
+S_diag = chol_free(diff);
+U = ( XX(:,kk) - QQ(:,1:sk-s) * S_col ) / S_diag;
+
+for k = 2:p
+    % k.2
+    tmp = [QQ(:,1:sk-s) U]' * U;
+    T_col = tmp(1:sk-s,:);
+    diff = tmp(kk,:) - T_col' * T_col;
+    T_diag = chol_free(diff);
+    QQ(:,kk) = ( U - QQ(:,1:sk-s) * T_col ) / T_diag;
     
-    % Step k.2
-    T_col = tmp(1:sk-s,s1);
-    T_diag = chol_free( tmp(sk-s+1:sk,s1) - T_col'*T_col );
-    QQ(:,kk) = U / T_diag;
-    
-    % Step k.3
+    % k.3
     RR(1:sk-s,kk) = S_col + T_col * S_diag;
     RR(kk,kk) = T_diag * S_diag;
     
-    % Step (k+1).1
-    S_col = [tmp(1:sk-s,s1); 
-        T_diag' \ ( tmp(sk-s+1:sk,s2) - T_col'*tmp(1:sk-s,s2) )];
-    S_diag = chol_free( tmp(sk+1:sk+s,s2) - S_col'*S_col );
-    U = ( XX(:,kk+s) - QQ(:,1:sk) * S_col ) / S_diag;
-
     if verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
@@ -88,30 +75,18 @@ for k = 2:p-1
         fprintf('  %2.4e\n',...
             norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end
-end
 
-%% Finish up steps p.2 and p.3
-% Update block indices
-kk = kk + s;
-sk = p*s;
-
-% Compute combined inner product (ps x s)
-tmp = [QQ(:,1:sk-s), U]' * U;
-
-% Step p.2
-T_col = tmp(1:sk-s,s1);
-T_diag = chol_free( tmp(sk-s+1:sk,s1) - T_col'*T_col );
-QQ(:,kk) = U / T_diag;
-
-% Step k.3
-RR(1:sk-s,kk) = S_col + T_col * S_diag;
-RR(kk,kk) = T_diag * S_diag;
-
-if verbose
-    fprintf('%3.0d:', k);
-    fprintf('  %2.4e  |',...
-        norm( eye(sk) - QQ(:, 1:sk)' * QQ(:, 1:sk) ) );
-    fprintf('  %2.4e\n',...
-        norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
+    if k < p
+        % Update block indices
+        kk = kk + s;
+        sk = sk + s;
+    
+        % (k+1).1
+        tmp = [QQ(:,1:sk-s) XX(:,kk)]' * XX(:,kk);
+        S_col = tmp(1:sk-s,:);
+        diff = tmp(kk,:) - S_col'*S_col;
+        S_diag = chol_free(diff);
+        U = ( XX(:,kk) - QQ(:,1:sk-s) * S_col ) / S_diag;
+    end
 end
 end
