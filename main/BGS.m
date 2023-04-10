@@ -57,6 +57,18 @@ switch skel
         [QQ, RR] = bcgs_iro_ls(XX, s, musc, verbose);
         TotTime = toc;
 
+    case {'bcgs_pip_ro'}
+        tic;
+        [QQ1, RR1] = bcgs_pip(XX, s, musc, verbose);
+        [QQ, RR2] = bcgs_pip(QQ1, s, musc, verbose);
+        RR = RR2 * RR1;
+        TotTime = toc;
+
+    case {'bcgs_pip_iro'}
+        tic;
+        [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose);
+        TotTime = toc;
+
     case {'bcgs_iro_ls_play'}
         tic;
         [QQ, RR] = bcgs_iro_ls_play(XX, s, musc, verbose);
@@ -72,9 +84,19 @@ switch skel
         [QQ, RR] = bcgs_iro_ls_2(XX, s, musc, verbose);
         TotTime = toc;
 
+    case {'bcgs_iro_1s'}
+        tic;
+        [QQ, RR] = bcgs_iro_1s(XX, s, musc, verbose);
+        TotTime = toc;
+
     case {'bcgs_iro_2s'}
         tic;
         [QQ, RR] = bcgs_iro_2s(XX, s, musc, verbose);
+        TotTime = toc;
+
+    case {'bcgs_iro_3s'}
+        tic;
+        [QQ, RR] = bcgs_iro_3s(XX, s, musc, verbose);
         TotTime = toc;
 
     case {'bcgs_iro_bl'}
@@ -85,18 +107,6 @@ switch skel
     case {'bcgs_iro_kl'}
         tic;
         [QQ, RR] = bcgs_iro_kl(XX, s, musc, verbose);
-        TotTime = toc;
-
-    case {'bcgs_pip_ro'}
-        tic;
-        [QQ1, RR1] = bcgs_pip(XX, s, musc, verbose);
-        [QQ, RR2] = bcgs_pip(QQ1, s, musc, verbose);
-        RR = RR2 * RR1;
-        TotTime = toc;
-
-    case {'bcgs_pip_iro'}
-        tic;
-        [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose);
         TotTime = toc;
 
 % MGS variants -------------------------------------------------------------
