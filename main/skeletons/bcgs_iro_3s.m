@@ -43,21 +43,17 @@ for k = 1:p-1
     % Update block indices
     kk = kk + s;
     
-    % Initialize W
-    W = XX(:,kk);
-    
-    % First BCGS step
-    S_col = InnerProd(QQ(:,1:sk), W, musc);
-    W = W - QQ(:,1:sk) * S_col;
+    % First BCGS step w/o normalization
+    S_col = InnerProd(QQ(:,1:sk), XX(:,kk), musc);
+    W = XX(:,kk) - QQ(:,1:sk) * S_col;
     
     % Second BCGS step
-    T_col = InnerProd(QQ(:,1:sk), W, musc);
-    W = W - QQ(:,1:sk) * T_col;
-    [QQ(:,kk), T_diag] = IntraOrtho(W, musc);
+    Y_col = InnerProd(QQ(:,1:sk), W, musc);
+    [QQ(:,kk), Y_diag] = IntraOrtho(W - QQ(:,1:sk) * Y_col, musc);
     
     % Combine both steps
-    RR(1:sk,kk) = S_col + T_col;
-    RR(kk,kk) = T_diag;
+    RR(1:sk,kk) = S_col + Y_col;
+    RR(kk,kk) = Y_diag;
     
     sk = sk + s;
     if verbose
