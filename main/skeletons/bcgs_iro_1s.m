@@ -52,15 +52,16 @@ W = XX(:,kk) - QQ(:,1:sk-s) * S_col;
 
 for k = 2:p-1
     % k.2
-    tmp = [QQ(:,1:sk-s) W]' * [W XX(:,kk+s)];
-    T_col = tmp(1:sk-s,s1);
-    diff = tmp(kk,s1) - T_col' * T_col;
-    T_diag = chol_nan(diff);
-    QQ(:,kk) = (W - QQ(:,1:sk-s) * T_col ) / T_diag;
+    tmp = InnerProd([QQ(:,1:sk-s) W], [W XX(:,kk+s)], musc);
+    Y_col = tmp(1:sk-s,s1);
+    Omega = tmp(kk,s1);
+    diff = Omega - Y_col' * Y_col;
+    Y_diag = chol_nan(diff);
+    QQ(:,kk) = (W - QQ(:,1:sk-s) * Y_col ) / Y_diag;
     
     % k.3
-    RR(1:sk-s,kk) = S_col + T_col;
-    RR(kk,kk) = T_diag;
+    RR(1:sk-s,kk) = S_col + Y_col;
+    RR(kk,kk) = Y_diag;
     
     if verbose
         fprintf('%3.0d:', k);
@@ -71,8 +72,9 @@ for k = 2:p-1
     end
 
     % (k+1).1.1
-    S_col = [tmp(1:sk-s,s2);...
-        T_diag' \ (tmp(kk,s2) - T_col' * tmp(1:sk-s,s2))];
+    Z_col = tmp(1:sk-s,s2);
+    P = tmp(kk,s2);
+    S_col = [Z_col; Y_diag' \ (P - Y_col' * Z_col)];
 
     % Update block indices
     kk = kk + s;
@@ -84,14 +86,14 @@ end
 
 % p.2
 tmp = [QQ(:,1:sk-s) W]' * W;
-T_col = tmp(1:sk-s,s1);
-diff = tmp(kk,s1) - T_col' * T_col;
-T_diag = chol_nan(diff);
-QQ(:,kk) = (W - QQ(:,1:sk-s) * T_col ) / T_diag;
+Y_col = tmp(1:sk-s,s1);
+diff = tmp(kk,s1) - Y_col' * Y_col;
+Y_diag = chol_nan(diff);
+QQ(:,kk) = (W - QQ(:,1:sk-s) * Y_col ) / Y_diag;
 
 % p.3
-RR(1:sk-s,kk) = S_col + T_col;
-RR(kk,kk) = T_diag;
+RR(1:sk-s,kk) = S_col + Y_col;
+RR(kk,kk) = Y_diag;
 
 if verbose
     fprintf('%3.0d:', k);

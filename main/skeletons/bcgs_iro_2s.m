@@ -46,19 +46,19 @@ for k = 2:p
     sk = sk + s;
 
     % k.1
-    S_col = QQ(:,1:sk-s)' * XX(:,kk);
+    S_col = InnerProd(QQ(:,1:sk), XX(:,kk), musc);
     W = XX(:,kk) - QQ(:,1:sk-s) * S_col;
 
     % k.2
-    tmp = [QQ(:,1:sk-s) W]' * W;
-    T_col = tmp(1:sk-s,:);
-    diff = tmp(kk,:) - T_col' * T_col;
-    T_diag = chol_nan(diff);
-    QQ(:,kk) = (W - QQ(:,1:sk-s) * T_col ) / T_diag;
+    tmp = InnerProd([QQ(:,1:sk) W], W, musc);
+    Y_col = tmp(1:sk-s,:);
+    diff = tmp(kk,:) - Y_col' * Y_col;
+    Y_diag = chol_nan(diff);
+    QQ(:,kk) = (W - QQ(:,1:sk-s) * Y_col ) / Y_diag;
     
     % k.3
-    RR(1:sk-s,kk) = S_col + T_col;
-    RR(kk,kk) = T_diag;
+    RR(1:sk-s,kk) = S_col + Y_col;
+    RR(kk,kk) = Y_diag;
     
     if verbose
         fprintf('%3.0d:', k);
