@@ -3,7 +3,9 @@ function [QQ, RR] = bcgs_iro_ls(XX, s, ~, verbose)
 % Gram-Schmidt with Reorthogonalization and a Low-Sync formulation
 % (actually, a one-sync) on the n x m matrix XX. It is the block
 % generalization of CGS_IRO_LS, i.e., Algorithm 3 from [Swirydowicz, et.
-% al., 2020].  Note that no muscle is explicitly required.
+% al. 2020] or Algorithm 2 from [Bielich, et al. 2022].  Note that no
+% muscle is explicitly required, because CholQR is hard-coded for all
+% intra-orthogonalizations.
 %
 % This version first appeared in [Carson, et al. 2022].  For an alternative
 % 1-sync variation derived from different principles, see BCGS_IRO_1S.

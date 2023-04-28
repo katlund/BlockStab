@@ -44,7 +44,7 @@ switch skel
         [QQ, RR] = bcgs_iro(XX, s, musc, verbose);
         TotTime = toc;
 
-% Stewart variant ---------------------------------------------------------
+% [Stewart 2008] variant --------------------------------------------------
     case {'bcgs_sror'}
         if nargin >= 5
             tic;
@@ -56,12 +56,13 @@ switch skel
             TotTime = toc;
         end
 
-% Low-sync variants based on BCGS_IRO
+% [Swirydowicz et al. 2020]/[Bielich et al. 2022] variant -----------------
     case {'bcgs_iro_ls'}
         tic;
         [QQ, RR] = bcgs_iro_ls(XX, s, musc, verbose);
         TotTime = toc;
 
+% "Roadmap" variants ------------------------------------------------------
     case {'bcgs_iro_1s'}
         tic;
         [QQ, RR] = bcgs_iro_1s(XX, s, musc, verbose);
