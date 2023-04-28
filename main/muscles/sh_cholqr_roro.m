@@ -2,7 +2,7 @@ function [Q, R] = sh_cholqr_roro(X)
 % [Q, R] = SH_CHOLQR_RORO(X, verbose) computes a shifted Cholesky QR
 % factorization with reorthonormalization of the m x s matrix X.  This
 % algorithm is equivalent to Algorithm 4.2 (shiftedCholeskyQR3) of [Fukaya,
-% et. al. 2018].
+% et. al. 2020].
 %
 % See INTRAORTHO for more details about the parameters.
 
