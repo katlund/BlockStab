@@ -5,25 +5,27 @@ Follow the download options from the Git repository main page.
 
 ## Usage
 The main purpose of this software is to study, verify, and conjecture the
-stability properties of different versions of Block Gram-Schmidt (BGS) and
-Block GMRES (BGMRES) via a skeleton-muscle paradigm.  Each skeleton and muscle
+stability properties of different versions of Block Gram-Schmidt (BGS) via a skeleton-muscle paradigm.  Each skeleton and muscle
 can be run individually or via the drivers
-`BGS(XX, s, skel, musc, rpltol, verbose)`  
-and  
-`IntraOrtho(X, musc, rpltol, verbose)`.  
-The variable `XX` typically denotes a block vector with `m` rows, `p` block vectors,
-and `s` columns per block vector.  `X` typically denotes a single block vector
-(or tall-and-skinny matrix) with `m` rows and `s` columns. As for the other parameters:  
-* `mat` - char specifying matrix type
+```
+BGS(XX, s, skel, musc, rpltol, verbose)
+```
+and
+```
+IntraOrtho(X, musc, rpltol, verbose)
+```
+for skeletons and muscles, respectively.
+
+The variable `XX` denotes a matrix with `m` rows, `p` block vectors,
+and `s` columns per block vector, i.e., $m = ps$.  `X` denotes a single block vector
+(or tall-and-skinny matrix) with `m` rows and `s` columns, $s \leq m$. As for the other parameters:  
 * `skel` - char specifying BGS skeleton
 * `musc` - char specifying intra-orthogonalization muscle
-* `rpltol` - replacement tolerance (only for `cgs_sror` and `bgs_sror`)
-* `verbose` - true to print information to screen; false to mute
+* `rpltol` - replacement tolerance (only required for `cgs_sror` and `bgs_sror`)
+* `verbose` - `true` to print the loss of orthogonality (LOO) and relative residual (RelRes) to screen per step of the algorithm; `false` to mute
 
-For all currently implemented skeletons and muscles, see the headers to `BGS` and
-`IntraOrtho`. To debug a specific skeleton or muscle, set `verbose = true`.  The loss of
-orthogonality (LOO) and relative residual (RelRes) will print to screen per step
-of the algorithm.  Try, for example:
+For a list of all currently implemented skeletons and muscles, see the headers to `BGS` and
+`IntraOrtho`. Try, for example:
 
 ```
 mgs(randn(100,10), true);
@@ -47,7 +49,7 @@ Example output:
   9:  2.6734e-16  |  1.5960e-16
  10:  2.7682e-16  |  1.5283e-16
  ```
-For block methods, try:
+For block methods, try
 ```
 bmgs(randn(100,20), 2, 'HouseQR', true);
 ```
@@ -74,8 +76,8 @@ Example output:
 There are several test files.  `MakeHeatmap` generates heatmaps comparing loss of
 orthogonality and residual across many skeleton-muscle combinations for the same
 test matrix.  `KappaPlot` and similar test files plot loss of orthogonality and
-residual trends against matrices with a range of condition numbers; since the Greek
-letter κ is used to denote the 2-norm condition number, we refer to these
+residual trends against matrices with a range of condition numbers. As the Greek
+letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these
 plots as "kappa plots."  See the header for each for full descriptions of
 their functionalities.  To explore some interesting examples, try the following:
 * `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1)`
@@ -97,10 +99,6 @@ Each file contains a descriptive header.  See especially the following core file
 * `KappaPlot.m` - generates kappa plots for muscles
 * `BlockKappaPlot.m` - generates kappa plots for skeleton-muscle combinations
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to
-discuss what you would like to change.
-
 ## How we cite things
 Several papers are foundational for our subroutines.  We provide the full citations here and use abbreviated ones (given as [Author YYYY]) throughout the documentation.
 * [Barlow 2019](https://doi.org/10.1137/18M1197400): Barlow, J. Block modified Gram-Schmidt algorithms and their analysis. SIAM Journal on Matrix Analysis and Applications. Vol. 40, 4, pp. 1257--1290, 2019.
@@ -118,6 +116,10 @@ Several papers are foundational for our subroutines.  We provide the full citati
 Erin Carson, Kathryn Lund, Miro Rozložník, and Stephen Thomas. Block Gram-Schmidt methods and their stability properties. Linear ALgebra and its Applications. Vol 638, pp 150--195, 2022. https://doi.org/10.1016/j.laa.2021.12.017
 
 Please also mention which version of the software you are using by referring, e.g., to a tag or specific commit.
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to
+discuss what you would like to change.
 
 ## Related projects
 See [LowSyncBlockArnoldi](https://gitlab.mpi-magdeburg.mpg.de/lund/low-sync-block-arnoldi) for block Arnoldi versions of these routines and a simple algorithm comparison workflow.
