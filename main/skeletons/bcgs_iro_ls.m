@@ -5,11 +5,15 @@ function [QQ, RR] = bcgs_iro_ls(XX, s, ~, verbose)
 % generalization of CGS_IRO_LS, i.e., Algorithm 3 from [Swirydowicz, et.
 % al., 2020].  Note that no muscle is explicitly required.
 %
+% This version first appeared in [Carson, et al. 2022].  For an alternative
+% 1-sync variation derived from different principles, see BCGS_IRO_1S.
+%
 % See BGS for more details about the parameters.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-addpath(genpath('../'))
-
 % Default: debugging off
 if nargin < 4
     verbose = 0;

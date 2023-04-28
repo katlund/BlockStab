@@ -9,6 +9,10 @@ function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, rpltol, verbose)
 % orthogonality (LOO) or relative residual (RelRes) per iteration.
 %
 % For all possible muscle options, see INTRAORTHO.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
+
 
 %%
 addpath(genpath('skeletons/'))

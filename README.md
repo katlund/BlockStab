@@ -136,7 +136,7 @@ Several papers are foundational for our subroutines.  We provide the full citati
 
 ## How to cite us
 
-Erin Carson, Kathryn Lund, Miro Rozložník, and Stephen Thomas. Block Gram-Schmidt methods and their stability properties. Linear ALgebra and its Applications. Vol 638, pp 150--195, 2022. [DOI:10.1016/j.laa.2021.12.017](https://doi.org/10.1016/j.laa.2021.12.017)
+[Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017) Carson, E., Lund, K, Rozložník, M., and Thomas, S. Block Gram-Schmidt methods and their stability properties. Linear Algebra and its Applications. Vol 638, pp 150--195, 2022.
 
 Please also mention which version of the software you are using by referring, e.g., to a tag or specific commit.
 
