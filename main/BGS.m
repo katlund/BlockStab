@@ -2,10 +2,10 @@ function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, rpltol, verbose)
 % [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, rpltol, verbose) is a
 % wrapper function for calling different Block Gram-Schmidt skeleton-muscle
 % configurations. XX must be a matrix, s a scalar specifying the size of
-% block vectors, and skel and musc char arrays.  s must divide the number
-% of columns of XX. rpltol is an optional argument for BCGS_SROR, a scalar
-% which determines the replacement tolerance; it is ignored otherwise.
-% verbose is a Boolean for whether to print intermediate loss of
+% block vectors, and skel and musc char arrays.  s must cleanly divide the
+% number of columns of XX. rpltol is an optional scalar argument for
+% BCGS_SROR that determines the replacement tolerance; it is ignored
+% otherwise. verbose is a boolean for whether to print intermediate loss of
 % orthogonality (LOO) or relative residual (RelRes) per iteration.
 %
 % For all possible muscle options, see INTRAORTHO.
@@ -24,6 +24,7 @@ end
 
 skel = lower(skel);
 switch skel
+% Standard BCGS and reorthogonalized variants -----------------------------
     case {'bcgs'}
         tic;
         [QQ, RR] = bcgs(XX, s, musc, verbose);
@@ -31,18 +32,17 @@ switch skel
 
     case {'bcgs_ro'}
         tic;
-        [QQ1, RR1] = bcgs(XX, s, musc, verbose);
-        [QQ, RR2] = bcgs(QQ1, s, musc, verbose);
-        RR = RR2 * RR1;
+        [QQ, RR] = bcgs(XX, s, musc, verbose);
         TotTime = toc;
         
     case {'bcgs_iro'}
         tic;
         [QQ, RR] = bcgs_iro(XX, s, musc, verbose);
         TotTime = toc;
-        
+
+% Stewart variant ---------------------------------------------------------
     case {'bcgs_sror'}
-        if nargin == 5
+        if nargin >= 5
             tic;
             [QQ, RR] = bcgs_sror(XX, s, rpltol, verbose);
             TotTime = toc;
@@ -51,37 +51,11 @@ switch skel
             [QQ, RR] = bcgs_sror(XX, s, [], verbose);
             TotTime = toc;
         end
-        
+
+% Low-sync variants based on BCGS_IRO
     case {'bcgs_iro_ls'}
         tic;
         [QQ, RR] = bcgs_iro_ls(XX, s, musc, verbose);
-        TotTime = toc;
-
-    case {'bcgs_pip_ro'}
-        tic;
-        [QQ1, RR1] = bcgs_pip(XX, s, musc, verbose);
-        [QQ, RR2] = bcgs_pip(QQ1, s, musc, verbose);
-        RR = RR2 * RR1;
-        TotTime = toc;
-
-    case {'bcgs_pip_iro'}
-        tic;
-        [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose);
-        TotTime = toc;
-
-    case {'bcgs_iro_ls_play'}
-        tic;
-        [QQ, RR] = bcgs_iro_ls_play(XX, s, musc, verbose);
-        TotTime = toc;
-
-    case {'bcgs_iro_ls_1'}
-        tic;
-        [QQ, RR] = bcgs_iro_ls_1(XX, s, musc, verbose);
-        TotTime = toc;
-
-    case {'bcgs_iro_ls_2'}
-        tic;
-        [QQ, RR] = bcgs_iro_ls_2(XX, s, musc, verbose);
         TotTime = toc;
 
     case {'bcgs_iro_1s'}
@@ -99,37 +73,13 @@ switch skel
         [QQ, RR] = bcgs_iro_3s(XX, s, musc, verbose);
         TotTime = toc;
 
-    case {'bcgs_iro_1_1s'}
-        tic;
-        [QQ, RR] = bcgs_iro_1_1s(XX, s, musc, verbose);
-        TotTime = toc;
-
-    case {'bcgs_iro_1_2s'}
-        tic;
-        [QQ, RR] = bcgs_iro_1_2s(XX, s, musc, verbose);
-        TotTime = toc;
-
-    case {'bcgs_iro_1_3s'}
-        tic;
-        [QQ, RR] = bcgs_iro_1_3s(XX, s, musc, verbose);
-        TotTime = toc;
-
-    case {'bcgs_iro_bl'}
-        tic;
-        [QQ, RR] = bcgs_iro_bl(XX, s, musc, verbose);
-        TotTime = toc;
-
-    case {'bcgs_iro_kl'}
-        tic;
-        [QQ, RR] = bcgs_iro_kl(XX, s, musc, verbose);
-        TotTime = toc;
-
-% MGS variants -------------------------------------------------------------
+% Standard BMGS -----------------------------------------------------------
     case {'bmgs'}
         tic;
         [QQ, RR] = bmgs(XX, s, musc, verbose);
         TotTime = toc;
         
+% 3-sync BMGS variants ----------------------------------------------------
     case {'bmgs_svl'}
         tic;
         [QQ, RR, TT] = bmgs_svl(XX, s, musc, verbose);
@@ -140,6 +90,7 @@ switch skel
         [QQ, RR, TT] = bmgs_lts(XX, s, musc, verbose);
         TotTime = toc;
         
+% 1-sync BMGS variants ----------------------------------------------------
     case {'bmgs_cwy'}
         tic;
         [QQ, RR, TT] = bmgs_cwy(XX, s, musc, verbose);
@@ -177,15 +128,18 @@ switch skel
         tic;
         [QQ, RR] = bcgs_pip(XX, s, musc, verbose);
         TotTime = toc;
-        
-    case {'bcgs_pio_free'}
+
+% Reorthogonalized P-variants ---------------------------------------------
+    case {'bcgs_pip_ro'}
         tic;
-        [QQ, RR] = bcgs_pio_free(XX, s, musc, verbose);
+        [QQ1, RR1] = bcgs_pip(XX, s, musc, verbose);
+        [QQ, RR2] = bcgs_pip(QQ1, s, musc, verbose);
+        RR = RR2 * RR1;
         TotTime = toc;
-        
-    case {'bcgs_pip_free'}
+
+    case {'bcgs_pip_iro'}
         tic;
-        [QQ, RR] = bcgs_pip_free(XX, s, musc, verbose);
+        [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose);
         TotTime = toc;
         
     otherwise

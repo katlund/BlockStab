@@ -1,9 +1,9 @@
 function [QQ, RR] = bcgs_iro(XX, s, musc, verbose)
-% [QQ, RR] = BCGS_IRO(XX, s, musc, verbose) performs Block Classical Gram-Schmidt
-% on the m x n matrix XX with p = n/s block partitions each of size s with
-% Inner ReOrthonormalization as described in [Barlow & Smoktunowicz 2013]
-% and with intra-orthonormalization procedure determined by musc.
-% BCGS_IRO is the block generalization of CGS_IRO.
+% [QQ, RR] = BCGS_IRO(XX, s, musc, verbose) performs Block Classical
+% Gram-Schmidt on the m x n matrix XX with p = n/s block partitions each of
+% size s with Inner ReOrthonormalization as described in [Barlow &
+% Smoktunowicz 2013] and with intra-orthonormalization procedure determined
+% by musc. BCGS_IRO is the block generalization of CGS_IRO.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
@@ -34,7 +34,7 @@ if verbose
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
     fprintf('  %2.4e  |',...
-        norm( eye(s) - QQ(:, 1:s)' * QQ(:, 1:s) ) );
+        norm( eye(s) - InnerProd(QQ(:, 1:s), QQ(:, 1:s)) ) );
     fprintf('  %2.4e\n',...
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
@@ -63,7 +63,7 @@ for k = 1:p-1
     if verbose
         fprintf('%3.0d:', k+1);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - QQ(:, 1:sk)' * QQ(:, 1:sk) ) );
+            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk)) ) );
         fprintf('  %2.4e\n',...
             norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end
