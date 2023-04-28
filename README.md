@@ -1,24 +1,31 @@
 # BlockStab
 
 ## Installation
+
 Follow the download options from the Git repository main page.
 
 ## Usage
+
 The main purpose of this software is to study, verify, and conjecture the
 stability properties of different versions of Block Gram-Schmidt (BGS) via a skeleton-muscle paradigm.  Each skeleton and muscle
 can be run individually or via the drivers
-```
+
+```matlab
 BGS(XX, s, skel, musc, rpltol, verbose)
 ```
+
 and
-```
+
+```matlab
 IntraOrtho(X, musc, rpltol, verbose)
 ```
+
 for skeletons and muscles, respectively.
 
 The variable `XX` denotes a matrix with `m` rows, `p` block vectors,
 and `s` columns per block vector, i.e., $m = ps$.  `X` denotes a single block vector
-(or tall-and-skinny matrix) with `m` rows and `s` columns, $s \leq m$. As for the other parameters:  
+(or tall-and-skinny matrix) with `m` rows and `s` columns, $s \leq m$. As for the other parameters:
+
 * `skel` - char specifying BGS skeleton
 * `musc` - char specifying intra-orthogonalization muscle
 * `rpltol` - replacement tolerance (only required for `cgs_sror` and `bgs_sror`)
@@ -27,15 +34,19 @@ and `s` columns per block vector, i.e., $m = ps$.  `X` denotes a single block ve
 For a list of all currently implemented skeletons and muscles, see the headers to `BGS` and
 `IntraOrtho`. Try, for example:
 
-```
+```matlab
 mgs(randn(100,10), true);
 ```
+
 or
-```
+
+```matlab
 IntraOrtho(randn(100,10), 'MGS', [], true);
 ```
+
 Example output:
-```
+
+```matlab
          LOO      |    RelRes
 -----------------------------------
   1:  2.2204e-16  |  3.7634e-17
@@ -49,16 +60,22 @@ Example output:
   9:  2.6734e-16  |  1.5960e-16
  10:  2.7682e-16  |  1.5283e-16
  ```
+
 For block methods, try
-```
+
+```matlab
 bmgs(randn(100,20), 2, 'HouseQR', true);
 ```
+
 or
-```
+
+```matlab
 BGS(randn(100,20), 2, 'BMGS', 'HouseQR', [], true);
 ```
+
 Example output:
-```
+
+```matlab
          LOO      |    RelRes
 -----------------------------------
   1:  6.7663e-16  |  1.2409e-16
@@ -80,6 +97,7 @@ residual trends against matrices with a range of condition numbers. As the Greek
 letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these
 plots as "kappa plots."  See the header for each for full descriptions of
 their functionalities.  To explore some interesting examples, try the following:
+
 * `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1)`
 * `KappaPlot([100 10], [], {'MGS', 'MGS_SVL', 'MGS_LTS', 'MGS_CWY', 'MGS_ICWY'})`
 * `BlockKappaPlot([100 20 2], [], {'BCGS', 'BCGS_IRO', 'BCGS_IRO_LS'}, {'CGS', 'MGS', 'HouseQR'})`
@@ -89,7 +107,9 @@ their functionalities.  To explore some interesting examples, try the following:
 * `MonomialBlockKappaPlot([1000 100],[1 2 5 10],{'BCGS', 'BMGS', 'BCGS_IRO'}, {'CholQR', 'MGS', 'HouseQR'})`
 
 ## Documentation
+
 Each file contains a descriptive header.  See especially the following core files:
+
 * `BGS.m` - switches between skeletons
 * `IntraOrtho.m` - switches between muscles
 * `InnerProd.m` - switches between inner products
@@ -100,7 +120,9 @@ Each file contains a descriptive header.  See especially the following core file
 * `BlockKappaPlot.m` - generates kappa plots for skeleton-muscle combinations
 
 ## How we cite things
+
 Several papers are foundational for our subroutines.  We provide the full citations here and use abbreviated ones (given as [Author YYYY]) throughout the documentation.
+
 * [Barlow 2019](https://doi.org/10.1137/18M1197400): Barlow, J. Block modified Gram-Schmidt algorithms and their analysis. SIAM Journal on Matrix Analysis and Applications. Vol. 40, 4, pp. 1257--1290, 2019.
 * [Barlow & Smoktunowicz 2013](https://doi.org/10.1007/s00211-012-0496-2): Barlow, J. & Smoktunowicz, A. Reorthogonalized block classical Gram-Schmidt. Numerische Mathematik. Vol 123, pp 395--423, 2013.
 * [Bielich, et al. 2022](https://doi.org/10.1016/j.parco.2022.102940): Bielich, D, Langou J., Thomas, S., Świrydowicz, K., Yamazaki, I., and Boman, E.G.  Low-synch Gram–Schmidt with delayed reorthogonalization for Krylov solvers.  Parallel Computing. Vol 112, pp 102940, 2022.
@@ -113,16 +135,20 @@ Several papers are foundational for our subroutines.  We provide the full citati
 * [Swirydowicz, et al. 2020](https://doi.org/10.1016/j.parco.2022.102940): Świrydowicz, K., Langou, J., Ananthan, S., Yang, U., & Thomas, S. Low synchronization Gram-Schmidt and GMRES algorithms. Technical report, 2020.
 
 ## How to cite us
-Erin Carson, Kathryn Lund, Miro Rozložník, and Stephen Thomas. Block Gram-Schmidt methods and their stability properties. Linear ALgebra and its Applications. Vol 638, pp 150--195, 2022. https://doi.org/10.1016/j.laa.2021.12.017
+
+Erin Carson, Kathryn Lund, Miro Rozložník, and Stephen Thomas. Block Gram-Schmidt methods and their stability properties. Linear ALgebra and its Applications. Vol 638, pp 150--195, 2022. [DOI:10.1016/j.laa.2021.12.017](https://doi.org/10.1016/j.laa.2021.12.017)
 
 Please also mention which version of the software you are using by referring, e.g., to a tag or specific commit.
 
 ## Contributing
+
 Pull requests are welcome. For major changes, please open an issue first to
 discuss what you would like to change.
 
 ## Related projects
+
 See [LowSyncBlockArnoldi](https://gitlab.mpi-magdeburg.mpg.de/lund/low-sync-block-arnoldi) for block Arnoldi versions of these routines and a simple algorithm comparison workflow.
 
 ## License
-Creative Commons Attribution 4.0 International Public License: https://creativecommons.org/licenses/by/4.0/legalcode.
+
+[Creative Commons Attribution 4.0 International Public License](https://creativecommons.org/licenses/by/4.0/legalcode)
