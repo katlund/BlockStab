@@ -4,6 +4,8 @@
 
 Follow the download options from the Git repository main page.  Then navigate to the repo and run `install_blockstab.m` in MATLAB.  Note that this script only temporarily saves the paths; they will be cleared at the next start-up.  To permanently save `BlockStab` routines to the startup path, run `savepath`, which may overwrite paths to other functions with the same names.
 
+Note: Some mixed precision functionality (functions ending with `_mp`) in this branch requires the Advanpix Multiprecision Computing Toolbox. If this is not available, use instead the analogous functions ending with `_vpa`, which uses the (slower) built-in MATLAB vpa. 
+
 ## Usage
 
 The main purpose of this software is to study, verify, and conjecture the

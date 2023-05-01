@@ -119,6 +119,16 @@ switch skel
         [QQ, RR] = bcgs_iro_1(XX, s, musc, verbose);
         TotTime = toc;
         
+    case {'bcgs_pio_iro_1'}
+        tic;
+        [QQ, RR] = bcgs_pio_iro_1(XX, s, musc, verbose);
+        TotTime = toc;   
+        
+    case {'bcgs_pip_iro_1'}
+        tic;
+        [QQ, RR] = bcgs_pip_iro_1(XX, s, musc, verbose);
+        TotTime = toc;
+        
 % P-variants --------------------------------------------------------------
     case {'bcgs_pio'}
         tic;
@@ -141,6 +151,80 @@ switch skel
     case {'bcgs_pip_iro'}
         tic;
         [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose);
+        TotTime = toc;
+		
+% Multiprecision variants --------------------------------------------------
+    case {'bcgs_iro_ls_mp'}
+        tic;
+        [QQ, RR] = bcgs_iro_ls_mp(XX, s, musc, verbose);
+        TotTime = toc;    
+
+    case {'bcgs_iro_ls_vpa'}
+        tic;
+        [QQ, RR] = bcgs_iro_ls_vpa(XX, s, musc, verbose);
+        TotTime = toc; 
+    case {'bcgs_pio_mp'}
+        tic;
+        [QQ, RR] = bcgs_pio_mp(XX, s, musc, verbose);
+        TotTime = toc;
+        
+    case {'bcgs_pip_mp'}
+        tic;
+        [QQ, RR] = bcgs_pip_mp(XX, s, musc, verbose);
+        TotTime = toc;  
+
+    case {'bcgs_pip_ro_mp'}
+        tic;
+        [QQ1, RR1] = bcgs_pip_mp(XX, s, musc, verbose);
+        [QQ, RR2] = bcgs_pip_mp(QQ1, s, musc, verbose);
+        RR = RR2 * RR1;
+        TotTime = toc;  
+
+    case {'bcgs_pip_ro'}
+        tic;
+        [QQ1, RR1] = bcgs_pip(XX, s, musc, verbose);
+        [QQ, RR2] = bcgs_pip(QQ1, s, musc, verbose);
+        RR = RR2 * RR1;
+        TotTime = toc;  
+        
+    case {'bcgs_pio_vpa'}
+        tic;
+        [QQ, RR] = bcgs_pio_vpa(XX, s, musc, verbose);
+        TotTime = toc;
+        
+    case {'bcgs_pip_vpa'}
+        tic;
+        [QQ, RR] = bcgs_pip_vpa(XX, s, musc, verbose);
+        TotTime = toc; 
+        
+    case {'bcgs_pip_iro'}
+        tic;
+        [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose);
+        TotTime = toc;
+        
+    case {'bcgs_pio_iro'}
+        tic;
+        [QQ, RR] = bcgs_pio_iro(XX, s, musc, verbose);
+        TotTime = toc;
+    
+	case {'bcgs_pip_iro_mp'}
+        tic;
+        [QQ, RR] = bcgs_pip_iro_mp(XX, s, musc, verbose);
+        TotTime = toc;
+        
+    case {'bcgs_pio_iro_mp'}
+        tic;
+        [QQ, RR] = bcgs_pio_iro_mp(XX, s, musc, verbose);
+        TotTime = toc;
+
+    case {'bcgs_pip_iro_vpa'}
+        tic;
+        [QQ, RR] = bcgs_pip_iro_vpa(XX, s, musc, verbose);
+        TotTime = toc;
+        
+    case {'bcgs_pio_iro_vpa'}
+        tic;
+        [QQ, RR] = bcgs_pio_iro_vpa(XX, s, musc, verbose);
         TotTime = toc;
         
     otherwise
