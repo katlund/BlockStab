@@ -1,8 +1,8 @@
 function LaeuchliBlockKappaPlot(XXdim, eps_vec, skel, musc)
-% BLOCKKAPPAPLOT(XXdim, eps_vs, skel, musc) compares loss of orthogonality
-% and relative residual for different skeleton-muscle combinationss for a
-% set of matrices of size XXdim = [m p s] with varying condition numbers
-% determined by the vector array eps_vec.
+% LAEUCHLIBLOCKKAPPAPLOT(XXdim, eps_vec, skel, musc) compares loss of
+% orthogonality and relative residual for different skeleton-muscle
+% combinationss for a set of matrices of size XXdim = [m p s] with varying
+% condition numbers determined by the vector array eps_vec.
 %
 % skel and musc should be given as either a char array or a cell of char
 % arrays (i.e., text strings with single quotes).

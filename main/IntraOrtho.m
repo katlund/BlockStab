@@ -5,6 +5,9 @@ function [Q, R, T] = IntraOrtho(X, musc, rpltol, verbose)
 % the replacement tolerance in CGS_SROR. verbose is a Boolean for whether
 % to print intermediate loss of orthogonality (LOO) or relative residual
 % (RelRes) computations.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 % Defaults
@@ -15,9 +18,7 @@ elseif nargin == 3
     verbose = 0;
 end
 
-addpath(genpath('muscles'))
-musc = lower(musc);
-switch musc        
+switch lower(musc)
     case {'cgs'}
         [Q, R] = cgs(X, verbose);
         
@@ -43,6 +44,9 @@ switch musc
         
     case {'cgs_iro_ls'}
         [Q, R] = cgs_iro_ls(X, verbose);
+
+    case {'cgs_iro_bl'}
+        [Q, R] = cgs_iro_bl(X, verbose);
         
 %--------------------------------------------------------------------------
     case {'mgs'}

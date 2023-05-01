@@ -1,8 +1,8 @@
-function MonomialBlockKappaPlot(XXdim, svec, skel, musc, A)
-% MONOMIALBLOCKKAPPAPLOT(XXdim, svec, skel, musc, A) compares loss of
+function AlternatingBlockKappaPlot(XXdim, svec, skel, musc)
+% ALTERNATINGBLOCKKAPPAPLOT(XXdim, svec, skel, musc) compares loss of
 % orthogonality and relative residual for different skeleton-muscle
-% combinationss for a set of monomial matrices of size XXdim = [m p s] with
-% varying block widths specified by the vector array svec.
+% combinationss for a set of so-called "alternating" matrices of size XXdim
+% = [m p s] with varying block widths specified by the vector array svec.
 %
 % skel and musc should be given as either a char array or a cell of char
 % arrays (i.e., text strings with single quotes).
@@ -10,22 +10,20 @@ function MonomialBlockKappaPlot(XXdim, svec, skel, musc, A)
 % Options for XXdim and svec:
 %   XXdim = [m p s], where m is the number of rows, p the number of block
 %   vectors, and s the number of columns per block vector. svec is a vector
-%   of scalars that divide n = p*s.  With s0 denoting one such scalar, a
-%   matrix XX is produced with m rows and p = n/s0 block vectors each with
-%   s0 columns. Each block vector X_k of XX is built from a random vector
-%   v_k like
+%   of scalars such that each entry of 2*vvec-1 divides n = p*s.  With s0
+%   denoting one such scalar, a matrix XX is produced with m rows and p =
+%   n/(2*s0-1) block vectors each with 2*s0-1 columns. Each block vector
+%   X_k of XX is built from a random vector v_k like
 %
-%       X_k = [v_k A*v_k ... A^(s0-1)*v_k].
+%       X_k = [v_k [A^{-1}*v_k A*v_k] ... [A^{-s0+1}*v_k A^(s0-1)*v_k] ].
 %
 %   Defaults:
-%       XXdim = [1000 120 2];
-%       svec = 2:2:12;
+%       XXdim = [1000 315 2];
+%       svec = 1:5;
 %
 % Options for skel: see BGS.
 %
 % Options for musc: see INTRAORTHO.
-%
-% Options for A: any m x m matrix or operation on vectors.
 %
 % See also BLOCKKAPPAPLOT for more details about basic functionalities.
 % Note that these tests are particularly slow, especially since large
@@ -34,14 +32,14 @@ function MonomialBlockKappaPlot(XXdim, svec, skel, musc, A)
 %%
 addpath(genpath('../main/'))                                                % path to main routines
 addpath(genpath('auxiliary/'))
-fstr = 'monomial_block_kappa_plot';
+fstr = 'alternating_block_kappa_plot';
 
 % Defaults for empty arguments
 if isempty(XXdim)
-    XXdim = [1000 120 2];
+    XXdim = [1000 315 2];
 end
 if isempty(svec)
-    svec = 2:2:12;
+    svec = 1:5;
 end
 
 % Defaults for processing a single char array
@@ -70,37 +68,43 @@ XXcond = zeros(1,nmat);
 m = XXdim(1); p = XXdim(2); s = XXdim(3); n = p*s;
 I = eye(n);
 
-% Default A
-if nargin <= 4
-    A = spdiags(linspace(.1,1,m)',0,m,m);
-end
-
+A = spdiags((linspace(1e-2,1e2,m) + randn(1,m))',0,m,m);
 for i = 1:nmat
     % Create or load XX
-    mat_s = svec(i); mat_p = n/mat_s;
-    matstr = sprintf('monomial_m%d_p%d_s%d.mat', m, mat_p, mat_s);
+    mat_s = 2*svec(i)-1; mat_p = n/mat_s;
+    matstr = sprintf('alternating_m%d_p%d_s%d.mat', m, mat_p, mat_s);
     
     cd matrices
     if exist(matstr, 'file')
         load(matstr, 'XX');
     else
-        XXhat = rand(m,mat_p*mat_s);
+        % Simulate building extended Krylov via channels
+        XXpower = rand(m, mat_p*svec(i));
+        XXinv = rand(m, mat_p*(svec(i)-1));
         pp = 1:mat_p;
-        XXhat(:,pp) = XXhat(:,pp)/norm(XXhat(:,pp));
-        for k = 2:mat_s
+        XXpower(:,pp) = XXpower(:,pp)/norm(XXpower(:,pp));
+        if svec(i) > 1
+            XXinv(:,pp) = A\XXpower(:,pp);
             pp = pp + mat_p;
-            XXhat(:,pp) = A*XXhat(:,pp - mat_p);
+            XXpower(:,pp) = A*XXpower(:,pp);
+            for k = 3:svec(i)
+                XXinv(:,pp) = A\XXinv(:,pp - mat_p);
+                pp = pp + mat_p;
+                XXpower(:,pp) = A*XXpower(:,pp - mat_p);
+            end
         end
         % Reshape XX
         XX = zeros(m,n);
         ind = 1:mat_s:n;
         kk = 1:mat_p;
-        for k = 1:mat_s
-            XX(:,ind) = XXhat(:,kk);
+        XX(:,ind) = XXpower(:,kk);
+        for k = 2:svec(i)
+            ind = ind + 1;
+            XX(:,ind) = XXinv(:,kk);
             ind = ind + 1;
             kk = kk + mat_p;
+            XX(:,ind) = XXpower(:,kk);
         end
-        
         save(matstr, 'XX');
     end
     cd ..
@@ -146,12 +150,12 @@ end
 for j = 1:nskel
     for k = 1:nmusc
         plot(ax{1}, x, loss_ortho(:,j,k),...
-            musc_lbl{k}, 'Color', skel_cmap(j,:),'MarkerSize',10,'LineWidth',1);
+            musc_lbl{k}, 'Color', skel_cmap(j,:));
         plot(ax{2}, x, res(:,j,k),... 
-            musc_lbl{k}, 'Color', skel_cmap(j,:),'MarkerSize',10,'LineWidth',1);
+            musc_lbl{k}, 'Color', skel_cmap(j,:));
         plot(ax{3}, x, res_chol(:,j,k),...
-            musc_lbl{k}, 'Color', skel_cmap(j,:),'MarkerSize',10,'LineWidth',1);
-        lgd_str{end+1} = sprintf('%s $\\circ$ %s', skel_str{j}, musc_str{k});
+            musc_lbl{k}, 'Color', skel_cmap(j,:));
+        lgd_str{end+1} = sprintf('%s \\circ %s', skel_str{j}, musc_str{k});
     end
 end
 plot(ax{1}, x, eps*x, 'k--', x, eps*(x.^2), 'k-')

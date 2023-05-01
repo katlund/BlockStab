@@ -72,7 +72,7 @@ for i = 1:nmat
     if exist(matstr, 'file')
         load(matstr, 'XX');
     else
-        Xhat = rand(m,mat_p);
+        Xhat = rand(m,mat_p*mat_s);
         pp = 1:mat_p;
         Xhat(:,pp) = Xhat(:,pp)/norm(Xhat(:,pp));
         for k = 2:mat_s
