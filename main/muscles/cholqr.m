@@ -1,16 +1,12 @@
 function [Q, R] = cholqr(X)
 % [Q, R] = CHOLQR(X) computes Cholesky QR factorization of the m x s matrix
 % X as described in [Stathopoulos & Wu 2002].
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-[m, s] = size(X);
 A = X' * X;
-[~, flag] = chol(A);
-if ~flag
-    R = chol(A);
-    Q = X / R;
-else
-    Q = NaN(m,s);
-    R = NaN(s);
-end
+R = chol_nan(A);
+Q = X / R;
 end

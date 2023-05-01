@@ -5,13 +5,9 @@ function [Q, R] = cgs_iro_ls(X, verbose)
 % cosmetic modifications.
 %
 % See INTRAORTHO for more details about the parameters.
-
-% Note: as much as possible, we avoid calling entries of R or vectors of X
-% or Q to keep MATLAB from copying these structures when doing arithmetic.
-% While this may also speed up the code, the main reason for writing the
-% routine this way is that it makes stability analysis later on more
-% transparent, so that we can distinguish between temporary quantities and
-% "finished products."
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 % Default: debugging off
