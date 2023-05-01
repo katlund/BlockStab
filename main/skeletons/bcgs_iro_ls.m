@@ -1,11 +1,11 @@
-function [QQ, RR] = bcgs_iro_ls(XX, s, ~, verbose)
-% [QQ, RR] = BCGS_IRO_LS(XX, s, ~, verbose) performs Block Classical
+function [QQ, RR] = bcgs_iro_ls(XX, s, musc, verbose)
+% [QQ, RR] = BCGS_IRO_LS(XX, s, musc, verbose) performs Block Classical
 % Gram-Schmidt with Reorthogonalization and a Low-Sync formulation
-% (actually, a one-sync) on the n x m matrix XX. It is the block
+% (actually, a one-sync) on the n x m matrix XX. It is a block
 % generalization of CGS_IRO_LS, i.e., Algorithm 3 from [Swirydowicz, et.
 % al. 2020] or Algorithm 2 from [Bielich, et al. 2022].  Note that no
 % muscle is explicitly required, because CholQR is hard-coded for all
-% intra-orthogonalizations.
+% intra-orthogonalizations; it can, however, be passed to InnerProd.
 %
 % This version first appeared in [Carson, et al. 2022].  For an alternative
 % 1-sync variation derived from different principles, see BCGS_IRO_1S.
@@ -49,21 +49,16 @@ for k = 2:p
     
     % Compute temporary quantities -- the only sync point!
     if k == 2
-        R_tmp = Q_tmp' * [Q_tmp Xk];
+        R_tmp = InnerProd(Q_tmp, [Q_tmp Xk], musc);
     else
-        tmp = [QQ(:, 1:sk-2*s) Q_tmp]' * [Q_tmp Xk];
+        tmp = InnerProd([QQ(:, 1:sk-2*s) Q_tmp], [Q_tmp Xk], musc);
         W = tmp(1:sk-2*s, s1);
         Z = tmp(1:sk-2*s, s2);
         R_tmp = tmp(end-s+1:end,:) - W' * [W Z];
     end
     
     % Pythagorean trick for RR diagonals; assign finished entry
-    [~, flag] = chol(R_tmp(:, s1));
-    if flag == 0
-        R_diag = chol(R_tmp(:, s1));
-    else
-        R_diag = NaN(s);
-    end
+    R_diag = chol_nan(R_tmp(:, s1));
     
     % Assign finished entries of RR
     RR(kk-s, kk-s) = R_diag;
@@ -87,7 +82,7 @@ for k = 2:p
     if verbose
         fprintf('%3.0d:', k-1);
         fprintf('  %2.4e  |',...
-            norm( eye(sk-s) - QQ(:, 1:sk-s)' * QQ(:, 1:sk-s) ) );
+            norm( eye(sk-s) - InnerProd(QQ(:, 1:sk-s), QQ(:, 1:sk-s), musc) ) );
         fprintf('  %2.4e\n',...
             norm( XX(:,1:sk-s) - QQ(:,1:sk-s) * RR(1:sk-s,1:sk-s) ) / norm(XX(:,1:sk-s)) );
     end
@@ -95,22 +90,16 @@ end
 
 % Finish renormalizing last basis vector and assign last diagonal entry of
 % RR.  Note that this requires just one more sync, no IntraOrtho needed.
-tmp = [QQ(:,1:n-s) Q_tmp]' * Q_tmp;
+tmp = InnerProd([QQ(:,1:n-s) Q_tmp], Q_tmp, musc);
 W = tmp(1:n-s,:);
-R_tmp = tmp(end-s+1:end,:) - W' * W;
-[~, flag] = chol(R_tmp);
-if flag == 0
-    R_diag = chol(R_tmp);
-else
-    R_diag = NaN(s);
-end
+R_diag = chol(tmp(end-s+1:end,:) - W' * W);
 RR(kk, kk) = R_diag;
 RR(1:n-s, kk) = RR(1:n-s, kk) + W;
 QQ(:,kk) = (Q_tmp - QQ(:,1:n-s) * W) / R_diag;
 
 if verbose
     fprintf('%3.0d:', k+1);
-    fprintf('  %2.4e  |', norm( eye(n) - QQ' * QQ ) );
+    fprintf('  %2.4e  |', norm( eye(n) - InnerProd(QQ, QQ, musc) ) );
     fprintf('  %2.4e\n', norm( XX - QQ * RR ) / norm(XX) );
 end
 end

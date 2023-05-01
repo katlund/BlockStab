@@ -1,16 +1,17 @@
 function [QQ, RR] = bcgs_iro_3s(XX, s, musc, verbose)
 % [QQ, RR] = BCGS_IRO_3s(XX, s, musc, verbose) performs Block Classical
-% Gram-Schmidt on the m x n matrix XX with p = n/s block partitions each of
-% size s with Inner ReOrthonormalization as described in [Barlow &
-% Smoktunowicz 2013], but skips the first normalization step in order to
+% Gram-Schmidt with Inner ReOrthonormalization on the m x n matrix XX with
+% p = n/s block partitions each of size s as described in [Barlow &
+% Smoktunowicz 2013] but skips the first normalization step in order to
 % reduce the total sync count per iteration to 3.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-addpath(genpath('../'))
-
 % Default: debugging off
 if nargin < 4
     verbose = 0;
@@ -34,7 +35,7 @@ if verbose
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
     fprintf('  %2.4e  |',...
-        norm( eye(s) - QQ(:, 1:s)' * QQ(:, 1:s) ) );
+        norm( eye(s) - InnerProd(QQ(:, 1:s), QQ(:, 1:s), musc) ) );
     fprintf('  %2.4e\n',...
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
@@ -59,7 +60,7 @@ for k = 1:p-1
     if verbose
         fprintf('%3.0d:', k+1);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - QQ(:, 1:sk)' * QQ(:, 1:sk) ) );
+            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...
             norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end

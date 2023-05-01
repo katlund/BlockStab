@@ -6,10 +6,11 @@ function [QQ, RR] = bcgs_iro_1(XX, s, musc, verbose)
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-addpath(genpath('../'))
-
 % Default: debugging off
 if nargin < 4
     verbose = 0;
@@ -36,7 +37,7 @@ if verbose
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
     fprintf('  %2.4e  |',...
-        norm( eye(s) - QQ(:, 1:s)' * QQ(:, 1:s) ) );
+        norm( eye(s) - InnerProd(QQ(:, 1:s), QQ(:, 1:s), musc) ) );
     fprintf('  %2.4e\n',...
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
@@ -65,7 +66,7 @@ for k = 1:p-1
     if verbose
         fprintf('%3.0d:', k+1);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - QQ(:, 1:sk)' * QQ(:, 1:sk) ) );
+            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...
             norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end

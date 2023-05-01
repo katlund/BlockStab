@@ -1,11 +1,7 @@
-function [QQ, RR, TT] = bmgs_svl(XX, s, musc, verbose)
-% [QQ, RR, TT] = BMGS_SVL(XX, s, musc, verbose) performs Block Modified
-% Gram-Schmidt with the Schreiber-Van-Loan reformulation on the m x n
-% matrix XX with p = n/s block partitions each of size s with inner
-% orthogonalization procedure determined by musc.  When musc = 'HouseQR',
-% this algorithm reproduces BMGS_H from [Barlow 2019], and when musc =
-% 'MGS_SVL', this algorithm reproduces MGS3 from [Barlow 2019].  BMGS_SVL
-% is the block generalization of MGS_SVL.
+function [QQ, RR, TT] = bcgs_iro_t(XX, s, musc, verbose)
+% [QQ, RR, TT] = BCGS_IRO_T(XX, s, musc, verbose) performs the T-variant of
+% BCGS_IRO on the m x n matrix XX with p = n/s block partitions each of
+% size s and with intra-orthogonalization procedure determined by musc.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
@@ -19,10 +15,10 @@ if nargin < 4
     verbose = 0;
 end
 
-% Pre-allocate memory for QQ, RR, and TT
+% Pre-allocate memory for QQ and RR
 [m, n] = size(XX);
-QQ = zeros(m,n);
 RR = zeros(n,n);
+QQ = zeros(m,n);
 TT = zeros(n,n);
 p = n/s;
 
@@ -48,11 +44,21 @@ for k = 1:p-1
     kk = kk + s;
     
     W = XX(:,kk);
-    RR(1:sk,kk) = TT(1:sk, 1:sk)' * InnerProd(QQ(:,1:sk), W, musc);    
-    W = W - QQ(:,1:sk) * RR(1:sk,kk);
+    
+    % First BCGS step
+    RR1 = TT(1:sk,1:sk)' * InnerProd(QQ(:,1:sk), W, musc);
+    W = W - QQ(:,1:sk) * TT(1:sk,1:sk) * RR1;
+    [W, R1, T1] = IntraOrtho(W, musc);
+    
+    % Second BCGS step
+    RR(1:sk,kk) = TT(1:sk,1:sk)' * InnerProd(QQ(:,1:sk), W, musc);
+    W = W - QQ(:,1:sk) * TT(1:sk,1:sk) * RR(1:sk,kk);
     [QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(W, musc);
-    TT(1:sk,kk) = -TT(1:sk,1:sk)*...
-        InnerProd(QQ(:,1:sk), QQ(:,kk), musc) * TT(kk,kk);
+    
+    % Combine both steps
+    RR(1:sk,kk) = RR1 + RR(1:sk,kk) * R1;
+    RR(kk,kk) = RR(kk,kk) * R1;
+    TT(kk,kk) = TT(kk,kk) * T1;
     
     sk = sk + s;
     if verbose

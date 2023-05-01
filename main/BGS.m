@@ -13,11 +13,7 @@ function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, rpltol, verbose)
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
-
 %%
-addpath(genpath('skeletons/'))
-addpath(genpath('muscles/'))
-
 % Defaults
 if nargin == 4
     rpltol = [];
@@ -63,19 +59,19 @@ switch skel
         TotTime = toc;
 
 % "Roadmap" variants ------------------------------------------------------
-    case {'bcgs_iro_1s'}
+    case {'bcgs_iro_3s'}
         tic;
-        [QQ, RR] = bcgs_iro_1s(XX, s, musc, verbose);
+        [QQ, RR] = bcgs_iro_3s(XX, s, musc, verbose);
         TotTime = toc;
 
     case {'bcgs_iro_2s'}
         tic;
         [QQ, RR] = bcgs_iro_2s(XX, s, musc, verbose);
         TotTime = toc;
-
-    case {'bcgs_iro_3s'}
+        
+    case {'bcgs_iro_1s'}
         tic;
-        [QQ, RR] = bcgs_iro_3s(XX, s, musc, verbose);
+        [QQ, RR] = bcgs_iro_1s(XX, s, musc, verbose);
         TotTime = toc;
 
 % Standard BMGS -----------------------------------------------------------

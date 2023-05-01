@@ -7,10 +7,11 @@ function [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose)
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-addpath(genpath('../'))
-
 % Default: debugging off
 if nargin < 4
     verbose = 0;
@@ -35,7 +36,7 @@ if verbose
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
     fprintf('  %2.4e  |',...
-        norm( eye(s) - QQ(:, 1:s)' * QQ(:, 1:s) ) );
+        norm( eye(s) - InnerProd(QQ(:, 1:s), QQ(:, 1:s), musc) ) );
     fprintf('  %2.4e\n',...
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
@@ -46,17 +47,17 @@ for k = 2:p
     sk = sk + s;
 
     % First step
-    tmp = [QQ(:,1:sk-s) XX(:,kk)]' * XX(:,kk);
+    tmp = InnerProd([QQ(:,1:sk-s) XX(:,kk)], XX(:,kk), musc);
     S_col = tmp(1:sk-s,:);
     diff = tmp(kk,:) - S_col'*S_col;
-    S_diag = chol_free(diff);
+    S_diag = chol_nan(diff);
     U = ( XX(:,kk) - QQ(:,1:sk-s) * S_col ) / S_diag;
 
     % Second step
-    tmp = [QQ(:,1:sk-s) U]' * U;
+    tmp = InnerProd([QQ(:,1:sk-s) U], U, musc);
     T_col = tmp(1:sk-s,:);
     diff = tmp(kk,:) - T_col' * T_col;
-    T_diag = chol_free(diff);
+    T_diag = chol_nan(diff);
     QQ(:,kk) = ( U - QQ(:,1:sk-s) * T_col ) / T_diag;
     
     % Finalize R
@@ -66,7 +67,7 @@ for k = 2:p
     if verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - QQ(:, 1:sk)' * QQ(:, 1:sk) ) );
+            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...
             norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end

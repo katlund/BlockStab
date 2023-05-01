@@ -1,15 +1,18 @@
 function [QQ, RR] = bcgs_iro_1s(XX, s, musc, verbose)
 % [QQ, RR] = BCGS_IRO_1S(XX, s, musc, verbose) performs Block Classical
-% Gram-Schmidt with Inner ReOrthogonalization on the m x n matrix XX with p
-% = n/s block partitions each of size s with intra-orthogonalization
-% procedure determined by musc.  An alternative derivation of BCGS_IRO_LS.
+% Gram-Schmidt with Inner ReOrthogonalization with 1 sync on the m x n
+% matrix XX with p = n/s block partitions each of size s with
+% intra-orthogonalization procedure determined by musc.  See BCGS_IRO_LS
+% for an alternative formulation based on Algorithm 3 from [Swirydowicz, et.
+% al. 2020] or Algorithm 2 from [Bielich, et al. 2022].
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-addpath(genpath('../'))
-
 % Default: debugging off
 if nargin < 4
     verbose = 0;
@@ -35,13 +38,13 @@ if verbose
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
     fprintf('  %2.4e  |',...
-        norm( eye(s) - QQ(:, 1:s)' * QQ(:, 1:s) ) );
+        norm( eye(s) - InnerProd(QQ(:, 1:s), QQ(:, 1:s), musc) ) );
     fprintf('  %2.4e\n',...
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
 
 % k.1.1
-S_col = QQ(:,1:sk)' * XX(:,kk+s);
+S_col = InnerProd(QQ(:,1:sk), XX(:,kk+s), musc);
 
 % Update block indices
 kk = kk + s;
@@ -54,9 +57,7 @@ for k = 2:p-1
     % k.2
     tmp = InnerProd([QQ(:,1:sk-s) W], [W XX(:,kk+s)], musc);
     Y_col = tmp(1:sk-s,s1);
-    Omega = tmp(kk,s1);
-    diff = Omega - Y_col' * Y_col;
-    Y_diag = chol_nan(diff);
+    Y_diag = chol_nan(tmp(kk,s1) - Y_col' * Y_col);
     QQ(:,kk) = (W - QQ(:,1:sk-s) * Y_col ) / Y_diag;
     
     % k.3
@@ -66,7 +67,7 @@ for k = 2:p-1
     if verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - QQ(:, 1:sk)' * QQ(:, 1:sk) ) );
+            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...
             norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end
@@ -85,10 +86,9 @@ for k = 2:p-1
 end
 
 % p.2
-tmp = [QQ(:,1:sk-s) W]' * W;
+tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
 Y_col = tmp(1:sk-s,s1);
-diff = tmp(kk,s1) - Y_col' * Y_col;
-Y_diag = chol_nan(diff);
+Y_diag = chol_nan(tmp(kk,s1) - Y_col' * Y_col);
 QQ(:,kk) = (W - QQ(:,1:sk-s) * Y_col ) / Y_diag;
 
 % p.3
@@ -98,7 +98,7 @@ RR(kk,kk) = Y_diag;
 if verbose
     fprintf('%3.0d:', k);
     fprintf('  %2.4e  |',...
-        norm( eye(sk) - QQ(:, 1:sk)' * QQ(:, 1:sk) ) );
+        norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
     fprintf('  %2.4e\n',...
         norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
 end

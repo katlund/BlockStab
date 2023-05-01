@@ -148,4 +148,3 @@ discuss what you would like to change.
 ## Related projects
 
 See [LowSyncBlockArnoldi](https://gitlab.mpi-magdeburg.mpg.de/lund/low-sync-block-arnoldi) for block Arnoldi versions of these routines and a simple algorithm comparison workflow.
-
