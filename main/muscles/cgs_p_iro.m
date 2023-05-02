@@ -1,7 +1,7 @@
-function [Q, R] = cgs_p(X, verbose)
-% [Q, R] = CGS_P(X, verbose) performs Classical Gram-Schmidt with
-% Pythagorean modification (from [Smoktunowicz et al., 2006]) on the m x s
-% matrix X.
+function [Q, R] = cgs_p_iro(X, verbose)
+% [Q, R] = CGS_P_IRO(X, verbose) performs Classical Gram-Schmidt with
+% Pythagorean correction and Inner ReOrthogonalization on the m x s matrix
+% X.  See CGS_P for the base version.
 %
 % See INTRAORTHO for more details about the parameters.
 %
@@ -34,17 +34,32 @@ if verbose
 end
 
 for k = 1:s-1
+    % Set up next vector
     w = X(:,k+1);
+
+    % First CGS-P step
+    tmp = [Q(:,1:k) w]' * w;
+    R1 = tmp(1:k);
+    w = w - Q(:,1:k) * R1;
     
+    psi = sqrt(tmp(k+1));
+    phi = norm(R1);
+    r1 = sqrt(psi - phi) * sqrt(psi + phi);
+    w = w / r1;
+    
+    % Second CGS-P step
     tmp = [Q(:,1:k) w]' * w;
     R(1:k,k+1) = tmp(1:k);
     w = w - Q(:,1:k) * R(1:k,k+1);
     
     psi = sqrt(tmp(k+1));
     phi = norm(R(1:k,k+1));
-
     R(k+1,k+1) = sqrt(psi - phi) * sqrt(psi + phi);
     Q(:,k+1) = w / R(k+1,k+1);
+
+    % Combine both steps
+    R(1:k,k+1) = R1 + R(1:k,k+1) * r1;
+    R(k+1,k+1) = R(k+1,k+1) * r1;
     
     if verbose
         fprintf('%3.0d:', k+1);

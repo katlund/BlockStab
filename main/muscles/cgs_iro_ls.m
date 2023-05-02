@@ -29,13 +29,13 @@ end
 
 for k = 2:s
     % Pull out vector (keeps MATLAB from copying full X repeatedly)
-    xk = X(:,k);
+    u = X(:,k);
     
     % Compute temporary quantities -- the only sync point!
     if k == 2
-        r_tmp = q_tmp' * [q_tmp xk];
+        r_tmp = q_tmp' * [q_tmp u];
     else
-        tmp = [Q(:,1:k-2) q_tmp]' * [q_tmp xk];
+        tmp = [Q(:,1:k-2) q_tmp]' * [q_tmp u];
         w = tmp(1:k-2,1);
         z = tmp(1:k-2,2);
         r_tmp = tmp(end,:) - w'*[w z];
@@ -61,7 +61,7 @@ for k = 2:s
     end
     
     % Set up temporary vector for next iteration
-    q_tmp = xk - Q(:,1:k-1) * R(1:k-1,k);
+    q_tmp = u - Q(:,1:k-1) * R(1:k-1,k);
     
     if verbose
         fprintf('%3.0d:', k-1);

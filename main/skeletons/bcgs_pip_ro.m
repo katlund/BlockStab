@@ -16,7 +16,7 @@ if nargin < 4
     verbose = 0;
 end
 
-% Run BCGS twice
+% Run BCGS_PIP twice
 [QQ, RR] = bcgs_pip(XX, s, musc, verbose);
 [QQ, RR2] = bcgs_pip(QQ, s, musc, verbose);
 RR = RR2 * RR;

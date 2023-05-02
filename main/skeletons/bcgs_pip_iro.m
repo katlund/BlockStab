@@ -27,9 +27,10 @@ p = n/s;
 kk = 1:s;
 sk = s;
 
-[U, S_diag] = IntraOrtho(XX(:,kk), musc);
-[QQ(:,kk), T_diag] = IntraOrtho(U, musc);
-RR(kk,kk) = T_diag * S_diag;
+W = XX(:,kk);
+[W, R1] = IntraOrtho(W, musc);
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
+RR(kk,kk) = RR(kk,kk) * R1;
 
 if verbose
     fprintf('         LOO      |    RelRes\n');
@@ -46,23 +47,24 @@ for k = 2:p
     kk = kk + s;
     sk = sk + s;
 
+    % Set up next vector
+    W = XX(:,kk);
+
     % First step
-    tmp = InnerProd([QQ(:,1:sk-s) XX(:,kk)], XX(:,kk), musc);
-    S_col = tmp(1:sk-s,:);
-    diff = tmp(kk,:) - S_col'*S_col;
-    S_diag = chol_nan(diff);
-    U = ( XX(:,kk) - QQ(:,1:sk-s) * S_col ) / S_diag;
+    tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
+    RR1 = tmp(1:sk-s,:);
+    R1 = chol_nan(tmp(kk,:) - RR1'*RR1);
+    W = ( W - QQ(:,1:sk-s) * RR1 ) / R1;
 
     % Second step
-    tmp = InnerProd([QQ(:,1:sk-s) U], U, musc);
-    T_col = tmp(1:sk-s,:);
-    diff = tmp(kk,:) - T_col' * T_col;
-    T_diag = chol_nan(diff);
-    QQ(:,kk) = ( U - QQ(:,1:sk-s) * T_col ) / T_diag;
+    tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
+    RR(1:sk-s,kk) = tmp(1:sk-s,:);
+    RR(kk,kk) = chol_nan(tmp(kk,:) - RR(1:sk-s,kk)' * RR(1:sk-s,kk));
+    QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR(1:sk-s,kk) ) / RR(kk,kk);
     
     % Finalize R
-    RR(1:sk-s,kk) = S_col + T_col * S_diag;
-    RR(kk,kk) = T_diag * S_diag;
+    RR(1:sk-s,kk) = RR1 + RR(1:sk-s,kk) * R1;
+    RR(kk,kk) = RR(kk,kk) * R1;
     
     if verbose
         fprintf('%3.0d:', k);

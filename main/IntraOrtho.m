@@ -19,16 +19,13 @@ elseif nargin == 3
 end
 
 switch lower(musc)
+    % CGS -----------------------------------------------------------------
     case {'cgs'}
         [Q, R] = cgs(X, verbose);
         
-    case {'cgs_p'}
-        [Q, R] = cgs_p(X, verbose);
-        
+    % CGS with reorthogonalization ----------------------------------------
     case {'cgs_ro'}
-        [Q1, R1] = cgs(X, verbose);
-        [Q, R] = cgs(Q1, verbose);
-        R = R*R1;
+        [Q, R] = cgs_ro(X, verbose);
         
     case {'cgs_iro'}
         [Q, R] = cgs_iro(X, verbose);
@@ -45,13 +42,21 @@ switch lower(musc)
     case {'cgs_iro_ls'}
         [Q, R] = cgs_iro_ls(X, verbose);
 
-    case {'cgs_iro_bl'}
-        [Q, R] = cgs_iro_bl(X, verbose);
+% CGS (P-variants) --------------------------------------------------------
+    case {'cgs_p'}
+        [Q, R] = cgs_p(X, verbose);
         
-%--------------------------------------------------------------------------
+    case {'cgs_p_ro'}
+        [Q, R] = cgs_p_ro(X, verbose);
+        
+    case {'cgs_p_iro'}
+        [Q, R] = cgs_p_iro(X, verbose);
+        
+% MGS ---------------------------------------------------------------------
     case {'mgs'}
         [Q, R] = mgs(X, verbose);
-        
+      
+% MGS with reorthogonalization --------------------------------------------
     case {'mgs_ro'}
         [Q1, R1] = mgs(X, verbose);
         [Q, R] = mgs(Q1, verbose);
@@ -60,24 +65,25 @@ switch lower(musc)
     case {'mgs_iro'}
         [Q, R] = mgs_iro(X, verbose);
         
-%--------------------------------------------------------------------------
+% MGS (3-sync) ------------------------------------------------------------
     case {'mgs_svl'}
         [Q, R, T] = mgs_svl(X, verbose);
         
     case {'mgs_lts'}
         [Q, R, T] = mgs_lts(X, verbose);
         
+% MGS (1-sync) ------------------------------------------------------------
     case {'mgs_icwy'}
         [Q, R, T] = mgs_icwy(X, verbose);
         
     case {'mgs_cwy'}
         [Q, R, T] = mgs_cwy(X, verbose);
         
-%--------------------------------------------------------------------------
+% HouseQR -----------------------------------------------------------------
     case {'houseqr'}
         [Q, R] = qr(X,0);
         
-%--------------------------------------------------------------------------
+% CholQR ------------------------------------------------------------------
     case {'cholqr'}
         [Q, R] = cholqr(X);
 
@@ -101,7 +107,7 @@ switch lower(musc)
     case {'sh_cholqr_roro'}
         [Q, R] = sh_cholqr_roro(X);
         
-%--------------------------------------------------------------------------
+% Global QR ---------------------------------------------------------------
     case {'global'}
         s = size(X,2);
         R = norm(X,'fro')/sqrt(s);  % with s-scaling
