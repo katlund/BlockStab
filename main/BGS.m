@@ -1,12 +1,13 @@
-function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, rpltol, verbose)
-% [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, rpltol, verbose) is a
-% wrapper function for calling different Block Gram-Schmidt skeleton-muscle
-% configurations. XX must be a matrix, s a scalar specifying the size of
-% block vectors, and skel and musc char arrays.  s must cleanly divide the
-% number of columns of XX. rpltol is an optional scalar argument for
-% BCGS_SROR that determines the replacement tolerance; it is ignored
-% otherwise. verbose is a boolean for whether to print intermediate loss of
-% orthogonality (LOO) or relative residual (RelRes) per iteration.
+function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, rpltol, verbose, param)
+% [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, rpltol, verbose, param) is
+% a wrapper function for calling different Block Gram-Schmidt
+% skeleton-muscle configurations. XX must be a matrix, s a scalar
+% specifying the size of block vectors, and skel and musc char arrays.  s
+% must cleanly divide the number of columns of XX. rpltol is an optional
+% scalar argument for BCGS_SROR that determines the replacement tolerance;
+% it is ignored otherwise. verbose is a boolean for whether to print
+% intermediate loss of orthogonality (LOO) or relative residual (RelRes)
+% per iteration.
 %
 % For all possible muscle options, see INTRAORTHO.
 %
@@ -119,16 +120,6 @@ switch skel
         [QQ, RR] = bcgs_iro_1(XX, s, musc, verbose);
         TotTime = toc;
         
-    case {'bcgs_pio_iro_1'}
-        tic;
-        [QQ, RR] = bcgs_pio_iro_1(XX, s, musc, verbose);
-        TotTime = toc;   
-        
-    case {'bcgs_pip_iro_1'}
-        tic;
-        [QQ, RR] = bcgs_pip_iro_1(XX, s, musc, verbose);
-        TotTime = toc;
-        
 % P-variants --------------------------------------------------------------
     case {'bcgs_pio'}
         tic;
@@ -141,90 +132,45 @@ switch skel
         TotTime = toc;
 
 % Reorthogonalized P-variants ---------------------------------------------
-    case {'bcgs_pip_ro'}
+    case {'bcgs_pio_iro'}
         tic;
-        [QQ1, RR1] = bcgs_pip(XX, s, musc, verbose);
-        [QQ, RR2] = bcgs_pip(QQ1, s, musc, verbose);
-        RR = RR2 * RR1;
+        [QQ, RR] = bcgs_pio_iro(XX, s, musc, verbose);
         TotTime = toc;
 
     case {'bcgs_pip_iro'}
         tic;
         [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose);
+        TotTime = toc;
+
+    case {'bcgs_pip_ro'}
+        tic;
+        [QQ, RR] = bcgs_pip_ro(XX, s, musc, verbose);
         TotTime = toc;
 		
 % Multiprecision variants --------------------------------------------------
     case {'bcgs_iro_ls_mp'}
         tic;
-        [QQ, RR] = bcgs_iro_ls_mp(XX, s, musc, verbose);
+        [QQ, RR] = bcgs_iro_ls_mp(XX, s, musc, verbose, param);
         TotTime = toc;    
-
-    case {'bcgs_iro_ls_vpa'}
-        tic;
-        [QQ, RR] = bcgs_iro_ls_vpa(XX, s, musc, verbose);
-        TotTime = toc; 
+        
     case {'bcgs_pio_mp'}
         tic;
-        [QQ, RR] = bcgs_pio_mp(XX, s, musc, verbose);
+        [QQ, RR] = bcgs_pio_mp(XX, s, musc, verbose, param);
         TotTime = toc;
         
     case {'bcgs_pip_mp'}
         tic;
-        [QQ, RR] = bcgs_pip_mp(XX, s, musc, verbose);
+        [QQ, RR] = bcgs_pip_mp(XX, s, musc, verbose, param);
         TotTime = toc;  
-
-    case {'bcgs_pip_ro_mp'}
-        tic;
-        [QQ1, RR1] = bcgs_pip_mp(XX, s, musc, verbose);
-        [QQ, RR2] = bcgs_pip_mp(QQ1, s, musc, verbose);
-        RR = RR2 * RR1;
-        TotTime = toc;  
-
-    case {'bcgs_pip_ro'}
-        tic;
-        [QQ1, RR1] = bcgs_pip(XX, s, musc, verbose);
-        [QQ, RR2] = bcgs_pip(QQ1, s, musc, verbose);
-        RR = RR2 * RR1;
-        TotTime = toc;  
-        
-    case {'bcgs_pio_vpa'}
-        tic;
-        [QQ, RR] = bcgs_pio_vpa(XX, s, musc, verbose);
-        TotTime = toc;
-        
-    case {'bcgs_pip_vpa'}
-        tic;
-        [QQ, RR] = bcgs_pip_vpa(XX, s, musc, verbose);
-        TotTime = toc; 
-        
-    case {'bcgs_pip_iro'}
-        tic;
-        [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose);
-        TotTime = toc;
-        
-    case {'bcgs_pio_iro'}
-        tic;
-        [QQ, RR] = bcgs_pio_iro(XX, s, musc, verbose);
-        TotTime = toc;
     
 	case {'bcgs_pip_iro_mp'}
         tic;
-        [QQ, RR] = bcgs_pip_iro_mp(XX, s, musc, verbose);
+        [QQ, RR] = bcgs_pip_iro_mp(XX, s, musc, verbose, param);
         TotTime = toc;
         
     case {'bcgs_pio_iro_mp'}
         tic;
-        [QQ, RR] = bcgs_pio_iro_mp(XX, s, musc, verbose);
-        TotTime = toc;
-
-    case {'bcgs_pip_iro_vpa'}
-        tic;
-        [QQ, RR] = bcgs_pip_iro_vpa(XX, s, musc, verbose);
-        TotTime = toc;
-        
-    case {'bcgs_pio_iro_vpa'}
-        tic;
-        [QQ, RR] = bcgs_pio_iro_vpa(XX, s, musc, verbose);
+        [QQ, RR] = bcgs_pio_iro_mp(XX, s, musc, verbose, param);
         TotTime = toc;
         
     otherwise
