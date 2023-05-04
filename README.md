@@ -2,15 +2,15 @@
 
 ## Installation
 
-Follow the download options from the Git repository main page.  Then navigate to the repo and run `install_blockstab.m` in MATLAB.  Note that this script only temporarily saves the paths; they will be cleared at the next start-up.  To permanently save `BlockStab` routines to the startup path, run `savepath`, which may overwrite paths to other functions with the same names.
+Follow the download options from the Git repository main page.  Then navigate to the repo (`BlockStab`) and run `install_blockstab.m` in MATLAB.  Note that this script only temporarily saves the paths; they will be cleared at the next start-up.  To permanently save `BlockStab` routines to the startup path, run `savepath` after `install_blockstab.m`, which may overwrite paths to other functions with the same names.
 
-Note: Some mixed precision functionality (functions ending with `_mp`) in this branch requires the Advanpix Multiprecision Computing Toolbox. If this is not available, use instead the analogous functions ending with `_vpa`, which uses the (slower) built-in MATLAB vpa. 
+## Dependencies
 
-## Usage
+Mixed precision routines (i.e., those ending with `_mp`) require the [Advanpix Multiprecision Computing Toolbox](https://www.advanpix.com/), which requires a paid license.  An altertive, built-in option is the slower [`vpa`](https://mathworks.com/help/symbolic/vpa.html); associated routines are denoted with `_vpa`.
 
-The main purpose of this software is to study, verify, and conjecture the
-stability properties of different versions of Block Gram-Schmidt (BGS) via a skeleton-muscle paradigm.  Each skeleton and muscle
-can be run individually or via the drivers
+## Gram-Schmidt Routines
+
+The main purpose of this software is to study, verify, and conjecture the stability properties of different versions of Block Gram-Schmidt (BGS) via a skeleton-muscle paradigm.  Each skeleton and muscle can be run individually or via the drivers
 
 ```matlab
 BGS(XX, s, skel, musc, rpltol, verbose)
@@ -22,25 +22,22 @@ and
 IntraOrtho(X, musc, rpltol, verbose)
 ```
 
-for skeletons and muscles, respectively.
+for skeletons (`BGS`) and muscles (`IntraOrtho`), respectively.
 
-The variable `XX` denotes a matrix with `m` rows, `p` block vectors,
-and `s` columns per block vector, i.e., $m = ps$.  `X` denotes a single block vector
-(or tall-and-skinny matrix) with `m` rows and `s` columns, $s \leq m$. As for the other parameters:
+The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block vectors, and `s` columns per block vector, i.e., $m = ps$.  `X` denotes a single block vector (or a tall-and-skinny matrix) with `m` rows and `s` columns, $s \leq m$. As for the other parameters:
 
 * `skel` - char specifying BGS skeleton
 * `musc` - char specifying intra-orthogonalization muscle
 * `rpltol` - replacement tolerance (only required for `cgs_sror` and `bgs_sror`)
 * `verbose` - `true` to print the loss of orthogonality (LOO) and relative residual (RelRes) to screen per step of the algorithm; `false` to mute
 
-For a list of all currently implemented skeletons and muscles, see the headers to `BGS` and
-`IntraOrtho`. Try, for example:
+For a list of all currently implemented skeletons and muscles, see `BGS` and`IntraOrtho`. Try, for example:
 
 ```matlab
 mgs(randn(100,10), true);
 ```
 
-or
+or equivalently
 
 ```matlab
 IntraOrtho(randn(100,10), 'MGS', [], true);
@@ -69,7 +66,7 @@ For block methods, try
 bmgs(randn(100,20), 2, 'HouseQR', true);
 ```
 
-or
+or equivalently
 
 ```matlab
 BGS(randn(100,20), 2, 'BMGS', 'HouseQR', [], true);
@@ -92,13 +89,9 @@ Example output:
  10:  9.0044e-16  |  2.5827e-16
  ```
 
-There are several test files.  `MakeHeatmap` generates heatmaps comparing loss of
-orthogonality and residual across many skeleton-muscle combinations for the same
-test matrix.  `KappaPlot` and similar test files plot loss of orthogonality and
-residual trends against matrices with a range of condition numbers. As the Greek
-letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these
-plots as "kappa plots."  See the header for each for full descriptions of
-their functionalities.  To explore some interesting examples, try the following:
+## Test Routines
+
+There are several test files.  `MakeHeatmap` generates heatmaps comparing loss of orthogonality and residual across many skeleton-muscle combinations for the same test matrix.  `KappaPlot` and similar test files plot loss of orthogonality and residual trends against matrices with a range of condition numbers. As the Greek letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these plots as "kappa plots."  See the header for each for full descriptions of their functionalities.  To explore some interesting examples, try the following, and note that `[]` (empty) arguments call default options, which can be quite handy:
 
 * `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1)`
 * `KappaPlot([100 10], [], {'MGS', 'MGS_SVL', 'MGS_LTS', 'MGS_CWY', 'MGS_ICWY'})`
