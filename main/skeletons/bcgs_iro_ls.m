@@ -33,7 +33,7 @@ s1 = 1:s;
 s2 = s+1:2*s;
 
 % Initialize
-Q_tmp = XX(:,kk);
+U = XX(:,kk);
 
 if verbose
     fprintf('         LOO      |    RelRes\n');
@@ -46,16 +46,16 @@ for k = 2:p
     sk = s*k;
     
     % Pull out block vector (keeps MATLAB from copying full X repeatedly)
-    U = XX(:,kk);
+    W = XX(:,kk);
     
     % Compute temporary quantities -- the only sync point!
     if k == 2
-        R_tmp = InnerProd(Q_tmp, [Q_tmp U], musc);
+        R_tmp = InnerProd(U, [U W], musc);
     else
-        tmp = InnerProd([QQ(:, 1:sk-2*s) Q_tmp], [Q_tmp U], musc);
-        W = tmp(1:sk-2*s, s1);
+        tmp = InnerProd([QQ(:, 1:sk-2*s) U], [U W], musc);
+        Y = tmp(1:sk-2*s, s1);
         Z = tmp(1:sk-2*s, s2);
-        R_tmp = tmp(end-s+1:end,:) - W' * [W Z];
+        R_tmp = tmp(end-s+1:end,:) - Y' * [Y Z];
     end
     
     % Pythagorean trick for RR diagonals; assign finished entry
@@ -67,18 +67,18 @@ for k = 2:p
     
     if k == 2
         % Finish normalizing QQ(:,k-1)
-        QQ(:,kk-s) = Q_tmp / R_diag;
+        QQ(:,kk-s) = U / R_diag;
     else
         % Assign finished entries of RR
-        RR(1:sk-2*s, kk-s) = RR(1:sk-2*s, kk-s) + W;
+        RR(1:sk-2*s, kk-s) = RR(1:sk-2*s, kk-s) + Y;
         RR(1:sk-2*s, kk) = Z;
         
         % Finish normalizing QQ(:,k-1)
-        QQ(:,kk-s) = (Q_tmp - QQ(:, 1:sk-2*s) * W) / R_diag;
+        QQ(:,kk-s) = (U - QQ(:, 1:sk-2*s) * Y) / R_diag;
     end
     
     % Set up temporary block vector for next iteration
-    Q_tmp = U - QQ(:, 1:sk-s) * RR(1:sk-s, kk);
+    U = W - QQ(:, 1:sk-s) * RR(1:sk-s, kk);
     
     if verbose
         fprintf('%3.0d:', k-1);
@@ -91,12 +91,12 @@ end
 
 % Finish renormalizing last basis vector and assign last diagonal entry of
 % RR.  Note that this requires just one more sync, no IntraOrtho needed.
-tmp = InnerProd([QQ(:,1:n-s) Q_tmp], Q_tmp, musc);
-W = tmp(1:n-s,:);
-R_diag = chol(tmp(end-s+1:end,:) - W' * W);
+tmp = InnerProd([QQ(:,1:n-s) U], U, musc);
+Y = tmp(1:n-s,:);
+R_diag = chol_nan(tmp(end-s+1:end,:) - Y' * Y);
 RR(kk, kk) = R_diag;
-RR(1:n-s, kk) = RR(1:n-s, kk) + W;
-QQ(:,kk) = (Q_tmp - QQ(:,1:n-s) * W) / R_diag;
+RR(1:n-s, kk) = RR(1:n-s, kk) + Y;
+QQ(:,kk) = (U - QQ(:,1:n-s) * Y) / R_diag;
 
 if verbose
     fprintf('%3.0d:', k+1);

@@ -5,7 +5,7 @@ function x = mp_switch(x, param)
 % struct param.
 %
 % param should specify the following fields:
-% - .mp_package: either 'advanpix' or 'symbolic math'
+% - .mp_package: 'advanpix', 'symbolic math', or 'none'
 % - .mp_digits: the desired number of digits, according to the chosen
 %   package specifications.  The default for 'advanpix' is 34 (quad) and
 %   for 'symbolic math' is 32 (quad).
@@ -31,5 +31,8 @@ switch mp_package
             digits(param.mp_digits);
         end
         x = vpa(x);
+
+    case 'none'
+        % default double -- do nothing
 end
 end

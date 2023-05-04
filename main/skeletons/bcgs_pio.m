@@ -41,7 +41,7 @@ if verbose
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
 
-for k = 1:p-1
+for k = 2:p
     % Update block indices
     kk = kk + s;
     sk = sk + s;
@@ -49,7 +49,7 @@ for k = 1:p-1
     % Set up next vector
     W = XX(:,kk);
 
-    % Sync point
+    % Sync points
     RR(1:sk,kk) = InnerProd(QQ(:,1:sk-s), W, musc);
     [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR(1:sk,kk)], musc);
     tmp = tmp' * tmp;
@@ -57,7 +57,7 @@ for k = 1:p-1
     QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR(1:sk,kk) ) / RR(kk,kk);
     
     if verbose
-        fprintf('%3.0d:', k+1);
+        fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...

@@ -1,10 +1,8 @@
 function [QQ, RR] = bcgs_pio_iro(XX, s, musc, verbose)
-% [QQ, RR] = BCGS_PIO_IRO(XX, s, musc, verbose) performs Block Classical Gram-Schmidt
-% on the m x n matrix XX with p = n/s block partitions each of size s with
-% Inner ReOrthonormalization as described in [Barlow & Smoktunowicz 2013] but with 
-% the PIO-variant of BCGS
-% Intra-orthonormalization procedure determined by musc.
-%
+% [QQ, RR] = BCGS_PIO_IRO(XX, s, musc, verbose) performs BCGS_PIO with
+% Inner ReOrthonormalization on the m x n matrix XX with p = n/s block
+% partitions each of size s and with intra-orthogonalization procedure
+% determined by musc.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.

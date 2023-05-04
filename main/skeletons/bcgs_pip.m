@@ -41,23 +41,26 @@ if verbose
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
 
-for k = 1:p-1
+for k = 2:p
     % Update block indices
     kk = kk + s;
-    
+    sk = sk + s;
+   
+    % Extract next block vector
     W = XX(:,kk);
     
-    S = InnerProd([QQ(:,1:sk) W], W, musc);
-    Y = S(1:sk,:);
-    RR(kk,kk) = chol_nan(S(kk,:) - Y'*Y);
-    W = W - QQ(:,1:sk) * Y;
+    % Only sync point
+    tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
     
-    RR(1:sk,kk) = Y;
-    QQ(:,kk) = W / RR(kk,kk);
+    % Assign RR
+    RR(kk,kk) = chol_nan(tmp(kk,:) - RR(1:sk-s,kk)'* RR(1:sk-s,kk));
+    RR(1:sk,kk) = tmp(1:sk,:);
+
+    % Compute next basis vector
+    QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR(1:sk,kk) ) / RR(kk,kk);
     
-    sk = sk + s;
     if verbose
-        fprintf('%3.0d:', k+1);
+        fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...
