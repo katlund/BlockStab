@@ -32,6 +32,7 @@ kk = 1:s;
 s1 = 1:s;
 s2 = s+1:2*s;
 
+% Initialize
 Q_tmp = XX(:,kk);
 
 if verbose
@@ -45,13 +46,13 @@ for k = 2:p
     sk = s*k;
     
     % Pull out block vector (keeps MATLAB from copying full X repeatedly)
-    Xk = XX(:,kk);
+    U = XX(:,kk);
     
     % Compute temporary quantities -- the only sync point!
     if k == 2
-        R_tmp = InnerProd(Q_tmp, [Q_tmp Xk], musc);
+        R_tmp = InnerProd(Q_tmp, [Q_tmp U], musc);
     else
-        tmp = InnerProd([QQ(:, 1:sk-2*s) Q_tmp], [Q_tmp Xk], musc);
+        tmp = InnerProd([QQ(:, 1:sk-2*s) Q_tmp], [Q_tmp U], musc);
         W = tmp(1:sk-2*s, s1);
         Z = tmp(1:sk-2*s, s2);
         R_tmp = tmp(end-s+1:end,:) - W' * [W Z];
@@ -77,7 +78,7 @@ for k = 2:p
     end
     
     % Set up temporary block vector for next iteration
-    Q_tmp = Xk - QQ(:, 1:sk-s) * RR(1:sk-s, kk);
+    Q_tmp = U - QQ(:, 1:sk-s) * RR(1:sk-s, kk);
     
     if verbose
         fprintf('%3.0d:', k-1);

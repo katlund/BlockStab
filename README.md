@@ -1,16 +1,32 @@
 # BlockStab
 
+The main purpose of this package is to study, verify, and conjecture the stability properties of different versions of Block Gram-Schmidt (BGS) via a skeleton-muscle paradigm.
+
 ## Installation
 
 Follow the download options from the Git repository main page.  Then navigate to the repo (`BlockStab`) and run `install_blockstab.m` in MATLAB.  Note that this script only temporarily saves the paths; they will be cleared at the next start-up.  To permanently save `BlockStab` routines to the startup path, run `savepath` after `install_blockstab.m`, which may overwrite paths to other functions with the same names.
 
-## Dependencies
+## What is new in this version
 
-Mixed precision routines (i.e., those ending with `_mp`) require the [Advanpix Multiprecision Computing Toolbox](https://www.advanpix.com/), which requires a paid license.  An altertive, built-in option is the slower [`vpa`](https://mathworks.com/help/symbolic/vpa.html); associated routines are denoted with `_vpa`.
+* [ ] [Mixed precision implementations](#mixed-precision)
+* [ ] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties
+* [ ] A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
+* [ ] A unified, streamlined test engine that avoids superfluous runs for solvers that don't take muscles, simplifies syntax, and improves display of figure outputs
+
+To reproduce results from [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017), please use release [v1.2022](https://github.com/katlund/BlockStab/releases/tag/v1.2022).
+
+### Mixed precision
+
+Mixed precision routines (i.e., those ending with `_mp`) require one of the additional toolboxes:
+
+* [Advanpix Multiprecision Computing Toolbox](https://www.advanpix.com/), which requires a paid license.  The `mp` subroutine is used.
+* [Symbolic Math Toolbox](https://www.mathworks.com/products/symbolic.html), which may also require a paid license.  The subroutine [`vpa`](https://mathworks.com/help/symbolic/vpa.html) is used.
+
+The subroutine `mp_switch` manages which toolbox is called and at what precision.
 
 ## Gram-Schmidt Routines
 
-The main purpose of this software is to study, verify, and conjecture the stability properties of different versions of Block Gram-Schmidt (BGS) via a skeleton-muscle paradigm.  Each skeleton and muscle can be run individually or via the drivers
+Each skeleton and muscle can be run individually or via the drivers
 
 ```matlab
 BGS(XX, s, skel, musc, rpltol, verbose)
@@ -137,8 +153,9 @@ Please also mention which version of the software you are using by referring, e.
 
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to
-discuss what you would like to change.
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+If you are interested in helping develop an open-source version of this package in either Python or Julia, please contact [Kathryn Lund](mailto:kathryn.d.lund@gmail.com) directly.
 
 ## Related projects
 

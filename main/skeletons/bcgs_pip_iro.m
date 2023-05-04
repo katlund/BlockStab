@@ -28,9 +28,7 @@ kk = 1:s;
 sk = s;
 
 W = XX(:,kk);
-[W, R1] = IntraOrtho(W, musc);
 [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
-RR(kk,kk) = RR(kk,kk) * R1;
 
 if verbose
     fprintf('         LOO      |    RelRes\n');

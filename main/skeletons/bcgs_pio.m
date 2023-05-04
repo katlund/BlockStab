@@ -44,19 +44,18 @@ end
 for k = 1:p-1
     % Update block indices
     kk = kk + s;
+    sk = sk + s;
     
-    W = XX(:,kk);     
-    S = InnerProd(QQ(:,1:sk), W, musc);
+    % Set up next vector
+    W = XX(:,kk);
 
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(size(S)) S], musc);
+    % Sync point
+    RR(1:sk,kk) = InnerProd(QQ(:,1:sk-s), W, musc);
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR(1:sk,kk)], musc);
     tmp = tmp' * tmp;
     RR(kk,kk) = chol_nan(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end));
-    W = W - QQ(:,1:sk) * S;
+    QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR(1:sk,kk) ) / RR(kk,kk);
     
-    RR(1:sk,kk) = S;
-    QQ(:,kk) = W / RR(kk,kk);
-    
-    sk = sk + s;
     if verbose
         fprintf('%3.0d:', k+1);
         fprintf('  %2.4e  |',...

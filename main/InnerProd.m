@@ -1,6 +1,6 @@
 function XY = InnerProd(X, Y, str)
-% S = InnerProd(X,Y) is a wrapper function for switching between different
-% inner product paradigms, determined by str.
+% S = InnerProd(X, Y, str) is a wrapper function for switching between
+% different inner product paradigms, determined by str.
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
