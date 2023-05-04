@@ -132,22 +132,27 @@ switch skel
         TotTime = toc;
 
 % Reorthogonalized P-variants ---------------------------------------------
+    case {'bcgs_pio_ro'}
+        tic;
+        [QQ, RR] = bcgs_pio_ro(XX, s, musc, verbose);
+        TotTime = toc;
+
     case {'bcgs_pio_iro'}
         tic;
         [QQ, RR] = bcgs_pio_iro(XX, s, musc, verbose);
-        TotTime = toc;
-
-    case {'bcgs_pip_iro'}
-        tic;
-        [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose);
         TotTime = toc;
 
     case {'bcgs_pip_ro'}
         tic;
         [QQ, RR] = bcgs_pip_ro(XX, s, musc, verbose);
         TotTime = toc;
+
+    case {'bcgs_pip_iro'}
+        tic;
+        [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose);
+        TotTime = toc;
 		
-% Multiprecision variants --------------------------------------------------
+% Mixed Precision variants ------------------------------------------------
     case {'bcgs_iro_ls_mp'}
         tic;
         [QQ, RR] = bcgs_iro_ls_mp(XX, s, musc, verbose, param);
