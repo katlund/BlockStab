@@ -5,13 +5,9 @@ function [Q, R] = cgs_iro_ls(X, verbose)
 % cosmetic modifications.
 %
 % See INTRAORTHO for more details about the parameters.
-
-% Note: as much as possible, we avoid calling entries of R or vectors of X
-% or Q to keep MATLAB from copying these structures when doing arithmetic.
-% While this may also speed up the code, the main reason for writing the
-% routine this way is that it makes stability analysis later on more
-% transparent, so that we can distinguish between temporary quantities and
-% "finished products."
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 % Default: debugging off
@@ -33,13 +29,13 @@ end
 
 for k = 2:s
     % Pull out vector (keeps MATLAB from copying full X repeatedly)
-    xk = X(:,k);
+    u = X(:,k);
     
     % Compute temporary quantities -- the only sync point!
     if k == 2
-        r_tmp = q_tmp' * [q_tmp xk];
+        r_tmp = q_tmp' * [q_tmp u];
     else
-        tmp = [Q(:,1:k-2) q_tmp]' * [q_tmp xk];
+        tmp = [Q(:,1:k-2) q_tmp]' * [q_tmp u];
         w = tmp(1:k-2,1);
         z = tmp(1:k-2,2);
         r_tmp = tmp(end,:) - w'*[w z];
@@ -65,7 +61,7 @@ for k = 2:s
     end
     
     % Set up temporary vector for next iteration
-    q_tmp = xk - Q(:,1:k-1) * R(1:k-1,k);
+    q_tmp = u - Q(:,1:k-1) * R(1:k-1,k);
     
     if verbose
         fprintf('%3.0d:', k-1);

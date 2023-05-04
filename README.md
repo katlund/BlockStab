@@ -1,39 +1,67 @@
 # BlockStab
 
-## Installation
-Follow the download options from the Git repository main page.
+The main purpose of this package is to study, verify, and conjecture the stability properties of different versions of Block Gram-Schmidt (BGS) via a skeleton-muscle paradigm.
 
-## Usage
-The main purpose of this software is to study, verify, and conjecture the
-stability properties of different versions of Block Gram-Schmidt (BGS) and
-Block GMRES (BGMRES) via a skeleton-muscle paradigm.  Each skeleton and muscle
-can be run individually or via the drivers
-`BGS(XX, s, skel, musc, rpltol, verbose)`  
-and  
-`IntraOrtho(X, musc, rpltol, verbose)`.  
-The variable `XX` typically denotes a block vector with `m` rows, `p` block vectors,
-and `s` columns per block vector.  `X` typically denotes a single block vector
-(or tall-and-skinny matrix) with `m` rows and `s` columns. As for the other parameters:  
-* `mat` - char specifying matrix type
+## Installation
+
+Follow the download options from the Git repository main page.  Then navigate to the repo (`BlockStab`) and run `install_blockstab.m` in MATLAB.  Note that this script only temporarily saves the paths; they will be cleared at the next start-up.  To permanently save `BlockStab` routines to the startup path, run `savepath` after `install_blockstab.m`, which may overwrite paths to other functions with the same names.
+
+## What is new in this version
+
+* [ ] [Mixed precision implementations](#mixed-precision)
+* [ ] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties
+* [ ] A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
+* [ ] A unified, streamlined test engine that avoids superfluous runs for solvers that don't take muscles, simplifies syntax, and improves display of figure outputs
+
+To reproduce results from [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017), please use release [v1.2022](https://github.com/katlund/BlockStab/releases/tag/v1.2022).
+
+### Mixed precision
+
+Mixed precision routines (i.e., those ending with `_mp`) require one of the additional toolboxes:
+
+* [Advanpix Multiprecision Computing Toolbox](https://www.advanpix.com/), which requires a paid license.  The `mp` subroutine is used.
+* [Symbolic Math Toolbox](https://www.mathworks.com/products/symbolic.html), which may also require a paid license.  The subroutine [`vpa`](https://mathworks.com/help/symbolic/vpa.html) is used.
+
+The subroutine `mp_switch` manages which toolbox is called and at what precision.
+
+## Gram-Schmidt Routines
+
+Each skeleton and muscle can be run individually or via the drivers
+
+```matlab
+BGS(XX, s, skel, musc, rpltol, verbose)
+```
+
+and
+
+```matlab
+IntraOrtho(X, musc, rpltol, verbose)
+```
+
+for skeletons (`BGS`) and muscles (`IntraOrtho`), respectively.
+
+The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block vectors, and `s` columns per block vector, i.e., $m = ps$.  `X` denotes a single block vector (or a tall-and-skinny matrix) with `m` rows and `s` columns, $s \leq m$. As for the other parameters:
+
 * `skel` - char specifying BGS skeleton
 * `musc` - char specifying intra-orthogonalization muscle
-* `rpltol` - replacement tolerance (only for `cgs_sror` and `bgs_sror`)
-* `verbose` - true to print information to screen; false to mute
+* `rpltol` - replacement tolerance (only required for `cgs_sror` and `bgs_sror`)
+* `verbose` - `true` to print the loss of orthogonality (LOO) and relative residual (RelRes) to screen per step of the algorithm; `false` to mute
 
-For all currently implemented skeletons and muscles, see the headers to `BGS` and
-`IntraOrtho`. To debug a specific skeleton or muscle, set `verbose = true`.  The loss of
-orthogonality (LOO) and relative residual (RelRes) will print to screen per step
-of the algorithm.  Try, for example:
+For a list of all currently implemented skeletons and muscles, see `BGS` and`IntraOrtho`. Try, for example:
 
-```
+```matlab
 mgs(randn(100,10), true);
 ```
-or
-```
+
+or equivalently
+
+```matlab
 IntraOrtho(randn(100,10), 'MGS', [], true);
 ```
+
 Example output:
-```
+
+```matlab
          LOO      |    RelRes
 -----------------------------------
   1:  2.2204e-16  |  3.7634e-17
@@ -47,16 +75,22 @@ Example output:
   9:  2.6734e-16  |  1.5960e-16
  10:  2.7682e-16  |  1.5283e-16
  ```
-For block methods, try:
-```
+
+For block methods, try
+
+```matlab
 bmgs(randn(100,20), 2, 'HouseQR', true);
 ```
-or
-```
+
+or equivalently
+
+```matlab
 BGS(randn(100,20), 2, 'BMGS', 'HouseQR', [], true);
 ```
+
 Example output:
-```
+
+```matlab
          LOO      |    RelRes
 -----------------------------------
   1:  6.7663e-16  |  1.2409e-16
@@ -71,13 +105,10 @@ Example output:
  10:  9.0044e-16  |  2.5827e-16
  ```
 
-There are several test files.  `MakeHeatmap` generates heatmaps comparing loss of
-orthogonality and residual across many skeleton-muscle combinations for the same
-test matrix.  `KappaPlot` and similar test files plot loss of orthogonality and
-residual trends against matrices with a range of condition numbers; since the Greek
-letter κ is used to denote the 2-norm condition number, we refer to these
-plots as "kappa plots."  See the header for each for full descriptions of
-their functionalities.  To explore some interesting examples, try the following:
+## Test Routines
+
+There are several test files.  `MakeHeatmap` generates heatmaps comparing loss of orthogonality and residual across many skeleton-muscle combinations for the same test matrix.  `KappaPlot` and similar test files plot loss of orthogonality and residual trends against matrices with a range of condition numbers. As the Greek letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these plots as "kappa plots."  See the header for each for full descriptions of their functionalities.  To explore some interesting examples, try the following, and note that `[]` (empty) arguments call default options, which can be quite handy:
+
 * `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1)`
 * `KappaPlot([100 10], [], {'MGS', 'MGS_SVL', 'MGS_LTS', 'MGS_CWY', 'MGS_ICWY'})`
 * `BlockKappaPlot([100 20 2], [], {'BCGS', 'BCGS_IRO', 'BCGS_IRO_LS'}, {'CGS', 'MGS', 'HouseQR'})`
@@ -87,7 +118,9 @@ their functionalities.  To explore some interesting examples, try the following:
 * `MonomialBlockKappaPlot([1000 100],[1 2 5 10],{'BCGS', 'BMGS', 'BCGS_IRO'}, {'CholQR', 'MGS', 'HouseQR'})`
 
 ## Documentation
+
 Each file contains a descriptive header.  See especially the following core files:
+
 * `BGS.m` - switches between skeletons
 * `IntraOrtho.m` - switches between muscles
 * `InnerProd.m` - switches between inner products
@@ -97,23 +130,33 @@ Each file contains a descriptive header.  See especially the following core file
 * `KappaPlot.m` - generates kappa plots for muscles
 * `BlockKappaPlot.m` - generates kappa plots for skeleton-muscle combinations
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to
-discuss what you would like to change.
-
 ## How we cite things
+
 Several papers are foundational for our subroutines.  We provide the full citations here and use abbreviated ones (given as [Author YYYY]) throughout the documentation.
-* [Barlow 2019]: Barlow, J. Block modified Gram-Schmidt algorithms and their analysis. SIAM Journal on Matrix Analysis and Applications. Vol. 40, 4, pp. 1257--1290, 2019.
-* [Barlow & Smoktunowicz 2013]: Barlow, J. & Smoktunowicz, A. Reorthogonalized block classical Gram-Schmidt. Numerische Mathematik. Vol 123, pp 395--423, 2013.
-* [Fukaya, et al. 2018]: Fukaya, T., Kannan, R., Nakatsukasa, Y., Yamamoto, Y., & Yanagisawa, Y. Shifted CholeskyQR for computing the QR factorization of ill-conditioned matrices. arXiv 1809.11085, 2018.
-* [Fukaya, et al. 2014]: Fukaya, T., Nakatsukasa, Y., Yanagisawa, Y., & Yamamoto, Y. CholeskyQR2: A simple and communication-avoiding algorithm for computing a tall-skinny QR factorization on a large-scale parallel system. 2014 5th Workshop on Latest Advances in Scalable Algorithms for Large-Scale Systems, pp 31--38, 2014.
-* [Smoktunowicz, et al. 2006]: Smoktunowicz, A., Barlow, J., and Langou, J. A note on the error analysis of classical Gram-Schmidt. Numerische Mathematik. Vol. 105, 2, pp 299-313, 2006.
-* [Stathopoulos & Wu 2002]: Stathopoulos, A. & Wu, K. A block orthogonalization procedure with constant synchronization requirements. SIAM Journal on Scientific Computing. Vol 23, 6, pp 2165--2182, 2002.
-* [Stewart 2008]: Stewart, G. W. Block Gram-Schmidt orthogonalization. SIAM Journal on Scientific Computing. Vol 31, 1, pp 761--775, 2008.
-* [Swirydowicz, et al. 2020]: Świrydowicz, K., Langou, J., Ananthan, S., Yang, U., & Thomas, S. Low synchronization Gram-Schmidt and GMRES algorithms. Technical report, 2020.
+
+* [Barlow 2019](https://doi.org/10.1137/18M1197400): Barlow, J. Block modified Gram-Schmidt algorithms and their analysis. SIAM Journal on Matrix Analysis and Applications. Vol. 40, 4, pp. 1257--1290, 2019.
+* [Barlow & Smoktunowicz 2013](https://doi.org/10.1007/s00211-012-0496-2): Barlow, J. & Smoktunowicz, A. Reorthogonalized block classical Gram-Schmidt. Numerische Mathematik. Vol 123, pp 395--423, 2013.
+* [Bielich, et al. 2022](https://doi.org/10.1016/j.parco.2022.102940): Bielich, D, Langou J., Thomas, S., Świrydowicz, K., Yamazaki, I., and Boman, E.G.  Low-synch Gram–Schmidt with delayed reorthogonalization for Krylov solvers.  Parallel Computing. Vol 112, pp 102940, 2022.
+* [Carson, et al. 2021](https://doi.org/10.1137/21M1394424): Carson, E., Lund, K., and Rozložník, M.  The stability of block variants of classical Gram-Schmidt.  SIAM Journal on Matrix Analysis and Applications. Vol. 42, 3, pp 1365--1380, 2021.
+* [Fukaya, et al. 2020](https://doi.org/10.1137/18M1218212): Fukaya, T., Kannan, R., Nakatsukasa, Y., Yamamoto, Y., & Yanagisawa, Y. Shifted CholeskyQR for computing the QR factorization of ill-conditioned matrices. SIAM Journal on Scientific Computing. Vol. 42, 1, pp A477--A503, 2020.
+* [Fukaya, et al. 2014](https://doi.org/10.1109/ScalA.2014.11): Fukaya, T., Nakatsukasa, Y., Yanagisawa, Y., & Yamamoto, Y. CholeskyQR2: A simple and communication-avoiding algorithm for computing a tall-skinny QR factorization on a large-scale parallel system. 2014 5th Workshop on Latest Advances in Scalable Algorithms for Large-Scale Systems, pp 31--38, 2014.
+* [Smoktunowicz, et al. 2006](https://doi.org/10.1007/s00211-006-0042-1): Smoktunowicz, A., Barlow, J., and Langou, J. A note on the error analysis of classical Gram-Schmidt. Numerische Mathematik. Vol. 105, 2, pp 299-313, 2006.
+* [Stathopoulos & Wu 2002](https://doi.org/10.1137/S1064827500370883): Stathopoulos, A. & Wu, K. A block orthogonalization procedure with constant synchronization requirements. SIAM Journal on Scientific Computing. Vol 23, 6, pp 2165--2182, 2002.
+* [Stewart 2008](https://doi.org/10.1137/070682563): Stewart, G. W. Block Gram-Schmidt orthogonalization. SIAM Journal on Scientific Computing. Vol 31, 1, pp 761--775, 2008.
+* [Swirydowicz, et al. 2020](https://doi.org/10.1016/j.parco.2022.102940): Świrydowicz, K., Langou, J., Ananthan, S., Yang, U., & Thomas, S. Low synchronization Gram-Schmidt and GMRES algorithms. Technical report, 2020.
 
 ## How to cite us
-Erin Carson, Kathryn Lund, Miro Rozložník, and Stephen Thomas. Block Gram-Schmidt methods and their stability properties. Linear ALgebra and its Applications. Vol 638, pp 150--195, 2022. https://doi.org/10.1016/j.laa.2021.12.017
 
-## License
-Creative Commons Attribution 4.0 International Public License: https://creativecommons.org/licenses/by/4.0/legalcode.
+[Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017) Carson, E., Lund, K, Rozložník, M., and Thomas, S. Block Gram-Schmidt methods and their stability properties. Linear Algebra and its Applications. Vol 638, pp 150--195, 2022.
+
+Please also mention which version of the software you are using by referring, e.g., to a tag or specific commit.
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+If you are interested in helping develop an open-source version of this package in either Python or Julia, please contact [Kathryn Lund](mailto:kathryn.d.lund@gmail.com) directly.
+
+## Related projects
+
+See [LowSyncBlockArnoldi](https://gitlab.mpi-magdeburg.mpg.de/lund/low-sync-block-arnoldi) for block Arnoldi versions of these routines and a simple algorithm comparison workflow.

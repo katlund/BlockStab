@@ -1,10 +1,13 @@
-function [QQ, RR, TT] = bmgs_t(XX, s, IOstr, verbose)
-% [QQ, RR, TT] = BMGS_T(XX, s, IOstr, verbose) performs the T-variant of
+function [QQ, RR, TT] = bmgs_t(XX, s, musc, verbose)
+% [QQ, RR, TT] = BMGS_T(XX, s, musc, verbose) performs the T-variant of
 % BMGS on the m x n matrix XX with p = n/s block partitions each of size s
-% with inner orthogonalization procedure determined by IOstr.
+% with inner orthogonalization procedure determined by musc.
 %
-% See BGS for more details about the parameters, and INTRAORTHO for IOstr
+% See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 addpath(genpath('../'))
@@ -25,14 +28,14 @@ p = n/s;
 kk = 1:s;
 
 W = XX(:,kk);
-[QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(W, IOstr);
+[QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(W, musc);
 
 if verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
     fprintf('  %2.4e  |',...
-        norm( eye(s) - QQ(:, 1:s)' * QQ(:, 1:s) ) );
+        norm( eye(s) - InnerProd(QQ(:, 1:s), QQ(:, 1:s), musc) ) );
     fprintf('  %2.4e\n',...
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
@@ -46,18 +49,18 @@ for k = 1:p-1
     W = XX(:,kk);
     
     for j = 1:k
-        RR(jj,kk) = TT(jj,jj)' * InnerProd(QQ(:,jj), W, IOstr);
+        RR(jj,kk) = TT(jj,jj)' * InnerProd(QQ(:,jj), W, musc);
 
         W = W - QQ(:,jj) * TT(jj,jj) * RR(jj,kk);
         jj = jj + s;
     end
-    [QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(W, IOstr);
+    [QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(W, musc);
     
     if verbose
         fprintf('%3.0d:', k+1);
         sk = s*(k+1);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - QQ(:, 1:sk)' * QQ(:, 1:sk) ) );
+            norm( eye(sk) - InnerProd(QQ(:, 1:sk),  QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...
             norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end

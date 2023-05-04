@@ -4,6 +4,9 @@ function [Q, R] = cgs_p(X, verbose)
 % matrix X.
 %
 % See INTRAORTHO for more details about the parameters.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 % Default: debugging off
@@ -17,9 +20,8 @@ R = zeros(s);
 Q = zeros(m,s);
 
 w = X(:,1);
-r_diag = norm(w);
-Q(:,1) = w / r_diag;
-R(1,1) = r_diag;
+R(1,1) = norm(w);
+Q(:,1) = w / R(1,1);
 
 if verbose
     fprintf('         LOO      |    RelRes\n');
@@ -32,16 +34,17 @@ if verbose
 end
 
 for k = 1:s-1
-    xk = X(:,k+1);
-    r_vec = Q(:,1:k)' * xk;
-    w = xk - Q(:,1:k) * r_vec;
-    R(1:k,k+1) = r_vec;
+    w = X(:,k+1);
     
-    psi = norm(xk);
-    phi = norm(r_vec);
-    r_diag = sqrt(psi - phi) * sqrt(psi + phi);
-    Q(:,k+1) = w / r_diag;
-    R(k+1,k+1) = r_diag;
+    tmp = [Q(:,1:k) w]' * w;
+    R(1:k,k+1) = tmp(1:k);
+    w = w - Q(:,1:k) * R(1:k,k+1);
+    
+    psi = sqrt(tmp(k+1));
+    phi = norm(R(1:k,k+1));
+
+    R(k+1,k+1) = sqrt(psi - phi) * sqrt(psi + phi);
+    Q(:,k+1) = w / R(k+1,k+1);
     
     if verbose
         fprintf('%3.0d:', k+1);

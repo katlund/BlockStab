@@ -5,6 +5,9 @@ function [Q, R, T] = IntraOrtho(X, musc, rpltol, verbose)
 % the replacement tolerance in CGS_SROR. verbose is a Boolean for whether
 % to print intermediate loss of orthogonality (LOO) or relative residual
 % (RelRes) computations.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 % Defaults
@@ -15,19 +18,14 @@ elseif nargin == 3
     verbose = 0;
 end
 
-addpath(genpath('muscles'))
-musc = lower(musc);
-switch musc        
+switch lower(musc)
+    % CGS -----------------------------------------------------------------
     case {'cgs'}
         [Q, R] = cgs(X, verbose);
         
-    case {'cgs_p'}
-        [Q, R] = cgs_p(X, verbose);
-        
+    % CGS with reorthogonalization ----------------------------------------
     case {'cgs_ro'}
-        [Q1, R1] = cgs(X, verbose);
-        [Q, R] = cgs(Q1, verbose);
-        R = R*R1;
+        [Q, R] = cgs_ro(X, verbose);
         
     case {'cgs_iro'}
         [Q, R] = cgs_iro(X, verbose);
@@ -43,11 +41,22 @@ switch musc
         
     case {'cgs_iro_ls'}
         [Q, R] = cgs_iro_ls(X, verbose);
+
+% CGS (P-variants) --------------------------------------------------------
+    case {'cgs_p'}
+        [Q, R] = cgs_p(X, verbose);
         
-%--------------------------------------------------------------------------
+    case {'cgs_p_ro'}
+        [Q, R] = cgs_p_ro(X, verbose);
+        
+    case {'cgs_p_iro'}
+        [Q, R] = cgs_p_iro(X, verbose);
+        
+% MGS ---------------------------------------------------------------------
     case {'mgs'}
         [Q, R] = mgs(X, verbose);
-        
+      
+% MGS with reorthogonalization --------------------------------------------
     case {'mgs_ro'}
         [Q1, R1] = mgs(X, verbose);
         [Q, R] = mgs(Q1, verbose);
@@ -56,27 +65,34 @@ switch musc
     case {'mgs_iro'}
         [Q, R] = mgs_iro(X, verbose);
         
-%--------------------------------------------------------------------------
+% MGS (3-sync) ------------------------------------------------------------
     case {'mgs_svl'}
         [Q, R, T] = mgs_svl(X, verbose);
         
     case {'mgs_lts'}
         [Q, R, T] = mgs_lts(X, verbose);
         
+% MGS (1-sync) ------------------------------------------------------------
     case {'mgs_icwy'}
         [Q, R, T] = mgs_icwy(X, verbose);
         
     case {'mgs_cwy'}
         [Q, R, T] = mgs_cwy(X, verbose);
         
-%--------------------------------------------------------------------------
+% HouseQR -----------------------------------------------------------------
     case {'houseqr'}
         [Q, R] = qr(X,0);
         
-%--------------------------------------------------------------------------
+% CholQR ------------------------------------------------------------------
     case {'cholqr'}
         [Q, R] = cholqr(X);
-        
+
+    case {'cholqr_mp'}
+        [Q, R] = cholqr_mp(X);
+
+    case {'cholqr_vpa'}
+        [Q, R] = cholqr_vpa(X);
+
     case {'cholqr_pinv'}
         [Q, R] = cholqr_pinv(X);
         
@@ -91,7 +107,7 @@ switch musc
     case {'sh_cholqr_roro'}
         [Q, R] = sh_cholqr_roro(X);
         
-%--------------------------------------------------------------------------
+% Global QR ---------------------------------------------------------------
     case {'global'}
         s = size(X,2);
         R = norm(X,'fro')/sqrt(s);  % with s-scaling

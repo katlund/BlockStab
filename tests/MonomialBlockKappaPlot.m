@@ -1,5 +1,5 @@
-function MonomialBlockKappaPlot(XXdim, svec, skel, musc)
-% MONOMIALBLOCKKAPPAPLOT(XXdim, svec, skel, musc) compares loss of
+function MonomialBlockKappaPlot(XXdim, svec, skel, musc, A)
+% MONOMIALBLOCKKAPPAPLOT(XXdim, svec, skel, musc, A) compares loss of
 % orthogonality and relative residual for different skeleton-muscle
 % combinationss for a set of monomial matrices of size XXdim = [m p s] with
 % varying block widths specified by the vector array svec.
@@ -24,6 +24,8 @@ function MonomialBlockKappaPlot(XXdim, svec, skel, musc)
 % Options for skel: see BGS.
 %
 % Options for musc: see INTRAORTHO.
+%
+% Options for A: any m x m matrix or operation on vectors.
 %
 % See also BLOCKKAPPAPLOT for more details about basic functionalities.
 % Note that these tests are particularly slow, especially since large
@@ -68,7 +70,11 @@ XXcond = zeros(1,nmat);
 m = XXdim(1); p = XXdim(2); s = XXdim(3); n = p*s;
 I = eye(n);
 
-A = spdiags(linspace(.1,1,m)',0,m,m);
+% Default A
+if nargin <= 4
+    A = spdiags(linspace(.1,1,m)',0,m,m);
+end
+
 for i = 1:nmat
     % Create or load XX
     mat_s = svec(i); mat_p = n/mat_s;
@@ -78,7 +84,7 @@ for i = 1:nmat
     if exist(matstr, 'file')
         load(matstr, 'XX');
     else
-        XXhat = rand(m,mat_p);
+        XXhat = rand(m,mat_p*mat_s);
         pp = 1:mat_p;
         XXhat(:,pp) = XXhat(:,pp)/norm(XXhat(:,pp));
         for k = 2:mat_s
@@ -140,12 +146,12 @@ end
 for j = 1:nskel
     for k = 1:nmusc
         plot(ax{1}, x, loss_ortho(:,j,k),...
-            musc_lbl{k}, 'Color', skel_cmap(j,:));
+            musc_lbl{k}, 'Color', skel_cmap(j,:),'MarkerSize',10,'LineWidth',1);
         plot(ax{2}, x, res(:,j,k),... 
-            musc_lbl{k}, 'Color', skel_cmap(j,:));
+            musc_lbl{k}, 'Color', skel_cmap(j,:),'MarkerSize',10,'LineWidth',1);
         plot(ax{3}, x, res_chol(:,j,k),...
-            musc_lbl{k}, 'Color', skel_cmap(j,:));
-        lgd_str{end+1} = sprintf('%s \\circ %s', skel_str{j}, musc_str{k});
+            musc_lbl{k}, 'Color', skel_cmap(j,:),'MarkerSize',10,'LineWidth',1);
+        lgd_str{end+1} = sprintf('%s $\\circ$ %s', skel_str{j}, musc_str{k});
     end
 end
 plot(ax{1}, x, eps*x, 'k--', x, eps*(x.^2), 'k-')

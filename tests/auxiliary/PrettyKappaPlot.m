@@ -12,30 +12,30 @@ for i = 1:3
     % Aesthetics
     set(axi, 'Yscale', 'log', 'Xscale', 'log',...
         'XGrid', 'on', 'YGrid', 'on',...
-        'XMinorGrid', 'off', 'YMinorGrid', 'off');
+        'XMinorGrid', 'off', 'YMinorGrid', 'off','FontSize',14);
     
     % X-axis label
-    xlabel(axi, '\kappa(X)')
+    xlabel(axi, '$\kappa(\mathcal{X})$','Interpreter','Latex','FontSize',16)
     
     % Legends and titles
     if i == 1
         lgd_str_loo = lgd_str;
-        lgd_str_loo{end+1} = 'O(\epsilon) \kappa(X)';
-        lgd_str_loo{end+1} = 'O(\epsilon) \kappa^2(X)';
-        legend(axi, lgd_str_loo, 'Location', 'BestOutside');
-        title(axi, 'Loss of Orthogonality: ||I - Q''*Q||');
+        lgd_str_loo{end+1} = '$O(\varepsilon) \kappa(\mathcal{X})$';
+        lgd_str_loo{end+1} = '$O(\varepsilon) \kappa^2(\mathcal{X})$';
+        legend(axi, lgd_str_loo, 'Location', 'NorthWest','Interpreter','Latex','FontSize',10,'EdgeColor','none','Color','none');
+        title(axi, 'Loss of Orthogonality: $\Vert I - \bar\mathcal{Q}^T \bar\mathcal{Q}\Vert$','Interpreter','Latex','FontSize',16);
         save_str = sprintf('%s/loss_ortho', folder_str);
     else
-        legend(axi, lgd_str, 'Location', 'BestOutside');
+        legend(axi, lgd_str, 'Location', 'NorthWest','Interpreter','Latex','FontSize',10,'EdgeColor','none','Color','none');
         if i == 2
-            title(axi, 'Relative Residual: ||X - Q*R||/||X||');
+            title(axi, 'Relative Residual: $\Vert \mathcal{X} - \bar\mathcal{Q}\bar\mathcal{R}\Vert/\Vert X\Vert$','Interpreter','Latex','FontSize',16);
             save_str = sprintf('%s/res', folder_str);
         elseif i == 3
-            title(axi, 'Relative Cholesky Residual: ||X''*X - R''*R||/||X||^2');
+            title(axi, 'Relative Cholesky Residual: $\Vert \mathcal{X}^T \mathcal{X} - \bar\mathcal{R}^T \bar\mathcal{R}\Vert/ \Vert \mathcal{X}\Vert^2$','Interpreter','Latex','FontSize',16);
             save_str = sprintf('%s/res_chol', folder_str);
         end
     end
     savefig(fgi, save_str, 'compact');
-    saveas(fgi, save_str, 'epsc')
+    saveas(fgi, save_str, 'pdf')
 end
 end

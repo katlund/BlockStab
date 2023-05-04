@@ -124,12 +124,12 @@ end
 for j = 1:nskel
     for k = 1:nmusc
         plot(ax{1}, x, loss_ortho(:,j,k),...
-            musc_lbl{k}, 'Color', skel_cmap(j,:));
+            musc_lbl{k}, 'Color', skel_cmap(j,:),'MarkerSize',10,'LineWidth',1);
         plot(ax{2}, x, res(:,j,k),... 
-            musc_lbl{k}, 'Color', skel_cmap(j,:));
+            musc_lbl{k}, 'Color', skel_cmap(j,:),'MarkerSize',10,'LineWidth',1);
         plot(ax{3}, x, res_chol(:,j,k),...
-            musc_lbl{k}, 'Color', skel_cmap(j,:));
-        lgd_str{end+1} = sprintf('%s \\circ %s', skel_str{j}, musc_str{k});
+            musc_lbl{k}, 'Color', skel_cmap(j,:),'MarkerSize',10,'LineWidth',1);
+        lgd_str{end+1} = sprintf('%s $\\circ$ %s', skel_str{j}, musc_str{k});
     end
 end
 plot(ax{1}, x, eps*x, 'k--', x, eps*(x.^2), 'k-')

@@ -1,15 +1,16 @@
-function [QQ, RR] = bcgs_iro_1(XX, s, IOstr, verbose)
-% [QQ, RR] = BCGS_IRO_1(XX, s, IOstr, verbose) performs BCGS_IRO on the m
+function [QQ, RR] = bcgs_iro_1(XX, s, musc, verbose)
+% [QQ, RR] = BCGS_IRO_1(XX, s, musc, verbose) performs BCGS_IRO on the m
 % x n matrix XX with p = n/s block partitions each of size s and
-% with intra-orthogonalization procedure determined by IOstr.  This
+% with intra-orthogonalization procedure determined by musc.  This
 % version also reorthogonalizes the first block vector.
 %
-% See BGS for more details about the parameters, and INTRAORTHO for IOstr
+% See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-addpath(genpath('../'))
-
 % Default: debugging off
 if nargin < 4
     verbose = 0;
@@ -27,8 +28,8 @@ sk = s;
 
 W = XX(:,kk);
 
-[W, RR1] = IntraOrtho(W, IOstr);
-[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, IOstr);   % reorthogonalize first step
+[W, RR1] = IntraOrtho(W, musc);
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);   % reorthogonalize first step
 RR(kk,kk) = RR(kk,kk) * RR1;
 
 if verbose
@@ -36,7 +37,7 @@ if verbose
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
     fprintf('  %2.4e  |',...
-        norm( eye(s) - QQ(:, 1:s)' * QQ(:, 1:s) ) );
+        norm( eye(s) - InnerProd(QQ(:, 1:s), QQ(:, 1:s), musc) ) );
     fprintf('  %2.4e\n',...
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
@@ -48,14 +49,14 @@ for k = 1:p-1
     W = XX(:,kk);
     
     % First BCGS step
-    RR1 = InnerProd(QQ(:,1:sk), W, IOstr);
+    RR1 = InnerProd(QQ(:,1:sk), W, musc);
     W = W - QQ(:,1:sk) * RR1;
-    [W, R1] = IntraOrtho(W, IOstr);
+    [W, R1] = IntraOrtho(W, musc);
     
     % Second BCGS step
-    RR(1:sk,kk) = InnerProd(QQ(:,1:sk), W, IOstr);
+    RR(1:sk,kk) = InnerProd(QQ(:,1:sk), W, musc);
     W = W - QQ(:,1:sk) * RR(1:sk,kk);
-    [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, IOstr);
+    [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
     
     % Combine both steps
     RR(1:sk,kk) = RR1 + RR(1:sk,kk) * R1;
@@ -65,7 +66,7 @@ for k = 1:p-1
     if verbose
         fprintf('%3.0d:', k+1);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - QQ(:, 1:sk)' * QQ(:, 1:sk) ) );
+            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...
             norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end

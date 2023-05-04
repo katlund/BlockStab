@@ -1,15 +1,16 @@
-function [QQ, RR, TT] = bmgs_cwy(XX, s, IOstr, verbose)
-% [QQ, RR, TT] = BMGS_CWY(XX, s, IOstr, verbose) performs Block Modified
+function [QQ, RR, TT] = bmgs_cwy(XX, s, musc, verbose)
+% [QQ, RR, TT] = BMGS_CWY(XX, s, musc, verbose) performs Block Modified
 % Gram-Schmidt with Compact WY form on the m x n matrix XX with p = n/s
 % block partitions each of size s with inner orthogonalization procedure
-% determined by IOstr. BMGS_CWY is the block generalization of MGS_CWY.
+% determined by musc. BMGS_CWY is the block generalization of MGS_CWY.
 %
-% See BGS for more details about the parameters, and INTRAORTHO for IOstr
+% See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-addpath(genpath('../'))
-
 % Default: debugging off
 if nargin < 4
     verbose = 0;
@@ -43,25 +44,12 @@ for k = 1:p-1
     
     % Compute temporary quantities-- only sync point!
     if k == 1
-        tmp = Q_tmp' * [Q_tmp W];
-        
-        [~, flag] = chol(tmp(kk, s1));
-        if flag == 0
-            R_diag = chol(tmp(kk, s1));
-        else
-            R_diag = NaN(s);
-        end
-        
+        tmp = InnerProd(Q_tmp, [Q_tmp W], musc);
+        R_diag = chol_nan(tmp(kk, s1));
+
     else
-        tmp = [QQ(:,1:sk-s) Q_tmp]' * [Q_tmp W];
-        
-        [~, flag] = chol(tmp(kk, s1));
-        if flag == 0
-            R_diag = chol(tmp(kk, s1));
-        else
-            R_diag = NaN(s);
-        end
-        
+        tmp = InnerProd([QQ(:,1:sk-s) Q_tmp], [Q_tmp W], musc);
+        R_diag = chol_nan(tmp(kk, s1));
         TT(1:sk-s,kk) = -TT(1:sk-s,1:sk-s) * (tmp(1:sk-s,s1) / R_diag);
     end
     
@@ -70,7 +58,6 @@ for k = 1:p-1
     RR(1:sk,kk+s) = TT(1:sk,1:sk)' * tmp(:,s2);
     
     QQ(:,kk) = Q_tmp / R_diag;
-    
     Q_tmp = W - QQ(:,1:sk) * RR(1:sk,kk+s);
     
     % Update block index
@@ -79,16 +66,16 @@ for k = 1:p-1
     if verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - QQ(:, 1:sk)' * QQ(:, 1:sk) ) );
+            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...
             norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end
 end
-[QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(Q_tmp, IOstr);
+[QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(Q_tmp, musc);
 
 if verbose
     fprintf('%3.0d:', k+1);
-    fprintf('  %2.4e  |', norm( eye(n) - QQ' * QQ ) );
+    fprintf('  %2.4e  |', norm( eye(n) - InnerProd(QQ, QQ, musc) ) );
     fprintf('  %2.4e\n', norm( XX - QQ * RR ) / norm(XX) );
 end
 end

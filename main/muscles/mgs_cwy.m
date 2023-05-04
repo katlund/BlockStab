@@ -4,6 +4,9 @@ function [Q, R, T] = mgs_cwy(X, verbose)
 % [Swirydowicz et. al. 2020].
 %
 % See INTRAORTHO for more details about the parameters.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 % Default: debugging off
@@ -26,14 +29,14 @@ end
 
 for k = 1:s-1
     % Pull out vector (keeps MATLAB from copying full X repeatedly)
-    xk = X(:,k+1);
+    u = X(:,k+1);
     
     % Compute temporary quantities -- the only sync point!
     if k == 1
-        tmp = q_tmp' * [q_tmp xk];
+        tmp = q_tmp' * [q_tmp u];
         r_diag = sqrt(tmp(k,1));
     else
-        tmp = [Q(:,1:k-1) q_tmp]' * [q_tmp xk];
+        tmp = [Q(:,1:k-1) q_tmp]' * [q_tmp u];
         r_diag = sqrt(tmp(k,1));
         T(1:k-1,k) = -T(1:k-1,1:k-1) * (tmp(1:k-1,1) / r_diag);
     end
@@ -43,7 +46,7 @@ for k = 1:s-1
     R(1:k,k+1) = T(1:k,1:k)' * tmp(:,2);
     
     Q(:,k) = q_tmp / r_diag;
-    q_tmp = xk - Q(:,1:k) * R(1:k,k+1);
+    q_tmp = u - Q(:,1:k) * R(1:k,k+1);
     
     if verbose
         fprintf('%3.0d:', k);
