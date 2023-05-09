@@ -1,5 +1,5 @@
-function [QQ, RR] = bcgs_pip_iro_mp(XX, s, musc, verbose)
-% [QQ, RR] = BCGS_PIP_IRO_MP(XX, s, musc, verbose) performs BCGS_PIP with
+function [QQ, RR] = bcgs_pip_iro_mp(XX, s, musc, param)
+% [QQ, RR] = BCGS_PIP_IRO_MP(XX, s, musc, param) performs BCGS_PIP with
 % Inner ReOrthogonalization on the m x n matrix XX with p = n/s block
 % partitions each of size s and with intra-orthogonalization procedure
 % determined by musc.
@@ -15,12 +15,17 @@ function [QQ, RR] = bcgs_pip_iro_mp(XX, s, musc, verbose)
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-% Default: debugging off
+% Defaults
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
     param.mp_package = 'advanpix';
-elseif nargin < 5
-    param.mp_package = 'advanpix';
+end
+if ~isfield(param, 'chol')
+    param.chol = 'chol_switch';
+else
+    if isempty(param, 'chol')
+        param.chol = 'chol_switch';
+    end
 end
 
 % Set up quad-precision subroutine
@@ -40,7 +45,7 @@ W = qp(XX(:,kk));
 [QQ(:,kk), R1] = IntraOrtho(W, musc);
 RR(kk,kk) = double(R1);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
@@ -63,7 +68,7 @@ for k = 2:p
     RR1 = tmp(1:sk-s,:);
 
     % Compute Cholesky in quad
-    R1 = chol_free_mp( tmp(kk,:) - RR1' * RR1, param );
+    R1 = chol_switch( tmp(kk,:) - RR1' * RR1, param );
 
     % Compute intermediate basis vector
     W = ( W - QQ(:,1:sk-s) * RR1 ) / R1;
@@ -72,7 +77,7 @@ for k = 2:p
     tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
 
     % Compute Cholesky in quad
-    R2 = chol_free_mp( tmp(kk,:) - tmp(1:sk-s,:)' * tmp(1:sk-s,:) );
+    R2 = chol_switch( tmp(kk,:) - tmp(1:sk-s,:)' * tmp(1:sk-s,:) );
     
     % Compute next basis vector
     QQ(:,kk) = ( W - QQ(:,1:sk-s) * tmp(1:sk-s,:) ) / R2;
@@ -81,7 +86,7 @@ for k = 2:p
     RR(kk,kk) = double(R2) * double(R1);
     RR(1:sk-s,kk) = double(RR1) + double(tmp(1:sk-s,:)) * double(RR1);
     
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(double(QQ(:, 1:sk)), double(QQ(:, 1:sk)), musc) ) );

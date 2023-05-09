@@ -1,5 +1,5 @@
-function [QQ, RR] = bcgs_iro_ls(XX, s, musc, verbose)
-% [QQ, RR] = BCGS_IRO_LS(XX, s, musc, verbose) performs Block Classical
+function [QQ, RR] = bcgs_iro_ls(XX, s, musc, param)
+% [QQ, RR] = BCGS_IRO_LS(XX, s, musc, param) performs Block Classical
 % Gram-Schmidt with Reorthogonalization and a Low-Sync formulation
 % (actually, a one-sync) on the n x m matrix XX. It is a block
 % generalization of CGS_IRO_LS, i.e., Algorithm 3 from [Swirydowicz, et.
@@ -18,7 +18,7 @@ function [QQ, RR] = bcgs_iro_ls(XX, s, musc, verbose)
 %%
 % Default: debugging off
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
 end
 
 % Pre-allocate memory for QQ and RR
@@ -35,7 +35,7 @@ s2 = s+1:2*s;
 % Initialize
 U = XX(:,kk);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
 end
@@ -59,7 +59,7 @@ for k = 2:p
     end
     
     % Pythagorean trick for RR diagonals; assign finished entry
-    R_diag = chol_nan(R_tmp(:, s1));
+    R_diag = chol_switch(R_tmp(:, s1), param);
     
     % Assign finished entries of RR
     RR(kk-s, kk-s) = R_diag;
@@ -80,7 +80,7 @@ for k = 2:p
     % Set up temporary block vector for next iteration
     U = W - QQ(:, 1:sk-s) * RR(1:sk-s, kk);
     
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k-1);
         fprintf('  %2.4e  |',...
             norm( eye(sk-s) - InnerProd(QQ(:, 1:sk-s), QQ(:, 1:sk-s), musc) ) );
@@ -93,12 +93,12 @@ end
 % RR.  Note that this requires just one more sync, no IntraOrtho needed.
 tmp = InnerProd([QQ(:,1:n-s) U], U, musc);
 Y = tmp(1:n-s,:);
-R_diag = chol_nan(tmp(end-s+1:end,:) - Y' * Y);
+R_diag = chol_switch(tmp(end-s+1:end,:) - Y' * Y, param);
 RR(kk, kk) = R_diag;
 RR(1:n-s, kk) = RR(1:n-s, kk) + Y;
 QQ(:,kk) = (U - QQ(:,1:n-s) * Y) / R_diag;
 
-if verbose
+if param.verbose
     fprintf('%3.0d:', k+1);
     fprintf('  %2.4e  |', norm( eye(n) - InnerProd(QQ, QQ, musc) ) );
     fprintf('  %2.4e\n', norm( XX - QQ * RR ) / norm(XX) );

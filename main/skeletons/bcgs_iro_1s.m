@@ -1,10 +1,10 @@
-function [QQ, RR] = bcgs_iro_1s(XX, s, musc, verbose)
-% [QQ, RR] = BCGS_IRO_1S(XX, s, musc, verbose) performs Block Classical
+function [QQ, RR] = bcgs_iro_1s(XX, s, musc, param)
+% [QQ, RR] = BCGS_IRO_1S(XX, s, musc, param) performs Block Classical
 % Gram-Schmidt with Inner ReOrthogonalization with 1 sync on the m x n
 % matrix XX with p = n/s block partitions each of size s with
 % intra-orthogonalization procedure determined by musc.  See BCGS_IRO_LS
-% for an alternative formulation based on Algorithm 3 from [Swirydowicz, et.
-% al. 2020] or Algorithm 2 from [Bielich, et al. 2022].
+% for an alternative formulation based on Algorithm 3 from [Swirydowicz,
+% et. al. 2020] or Algorithm 2 from [Bielich, et al. 2022].
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
@@ -15,7 +15,7 @@ function [QQ, RR] = bcgs_iro_1s(XX, s, musc, verbose)
 %%
 % Default: debugging off
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
 end
 
 % Pre-allocate memory for QQ and RR
@@ -33,7 +33,7 @@ s2 = s1 + s;
 % Initial step
 [QQ(:,kk), RR(kk,kk)] = IntraOrtho(XX(:,kk), musc);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
@@ -57,14 +57,14 @@ for k = 2:p-1
     % k.2
     tmp = InnerProd([QQ(:,1:sk-s) W], [W XX(:,kk+s)], musc);
     Y_col = tmp(1:sk-s,s1);
-    Y_diag = chol_nan(tmp(kk,s1) - Y_col' * Y_col);
+    Y_diag = chol_switch(tmp(kk,s1) - Y_col' * Y_col, param);
     QQ(:,kk) = (W - QQ(:,1:sk-s) * Y_col ) / Y_diag;
     
     % k.3
     RR(1:sk-s,kk) = S_col + Y_col;
     RR(kk,kk) = Y_diag;
     
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
@@ -88,14 +88,14 @@ end
 % p.2
 tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
 Y_col = tmp(1:sk-s,s1);
-Y_diag = chol_nan(tmp(kk,s1) - Y_col' * Y_col);
+Y_diag = chol_switch(tmp(kk,s1) - Y_col' * Y_col, param);
 QQ(:,kk) = (W - QQ(:,1:sk-s) * Y_col ) / Y_diag;
 
 % p.3
 RR(1:sk-s,kk) = S_col + Y_col;
 RR(kk,kk) = Y_diag;
 
-if verbose
+if param.verbose
     fprintf('%3.0d:', k);
     fprintf('  %2.4e  |',...
         norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );

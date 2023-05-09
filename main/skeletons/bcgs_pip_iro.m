@@ -1,8 +1,8 @@
-function [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose)
-% [QQ, RR] = BCGS_PIP_IRO(XX, s, musc, verbose) performs BCGS_PIP with
-% Inner ReOrthogonalization on the m x n matrix XX with p = n/s block
-% partitions each of size s and with intra-orthogonalization procedure
-% determined by musc.
+function [QQ, RR] = bcgs_pip_iro(XX, s, musc, param)
+% [QQ, RR] = BCGS_PIP_IRO(XX, s, musc, param) performs BCGS_PIP with Inner
+% ReOrthogonalization on the m x n matrix XX with p = n/s block partitions
+% each of size s and with intra-orthogonalization procedure determined by
+% musc.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
@@ -13,7 +13,7 @@ function [QQ, RR] = bcgs_pip_iro(XX, s, musc, verbose)
 %%
 % Default: debugging off
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
 end
 
 % Pre-allocate memory for QQ and RR
@@ -29,7 +29,7 @@ sk = s;
 W = XX(:,kk);
 [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
@@ -50,20 +50,20 @@ for k = 2:p
     % First step
     tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
     RR1 = tmp(1:sk-s,:);
-    R1 = chol_nan(tmp(kk,:) - RR1'*RR1);
+    R1 = chol_switch(tmp(kk,:) - RR1'*RR1, param);
     W = ( W - QQ(:,1:sk-s) * RR1 ) / R1;
 
     % Second step
     tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
     RR(1:sk-s,kk) = tmp(1:sk-s,:);
-    RR(kk,kk) = chol_nan(tmp(kk,:) - RR(1:sk-s,kk)' * RR(1:sk-s,kk));
+    RR(kk,kk) = chol_switch(tmp(kk,:) - RR(1:sk-s,kk)' * RR(1:sk-s,kk), param);
     QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR(1:sk-s,kk) ) / RR(kk,kk);
     
     % Finalize R
     RR(1:sk-s,kk) = RR1 + RR(1:sk-s,kk) * R1;
     RR(kk,kk) = RR(kk,kk) * R1;
     
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );

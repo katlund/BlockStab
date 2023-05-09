@@ -1,8 +1,8 @@
-function [QQ, RR] = bcgs_iro_1(XX, s, musc, verbose)
-% [QQ, RR] = BCGS_IRO_1(XX, s, musc, verbose) performs BCGS_IRO on the m
-% x n matrix XX with p = n/s block partitions each of size s and
-% with intra-orthogonalization procedure determined by musc.  This
-% version also reorthogonalizes the first block vector.
+function [QQ, RR] = bcgs_iro_1(XX, s, musc, param)
+% [QQ, RR] = BCGS_IRO_1(XX, s, musc, param) performs BCGS_IRO on the m x n
+% matrix XX with p = n/s block partitions each of size s and with
+% intra-orthogonalization procedure determined by musc.  This version also
+% reorthogonalizes the first block vector.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
@@ -13,7 +13,7 @@ function [QQ, RR] = bcgs_iro_1(XX, s, musc, verbose)
 %%
 % Default: debugging off
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
 end
 
 % Pre-allocate memory for QQ and RR
@@ -32,7 +32,7 @@ W = XX(:,kk);
 [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);   % reorthogonalize first step
 RR(kk,kk) = RR(kk,kk) * RR1;
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
@@ -63,7 +63,7 @@ for k = 1:p-1
     RR(kk,kk) = RR(kk,kk) * R1;
     
     sk = sk + s;
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k+1);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );

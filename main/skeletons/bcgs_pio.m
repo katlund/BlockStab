@@ -1,5 +1,5 @@
-function [QQ, RR] = bcgs_pio(XX, s, musc, verbose)
-% [QQ, RR] = BCGS_PIO(XX, s, musc, verbose) performs Block Classical
+function [QQ, RR] = bcgs_pio(XX, s, musc, param)
+% [QQ, RR] = BCGS_PIO(XX, s, musc, param) performs Block Classical
 % Gram-Schmidt with Pythagorean Intra-Orthogonalization modification on the
 % m x n matrix XX with p = n/s block partitions each of size s with
 % intra-orthogonalization procedure determined by musc.  BCGS_PIO is a
@@ -15,7 +15,7 @@ function [QQ, RR] = bcgs_pio(XX, s, musc, verbose)
 %%
 % Default: debugging off
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
 end
 
 % Pre-allocate memory for QQ and RR
@@ -31,7 +31,7 @@ sk = s;
 W = XX(:,kk);
 [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
@@ -53,10 +53,10 @@ for k = 2:p
     RR(1:sk,kk) = InnerProd(QQ(:,1:sk-s), W, musc);
     [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR(1:sk,kk)], musc);
     tmp = tmp' * tmp;
-    RR(kk,kk) = chol_nan(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end));
+    RR(kk,kk) = chol_switch( tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param);
     QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR(1:sk,kk) ) / RR(kk,kk);
     
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );

@@ -1,5 +1,5 @@
-function [QQ, RR] = bcgs_iro(XX, s, musc, verbose)
-% [QQ, RR] = BCGS_IRO(XX, s, musc, verbose) performs Block Classical
+function [QQ, RR] = bcgs_iro(XX, s, musc, param)
+% [QQ, RR] = BCGS_IRO(XX, s, musc, param) performs Block Classical
 % Gram-Schmidt on the m x n matrix XX with p = n/s block partitions each of
 % size s with Inner ReOrthonormalization as described in [Barlow &
 % Smoktunowicz 2013] and with intra-orthonormalization procedure determined
@@ -14,7 +14,7 @@ function [QQ, RR] = bcgs_iro(XX, s, musc, verbose)
 %%
 % Default: debugging off
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
 end
 
 % Pre-allocate memory for QQ and RR
@@ -30,7 +30,7 @@ sk = s;
 W = XX(:,kk);
 [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
@@ -61,7 +61,7 @@ for k = 1:p-1
     RR(kk,kk) = RR(kk,kk) * R1;
     
     sk = sk + s;
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k+1);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );

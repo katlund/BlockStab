@@ -1,6 +1,6 @@
-function [QQ, RR] = bcgs_pio_iro_mp(XX, s, musc, verbose, param)
-% [QQ, RR] = BCGS_PIO_IRO_MP(XX, s, musc, verbose, param) performs BCGS_PIO
-% with Inner ReOrthonormalization on the m x n matrix XX with p = n/s block
+function [QQ, RR] = bcgs_pio_iro_mp(XX, s, musc, param)
+% [QQ, RR] = BCGS_PIO_IRO_MP(XX, s, musc, param) performs BCGS_PIO with
+% Inner ReOrthonormalization on the m x n matrix XX with p = n/s block
 % partitions each of size s and with intra-orthogonalization procedure
 % determined by musc.
 %
@@ -15,12 +15,17 @@ function [QQ, RR] = bcgs_pio_iro_mp(XX, s, musc, verbose, param)
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-% Default: debugging off
+% Defaults
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
     param.mp_package = 'advanpix';
-elseif nargin < 5
-    param.mp_package = 'advanpix';
+end
+if ~isfield(param, 'chol')
+    param.chol = 'chol_switch';
+else
+    if isempty(param, 'chol')
+        param.chol = 'chol_switch';
+    end
 end
 
 % Set up quad-precision subroutine
@@ -40,7 +45,7 @@ W = qp(XX(:,kk));
 [QQ(:,kk), R1] = IntraOrtho(W, musc);
 RR(kk,kk) = double(R1);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
@@ -64,7 +69,7 @@ for k = 2:p
     tmp = tmp' * tmp;
 
     % Compute Cholesky in quad
-    R1 = chol_free_mp(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end));
+    R1 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end));
 
     % Compute intermediate basis vector
     W = ( W - QQ(:,1:sk-s) * RR1 ) / R1;
@@ -75,7 +80,7 @@ for k = 2:p
     tmp = tmp' * tmp;
 
     % Compute Cholesky in quad
-    R2 = chol_free_mp(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end));
+    R2 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end));
 
     % Compute next basis vector
     QQ(:,kk) = ( W - QQ(:,1:sk-s) * tmp(1:sk-s,:) ) / R2;
@@ -84,7 +89,7 @@ for k = 2:p
     RR(kk,kk) = double(R2) * double(R1);
     RR(1:sk-s,kk) = double(RR1) + double(RR2) * double(RR1);
     
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(double(QQ(:, 1:sk)), double(QQ(:, 1:sk)), musc) ) );

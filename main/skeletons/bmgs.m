@@ -1,5 +1,5 @@
-function [QQ, RR] = bmgs(XX, s, musc, verbose)
-% [QQ, RR] = BMGS(XX, s, musc, verbose) performs Block Modified
+function [QQ, RR] = bmgs(XX, s, musc, param)
+% [QQ, RR] = BMGS(XX, s, musc, param) performs Block Modified
 % Gram-Schmidt on the m x n matrix XX with p = n/s block partitions each of
 % size s with inner orthogonalization procedure determined by musc.  BMGS
 % is the block generalization of MGS.
@@ -13,7 +13,7 @@ function [QQ, RR] = bmgs(XX, s, musc, verbose)
 %%
 % Default: debugging off
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
 end
 
 % Pre-allocate memory for QQ and RR
@@ -28,7 +28,7 @@ kk = 1:s;
 W = XX(:,kk);
 [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
@@ -53,7 +53,7 @@ for k = 1:p-1
     end
     [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
     
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k+1);
         sk = s*(k+1);
         fprintf('  %2.4e  |',...
