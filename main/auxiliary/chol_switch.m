@@ -1,10 +1,9 @@
 function [R, nan_flag] = chol_switch(A, param)
 % [R, nan_flag] = CHOL_SWITCH(A, param) switches which Cholesky subroutine
-% is called based on param.chol.  The default is CHOL_NAN.  Other options
-% include the following:
+% is called based on param.chol.  The default is CHOL_NAN, which returns
+% NaN whenever CHOL throws an error.  Other options include the following:
 % - CHOL, the built-in MATLAB routine, which will throw errors when A is
 % not numerically positive definite
-%
 % - CHOL_FREE, which is not optimized for performance but will not throw
 % errors or return NaN when A is not numerically positive definite; a param
 % struct with the following fields must be specified to handle arbitrary
@@ -39,6 +38,9 @@ end
 
 % Switch
 switch lower(param.chol)
+    case 'chol'
+        R = chol(A);
+
     case 'chol_nan'
         [R, nan_flag] = chol_nan(A);
 
