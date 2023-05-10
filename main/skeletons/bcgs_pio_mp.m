@@ -7,8 +7,9 @@ function [QQ, RR] = bcgs_pio_mp(XX, s, musc, param)
 % 2006] derived in [Carson et al. 2021].
 %
 % This mixed precision version computes the inputs to Cholesky and the
-% Cholesky factorization itself in simulated quadruple precision.  See
-% MP_SWITCH for details on the param struct.
+% Cholesky factorization itself in simulated quadruple (or other,
+% user-specified precision) precision.  See MP_SWITCH for details on the
+% param struct.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
@@ -23,10 +24,10 @@ if nargin < 4
     param.mp_package = 'advanpix';
 end
 if ~isfield(param, 'chol')
-    param.chol = 'chol_switch';
+    param.chol = 'chol_free';
 else
     if isempty(param, 'chol')
-        param.chol = 'chol_switch';
+        param.chol = 'chol_free';
     end
 end
 

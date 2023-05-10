@@ -10,7 +10,7 @@ function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, param)
 % - skel: char array specifying inter-orthogonalation (between blocks)
 %   routine
 % - musc: char array specifying intra-orthogonalization (within block)
-%   routine; see INTRAORTOH for all possible options
+%   routine; see INTRAORTHO for all possible options
 % - param: a struct with the following optional fields:
 %   - .chol: char specifying what type of Cholesky subroutine to call for
 %      skeletons that hard-code Cholesky via a block Pythagorean trick
@@ -34,7 +34,7 @@ function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, param)
 % OUTPUTS:
 % - QQ: n x m orthonormal matrix
 % - RR: m x m upper triangular matrix
-% - TT: triangular matrix returned by routines such as BMGS_SVL and
+% - TT: m x m triangular matrix returned by routines such as BMGS_SVL and
 %   BMGS_LTS; regardless of TT, it should hold that
 %                      XX = QQ * RR.
 % - TotTime: total time elapsed measured by tic and toc
@@ -52,8 +52,7 @@ if nargin == 4
     param.verbose = 0;
 end
 
-skel = lower(skel);
-switch skel
+switch lower(skel)
 % Standard BCGS and reorthogonalized variants -----------------------------
     case {'bcgs'}
         tic;

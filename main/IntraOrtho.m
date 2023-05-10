@@ -1,10 +1,37 @@
-function [Q, R, T] = IntraOrtho(X, musc, rpltol, verbose)
-% [Q, R, T] = INTRAORTHO(X, musc, rpltol, verbose) is a wrapper function
-% for switching between intra-orthonormalization algorithms. musc is a char
-% specifying the algorithm, and rpltol is an optional argument determining
-% the replacement tolerance in CGS_SROR. verbose is a Boolean for whether
-% to print intermediate loss of orthogonality (LOO) or relative residual
-% (RelRes) computations.
+function [Q, R, T] = IntraOrtho(X, musc, param)
+% [Q, R, T] = INTRAORTHO(X, musc, param) is a wrapper function for
+% switching between intra-orthonormalization (column-vector-wise)
+% algorithms.
+% 
+% INPUTS:
+% - X: an n x s matrix, s <=n
+% - musc is a char specifying the algorithm
+% - param: a struct with the following optional fields:
+%   - .chol: char specifying what type of Cholesky subroutine to call for
+%      skeletons that hard-code Cholesky via a block Pythagorean trick
+%      (e.g., BCGS_PIP, BCGS_PIO, BCGS_IRO_LS, BMGS_CWY, BMGS_ICWY, and
+%      their reorthogonalized and multi-precision versions)
+%      default: 'chol_nan'
+%   - .mp_package: char specifying either 'advanpix' or 'symbolic toolbox'
+%      as the mixed precision package for routines with *_MP
+%      default: 'advanpix'
+%   - .mp_digits: int specifiying number of precision digits, e.g., 34 for
+%      quadruple precision (in Advanpix) or 32 for quadruple precision in
+%      Symbolic Toolbox
+%      default: 34
+%   - .rpltol: scalar argument for CGS_SROR that determines the
+%      replacement tolerance
+%      default: 1
+%   - .verbose: boolean for whether to print intermediate loss of
+%      orthogonality (LOO) or relative residual (RelRes) per iteration
+%      default: 0
+%
+% OUTPUTS:
+% - Q: m x s orthonormal matrix
+% - R: s x s upper triangular matrix
+% - T: s x s triangular matrix returned by routines such as MGS_SVL and
+%   MGS_LTS; regardless of T, it should hold that
+%                      X = Q * R.
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
@@ -12,72 +39,73 @@ function [Q, R, T] = IntraOrtho(X, musc, rpltol, verbose)
 %%
 % Defaults
 if nargin == 2
-    rpltol = [];
-    verbose = 0;
-elseif nargin == 3
-    verbose = 0;
+    param.chol = 'chol_nan';
+    param.mp_package = 'advanpix';
+    param.mp_digits = 34;
+    param.rpltol = [];
+    param.verbose = 0;
 end
 
 switch lower(musc)
     % CGS -----------------------------------------------------------------
     case {'cgs'}
-        [Q, R] = cgs(X, verbose);
+        [Q, R] = cgs(X, param.verbose);
         
     % CGS with reorthogonalization ----------------------------------------
     case {'cgs_ro'}
-        [Q, R] = cgs_ro(X, verbose);
+        [Q, R] = cgs_ro(X, param.verbose);
         
     case {'cgs_iro'}
-        [Q, R] = cgs_iro(X, verbose);
+        [Q, R] = cgs_iro(X, param.verbose);
         
     case {'cgs_sro'}
-        [Q, R] = cgs_sror(X, 0, verbose);    % rpltol = 0 ensures no replacement
+        [Q, R] = cgs_sror(X, 0, param.verbose);    % rpltol = 0 ensures no replacement
         
     case {'cgs_sror'}
-        if nargin == 2
-            rpltol = 10;
+        if ~isfield(param, 'rpltol')
+            param.rpltol = 10;
         end
-        [Q, R] = cgs_sror(X, rpltol, verbose);
+        if isempty(param.rpltol)
+            param.rpltol = 10;
+        end
+        [Q, R] = cgs_sror(X, param.rpltol, param.verbose);
         
     case {'cgs_iro_ls'}
-        [Q, R] = cgs_iro_ls(X, verbose);
+        [Q, R] = cgs_iro_ls(X, param.verbose);
 
 % CGS (P-variants) --------------------------------------------------------
     case {'cgs_p'}
-        [Q, R] = cgs_p(X, verbose);
+        [Q, R] = cgs_p(X, param.verbose);
         
     case {'cgs_p_ro'}
-        [Q, R] = cgs_p_ro(X, verbose);
+        [Q, R] = cgs_p_ro(X, param.verbose);
         
     case {'cgs_p_iro'}
-        [Q, R] = cgs_p_iro(X, verbose);
+        [Q, R] = cgs_p_iro(X, param.verbose);
         
 % MGS ---------------------------------------------------------------------
     case {'mgs'}
-        [Q, R] = mgs(X, verbose);
-      
-% MGS with reorthogonalization --------------------------------------------
+        [Q, R] = mgs(X, param.verbose);
+
     case {'mgs_ro'}
-        [Q1, R1] = mgs(X, verbose);
-        [Q, R] = mgs(Q1, verbose);
-        R = R*R1;
+        [Q, R] = mgs_ro(X, param.verbose);
         
     case {'mgs_iro'}
-        [Q, R] = mgs_iro(X, verbose);
+        [Q, R] = mgs_iro(X, param.verbose);
         
 % MGS (3-sync) ------------------------------------------------------------
     case {'mgs_svl'}
-        [Q, R, T] = mgs_svl(X, verbose);
+        [Q, R, T] = mgs_svl(X, param.verbose);
         
     case {'mgs_lts'}
-        [Q, R, T] = mgs_lts(X, verbose);
+        [Q, R, T] = mgs_lts(X, param.verbose);
         
 % MGS (1-sync) ------------------------------------------------------------
     case {'mgs_icwy'}
-        [Q, R, T] = mgs_icwy(X, verbose);
+        [Q, R, T] = mgs_icwy(X, param.verbose);
         
     case {'mgs_cwy'}
-        [Q, R, T] = mgs_cwy(X, verbose);
+        [Q, R, T] = mgs_cwy(X, param.verbose);
         
 % HouseQR -----------------------------------------------------------------
     case {'houseqr'}
@@ -85,27 +113,19 @@ switch lower(musc)
         
 % CholQR ------------------------------------------------------------------
     case {'cholqr'}
-        [Q, R] = cholqr(X);
-
-    case {'cholqr_mp'}
-        [Q, R] = cholqr_mp(X);
-
-    case {'cholqr_vpa'}
-        [Q, R] = cholqr_vpa(X);
-
-    case {'cholqr_pinv'}
-        [Q, R] = cholqr_pinv(X);
+        [Q, R] = cholqr(X, param);
         
     case {'cholqr_ro'}
-        [Q1, R1] = cholqr(X);
-        [Q, R] = cholqr(Q1);
-        R = R*R1;
+        [Q, R] = cholqr_ro(X, param);
         
     case {'iter_cholqr'}
         [Q, R] = iter_cholqr(X);
         
     case {'sh_cholqr_roro'}
         [Q, R] = sh_cholqr_roro(X);
+
+    case {'cholqr_pinv'}
+        [Q, R] = cholqr_pinv(X);
         
 % Global QR ---------------------------------------------------------------
     case {'global'}

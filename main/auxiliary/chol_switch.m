@@ -1,6 +1,24 @@
 function [R, nan_flag] = chol_switch(A, param)
 % [R, nan_flag] = CHOL_SWITCH(A, param) switches which Cholesky subroutine
-% is called based on param.chol.  The default is CHOL_NAN.
+% is called based on param.chol.  The default is CHOL_NAN.  Other options
+% include the following:
+% - CHOL, the built-in MATLAB routine, which will throw errors when A is
+% not numerically positive definite
+%
+% - CHOL_FREE, which is not optimized for performance but will not throw
+% errors or return NaN when A is not numerically positive definite; a param
+% struct with the following fields must be specified to handle arbitrary
+% precision:
+% - .mp_package: 'advanpix', 'symbolic math', or 'none'
+% - .mp_digits: the desired number of digits, according to the chosen
+%   package specifications.  The default for 'advanpix' is 34 (quad) and
+%   for 'symbolic math' is 32 (quad). 
+%
+% Note: both CHOL and CHOL_NAN are overloaded to operate in the precision
+% of the provided argument, i.e., if A is already stored in quadruple
+% precision, then the Cholesky factor will be returned in that same
+% precision.  CHOL_FREE, however, will only operate in double unless param
+% is provided.
 
 %%
 % Defaults
@@ -15,6 +33,9 @@ elseif nargin ==2
         end
     end
 end
+if isempty(param)
+    param.chol = 'chol_nan';
+end
 
 % Switch
 switch lower(param.chol)
@@ -22,11 +43,7 @@ switch lower(param.chol)
         [R, nan_flag] = chol_nan(A);
 
     case 'chol_free'
-        R = chol_free(A);
-        nan_flag = NaN;
-
-    case 'chol_free_mp'
-        R = chol_free_mp(A);
+        R = chol_free(A, param);
         nan_flag = NaN;
 end
 end
