@@ -1,10 +1,10 @@
-function [QQ, RR] = bcgs_pip(XX, s, musc, verbose)
-% [QQ, RR] = BCGS_PIP(XX, s, musc, verbose) performs Block Classical
+function [QQ, RR] = bcgs_pip(XX, s, musc, param)
+% [QQ, RR] = BCGS_PIP(XX, s, musc, param) performs Block Classical
 % Gram-Schmidt with Pythagorean Inner Product modification on the m x n
 % matrix XX with p = n/s block partitions each of size s with
-% intra-orthogonalization procedure determined by musc. BCGS_PIP is a
-% block generalization of CGS-P/Algorithm 2 from [Smoktunowicz et. al.
-% 2006] derived in [Carson et al. 2021].
+% intra-orthogonalization procedure determined by musc. BCGS_PIP is a block
+% generalization of CGS-P/Algorithm 2 from [Smoktunowicz et. al. 2006]
+% derived in [Carson et al. 2021].
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
@@ -15,7 +15,7 @@ function [QQ, RR] = bcgs_pip(XX, s, musc, verbose)
 %%
 % Default: debugging off
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
 end
 
 % Pre-allocate memory for QQ and RR
@@ -31,7 +31,7 @@ sk = s;
 W = XX(:,kk);
 [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
@@ -53,13 +53,13 @@ for k = 2:p
     tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
     
     % Assign RR
-    RR(kk,kk) = chol_nan(tmp(kk,:) - RR(1:sk-s,kk)'* RR(1:sk-s,kk));
+    RR(kk,kk) = chol_switch(tmp(kk,:) - RR(1:sk-s,kk)'* RR(1:sk-s,kk), param);
     RR(1:sk,kk) = tmp(1:sk,:);
 
     % Compute next basis vector
     QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR(1:sk,kk) ) / RR(kk,kk);
     
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );

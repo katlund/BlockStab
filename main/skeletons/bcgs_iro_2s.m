@@ -1,5 +1,5 @@
-function [QQ, RR] = bcgs_iro_2s(XX, s, musc, verbose)
-% [QQ, RR] = BCGS_IRO_2S(XX, s, musc, verbose) performs Block Classical
+function [QQ, RR] = bcgs_iro_2s(XX, s, musc, param)
+% [QQ, RR] = BCGS_IRO_2S(XX, s, musc, param) performs Block Classical
 % Gram-Schmidt with Inner ReOrthogonalization on the m x n matrix XX with p
 % = n/s block partitions each of size s with intra-orthogonalization
 % procedure determined by musc.  Skips the first norm of the first step and
@@ -15,7 +15,7 @@ function [QQ, RR] = bcgs_iro_2s(XX, s, musc, verbose)
 %%
 % Default: debugging off
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
 end
 
 % Pre-allocate memory for QQ and RR
@@ -31,7 +31,7 @@ sk = s;
 % Initial step
 [QQ(:,kk), RR(kk,kk)] = IntraOrtho(XX(:,kk), musc);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
@@ -53,14 +53,14 @@ for k = 2:p
     % k.2
     tmp = InnerProd([QQ(:,1:sk) W], W, musc);
     Y_col = tmp(1:sk-s,:);
-    Y_diag = chol_nan(tmp(kk,:) - Y_col' * Y_col);
+    Y_diag = chol_switch(tmp(kk,:) - Y_col' * Y_col, param);
     QQ(:,kk) = (W - QQ(:,1:sk-s) * Y_col ) / Y_diag;
     
     % k.3
     RR(1:sk-s,kk) = S_col + Y_col;
     RR(kk,kk) = Y_diag;
     
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );

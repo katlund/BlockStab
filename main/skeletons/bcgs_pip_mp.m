@@ -1,14 +1,15 @@
-function [QQ, RR] = bcgs_pip_mp(XX, s, musc, verbose, param)
-% [QQ, RR] = BCGS_PIP_MP(XX, s, musc, verbose, param) performs Block
-% Classical Gram-Schmidt with Pythagorean Inner Product modification on the
-% m x n matrix XX with p = n/s block partitions each of size s with
+function [QQ, RR] = bcgs_pip_mp(XX, s, musc, param)
+% [QQ, RR] = BCGS_PIP_MP(XX, s, musc, param) performs Block Classical
+% Gram-Schmidt with Pythagorean Inner Product modification on the m x n
+% matrix XX with p = n/s block partitions each of size s with
 % intra-orthogonalization procedure determined by musc. BCGS_PIP is a block
 % generalization of CGS-P/Algorithm 2 from [Smoktunowicz et. al. 2006]
 % derived in [Carson et al. 2021].
 %
 % This mixed precision version computes the inputs to Cholesky and the
-% Cholesky factorization itself in simulated quadruple precision.  See
-% MP_SWITCH for details on the param struct.
+% Cholesky factorization itself in simulated quadruple (or other,
+% user-specified precision) precision.  See MP_SWITCH for details on the
+% param struct.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
@@ -17,12 +18,17 @@ function [QQ, RR] = bcgs_pip_mp(XX, s, musc, verbose, param)
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-% Default: debugging off
+% Defaults
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
     param.mp_package = 'advanpix';
-elseif nargin < 5
-    param.mp_package = 'advanpix';
+end
+if ~isfield(param, 'chol')
+    param.chol = 'chol_free';
+else
+    if isempty(param, 'chol')
+        param.chol = 'chol_free';
+    end
 end
 
 % Set up quad-precision subroutine
@@ -42,7 +48,7 @@ W = qp(XX(:,kk));
 [QQ(:,kk), R_diag] = IntraOrtho(W, musc);
 RR(kk,kk) = double(R_diag);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
@@ -64,7 +70,7 @@ for k = 2:p
     tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
 
     % Compute Cholesky in quad
-    R_diag = chol_free_mp( tmp(kk,:) - tmp(1:sk-s,:)' * tmp(1:sk-s,:), param);
+    R_diag = chol_switch(tmp(kk,:) - tmp(1:sk-s,:)' * tmp(1:sk-s,:), param);
     
     % Assign RR in double
     RR(kk,kk) = double(R_diag); 
@@ -73,7 +79,7 @@ for k = 2:p
     % Compute next basis vector
     QQ(:,kk) = ( W - QQ(:,1:sk-s) * tmp(1:sk-s,:) ) / R_diag;
     
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(double(QQ(:, 1:sk)), double(QQ(:, 1:sk)), musc) ) );

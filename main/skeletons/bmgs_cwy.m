@@ -1,5 +1,5 @@
-function [QQ, RR, TT] = bmgs_cwy(XX, s, musc, verbose)
-% [QQ, RR, TT] = BMGS_CWY(XX, s, musc, verbose) performs Block Modified
+function [QQ, RR, TT] = bmgs_cwy(XX, s, musc, param)
+% [QQ, RR, TT] = BMGS_CWY(XX, s, musc, param) performs Block Modified
 % Gram-Schmidt with Compact WY form on the m x n matrix XX with p = n/s
 % block partitions each of size s with inner orthogonalization procedure
 % determined by musc. BMGS_CWY is the block generalization of MGS_CWY.
@@ -13,7 +13,7 @@ function [QQ, RR, TT] = bmgs_cwy(XX, s, musc, verbose)
 %%
 % Default: debugging off
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
 end
 
 % Pre-allocate memory for QQ, RR, and TT
@@ -30,7 +30,7 @@ s2 = s+1:2*s;
 
 Q_tmp = XX(:,kk);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
 end
@@ -45,11 +45,11 @@ for k = 1:p-1
     % Compute temporary quantities-- only sync point!
     if k == 1
         tmp = InnerProd(Q_tmp, [Q_tmp W], musc);
-        R_diag = chol_nan(tmp(kk, s1));
+        R_diag = chol_switch(tmp(kk, s1), param);
 
     else
         tmp = InnerProd([QQ(:,1:sk-s) Q_tmp], [Q_tmp W], musc);
-        R_diag = chol_nan(tmp(kk, s1));
+        R_diag = chol_switch(tmp(kk, s1), param);
         TT(1:sk-s,kk) = -TT(1:sk-s,1:sk-s) * (tmp(1:sk-s,s1) / R_diag);
     end
     
@@ -63,7 +63,7 @@ for k = 1:p-1
     % Update block index
     kk = kk + s;
     
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
@@ -73,7 +73,7 @@ for k = 1:p-1
 end
 [QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(Q_tmp, musc);
 
-if verbose
+if param.verbose
     fprintf('%3.0d:', k+1);
     fprintf('  %2.4e  |', norm( eye(n) - InnerProd(QQ, QQ, musc) ) );
     fprintf('  %2.4e\n', norm( XX - QQ * RR ) / norm(XX) );

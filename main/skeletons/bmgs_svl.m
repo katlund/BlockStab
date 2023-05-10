@@ -1,5 +1,5 @@
-function [QQ, RR, TT] = bmgs_svl(XX, s, musc, verbose)
-% [QQ, RR, TT] = BMGS_SVL(XX, s, musc, verbose) performs Block Modified
+function [QQ, RR, TT] = bmgs_svl(XX, s, musc, param)
+% [QQ, RR, TT] = BMGS_SVL(XX, s, musc, param) performs Block Modified
 % Gram-Schmidt with the Schreiber-Van-Loan reformulation on the m x n
 % matrix XX with p = n/s block partitions each of size s with inner
 % orthogonalization procedure determined by musc.  When musc = 'HouseQR',
@@ -16,7 +16,7 @@ function [QQ, RR, TT] = bmgs_svl(XX, s, musc, verbose)
 %%
 % Default: debugging off
 if nargin < 4
-    verbose = 0;
+    param.verbose = 0;
 end
 
 % Pre-allocate memory for QQ, RR, and TT
@@ -33,7 +33,7 @@ sk = s;
 W = XX(:,kk);
 [QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(W, musc);
 
-if verbose
+if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
@@ -55,7 +55,7 @@ for k = 1:p-1
         InnerProd(QQ(:,1:sk), QQ(:,kk), musc) * TT(kk,kk);
     
     sk = sk + s;
-    if verbose
+    if param.verbose
         fprintf('%3.0d:', k+1);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );

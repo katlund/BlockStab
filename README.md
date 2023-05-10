@@ -29,13 +29,13 @@ The subroutine `mp_switch` manages which toolbox is called and at what precision
 Each skeleton and muscle can be run individually or via the drivers
 
 ```matlab
-BGS(XX, s, skel, musc, rpltol, verbose)
+BGS(XX, s, skel, musc, param)
 ```
 
 and
 
 ```matlab
-IntraOrtho(X, musc, rpltol, verbose)
+IntraOrtho(X, musc, param)
 ```
 
 for skeletons (`BGS`) and muscles (`IntraOrtho`), respectively.
@@ -44,19 +44,39 @@ The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block ve
 
 * `skel` - char specifying BGS skeleton
 * `musc` - char specifying intra-orthogonalization muscle
-* `rpltol` - replacement tolerance (only required for `cgs_sror` and `bgs_sror`)
-* `verbose` - `true` to print the loss of orthogonality (LOO) and relative residual (RelRes) to screen per step of the algorithm; `false` to mute
+* param: a struct with the following optional fields:
+  * .chol: char specifying what type of Cholesky subroutine to call for
+     skeletons that hard-code Cholesky via a block Pythagorean trick
+     (e.g., BCGS_PIP, BCGS_PIO, BCGS_IRO_LS, BMGS_CWY, BMGS_ICWY, and
+     their reorthogonalized and multi-precision versions)
+     default: 'chol_nan'
+  * .mp_package: char specifying either 'advanpix' or 'symbolic toolbox'
+     as the mixed precision package for routines with *_MP
+     default: 'advanpix'
+  * .mp_digits: int specifiying number of precision digits, e.g., 34 for
+     quadruple precision (in Advanpix) or 32 for quadruple precision in
+     Symbolic Toolbox
+     default: 34
+  * .rpltol: scalar argument for BCGS_SROR that determines the
+     replacement tolerance
+     default: 1
+  * .verbose: boolean for whether to print intermediate loss of
+     orthogonality (LOO) or relative residual (RelRes) per iteration
+     default: 0
 
 For a list of all currently implemented skeletons and muscles, see `BGS` and`IntraOrtho`. Try, for example:
 
 ```matlab
+rng(4);
 mgs(randn(100,10), true);
 ```
 
 or equivalently
 
 ```matlab
-IntraOrtho(randn(100,10), 'MGS', [], true);
+rng(4);
+param.verbose = true;
+IntraOrtho(randn(100,10), 'MGS', param);
 ```
 
 Example output:
@@ -64,28 +84,32 @@ Example output:
 ```matlab
          LOO      |    RelRes
 -----------------------------------
-  1:  2.2204e-16  |  3.7634e-17
-  2:  2.3515e-16  |  4.1141e-17
-  3:  2.3984e-16  |  9.1624e-17
-  4:  2.4010e-16  |  8.9259e-17
-  5:  2.2531e-16  |  1.1044e-16
-  6:  2.3365e-16  |  1.2696e-16
-  7:  2.7442e-16  |  1.3645e-16
-  8:  2.7454e-16  |  1.4435e-16
-  9:  2.6734e-16  |  1.5960e-16
- 10:  2.7682e-16  |  1.5283e-16
+  1:  0.0000e+00  |  4.2294e-17
+  2:  4.4452e-16  |  4.3673e-17
+  3:  4.4469e-16  |  8.0352e-17
+  4:  4.4519e-16  |  1.0026e-16
+  5:  4.4830e-16  |  1.0289e-16
+  6:  5.5750e-16  |  9.8092e-17
+  7:  5.5811e-16  |  1.1045e-16
+  8:  5.5868e-16  |  1.3219e-16
+  9:  5.6484e-16  |  1.3937e-16
+ 10:  5.6465e-16  |  1.5539e-16
  ```
 
 For block methods, try
 
 ```matlab
-bmgs(randn(100,20), 2, 'HouseQR', true);
+rng(4);
+param.verbose = true;
+bmgs(randn(100,20), 2, 'HouseQR', param);
 ```
 
 or equivalently
 
 ```matlab
-BGS(randn(100,20), 2, 'BMGS', 'HouseQR', [], true);
+rng(4);
+param.verbose = true;
+BGS(randn(100,20), 2, 'BMGS', 'HouseQR', param);
 ```
 
 Example output:
@@ -93,16 +117,16 @@ Example output:
 ```matlab
          LOO      |    RelRes
 -----------------------------------
-  1:  6.7663e-16  |  1.2409e-16
-  2:  5.8765e-16  |  1.5998e-16
-  3:  7.9980e-16  |  1.5196e-16
-  4:  8.0337e-16  |  1.9282e-16
-  5:  8.0743e-16  |  1.9774e-16
-  6:  8.1551e-16  |  2.4859e-16
-  7:  8.8906e-16  |  2.5308e-16
-  8:  8.7674e-16  |  2.6215e-16
-  9:  8.8764e-16  |  2.6683e-16
- 10:  9.0044e-16  |  2.5827e-16
+  1:  4.4414e-16  |  1.1274e-16
+  2:  4.7420e-16  |  1.8449e-16
+  3:  7.1500e-16  |  1.8485e-16
+  4:  7.3794e-16  |  1.8839e-16
+  5:  7.4766e-16  |  1.8543e-16
+  6:  7.4959e-16  |  1.9422e-16
+  7:  7.6506e-16  |  2.1185e-16
+  8:  7.8917e-16  |  2.1527e-16
+  9:  7.7993e-16  |  2.2404e-16
+ 10:  7.9600e-16  |  2.3448e-16
  ```
 
 ## Test Routines
