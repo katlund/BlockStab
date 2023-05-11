@@ -41,5 +41,5 @@ while loss_ortho > sqrt(s)*eps
         return
     end
 end
-fprintf('%s converged in %d iterations\n', mfilename, iter);
+fprintf('\t%s converged in %d iterations\n', mfilename, iter);
 end

@@ -30,14 +30,14 @@ elseif nargin == 2
     end
 end
 
+% Allocate space for R
 A = qp(A);
 s = size(A,1);
 R = qp(zeros(s,s));
 
 for j = 1:s
     for i = 1:j-1
-        rij = A(i,j) - R(1:i-1,i)' * R(1:i-1,j);
-        R(i,j) = rij / R(i,i);
+        R(i,j) = ( A(i,j) - R(1:i-1,i)' * R(1:i-1,j) ) / R(i,i);
     end
     R(j,j) = sqrt( A(j,j) - R(1:j-1,j)' * R(1:j-1,j) );
 end
