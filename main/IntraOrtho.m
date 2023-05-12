@@ -12,6 +12,9 @@ function [Q, R, T] = IntraOrtho(X, musc, param)
 %      (e.g., BCGS_PIP, BCGS_PIO, BCGS_IRO_LS, BMGS_CWY, BMGS_ICWY, and
 %      their reorthogonalized and multi-precision versions)
 %      default: 'chol_nan'
+%   - .global_scale: boolean specifying whether to scale by s when musc is
+%      GlobalQR
+%      default: true
 %   - .mp_package: char specifying either 'advanpix' or 'symbolic toolbox'
 %      as the mixed precision package for routines with *_MP
 %      default: 'advanpix'
@@ -128,17 +131,8 @@ switch lower(musc)
         [Q, R] = cholqr_pinv(X);
         
 % Global QR ---------------------------------------------------------------
-    case {'global'}
-        s = size(X,2);
-        R = norm(X,'fro')/sqrt(s);  % with s-scaling
-        Q = X/R;
-        R = R*eye(s);
-        
-    case {'global-no-scale'}
-        s = size(X,2);
-        R = norm(X,'fro');
-        Q = X/R;
-        R = R*eye(s);
+    case {'global', 'global-no-scale', 'globalqr'}
+        [Q, R] = globalqr(X, param);
         
     otherwise
         error('%s is not a viable muscle option', musc);

@@ -1,6 +1,9 @@
 % Unit tests
 install_blockstab;
 
+% Clear workspace
+clear all; %#ok<*CLALL> 
+
 %% See which toolboxes are installed
 toolboxes = matlab.addons.installedAddons().Name;
 if any(contains(toolboxes, 'Advanpix'))
@@ -43,6 +46,7 @@ param = [];
 param.mp_package = 'none';
 qpn = @(x) mp_switch(x, param);
 fprintf('MP_SWITCH, NONE: %d\n', 1+qpn(x) == 1);
+fprintf('\n');
 
 %% CHOL_SWITCH
 % Check that CHOL_NAN returns NAN where expected, CHOL_FREE not, and
@@ -99,23 +103,113 @@ if symmath
         norm(chol_free(-Y,param) - sqrt(-Y)) == 0);
 end
 
-%% INNERPROD
+fprintf('\n');
 
+%% Extract list of all muscles
+musc_list = {dir('main\muscles\').name};
+musc_list(1:2) = [];
+musc_list(end+1:end+2) = {'global.m', 'global-no-scale.m'};
 
-%% INTRAORTHO
-io_list = {dir('main\muscles\').name};
-io_list(1:2) = [];
-io_list(end+1:end+2) = {'global.m', 'global-no-scale.m'};
-
+%% INTRAORTHO & INNER PROD
 % Run through all options; ignore .m
-rng(4);
-X = rand(100,10);
+n = 10; s = 5;
+rng(4); X = rand(n,s);
+rng(5); Y = rand(n,s);
+
+% Standard double precision
+param = [];
 param.verbose = 1;
-for i = 1:length(io_list)
-    musc = io_list{i}(1:end-2);
-    disp(musc);
+for i = 1:length(musc_list)
+    musc = musc_list{i}(1:end-2);
+    XY = InnerProd(X, Y, musc);
+    switch musc
+        case 'global'
+            fprintf('INNERPROD, global: %d\n', ...
+                norm(trace(X'*Y)/s - XY(1,1)) == 0);
+        case 'global-no-scale'
+            fprintf('INNERPROD, global-no-scale: %d\n', ...
+                norm(trace(X'*Y) - XY(1,1)) == 0);
+        otherwise
+            fprintf('INNERPROD, %s: %d\n', ...
+                musc, norm(X'*Y - XY) == 0);
+    end
+    if i <= length(musc_list) - 2
+        if contains(musc,'qr')
+            fprintf('INTRAORTHO, %s\n', musc);
+        else
+            fprintf('INTRAORTHO, %s: Evaluate LOO and RelRes for irregularites.\n', musc);
+        end
+    end
     IntraOrtho(X, musc, param);
+    fprintf('\n');
+end
+
+% Quadruple precision
+param = [];
+param.verbose = 1;
+
+if advanpix
+    param = [];
+    param.verbose = 1;
+    param.mp_package = 'advanpix';
+    param.mp_digits = 34;
+    for i = 1:length(musc_list)
+        musc = musc_list{i}(1:end-2);
+        XY = InnerProd(X, Y, musc);
+        switch musc
+            case 'global'
+                fprintf('INNERPROD, global, advanpix: %d\n', ...
+                    norm(trace(X'*Y)/s - XY(1,1)) == 0);
+            case 'global-no-scale'
+                fprintf('INNERPROD, global-no-scale, advanpix: %d\n', ...
+                    norm(trace(X'*Y) - XY(1,1)) == 0);
+            otherwise
+                fprintf('INNERPROD, %s, advanpix: %d\n', ...
+                    musc, norm(X'*Y - XY) == 0);
+        end
+        if i <= length(musc_list) - 2
+            if contains(musc,'qr')
+                fprintf('INTRAORTHO, %s, advanpix\n', musc);
+            else
+                fprintf('INTRAORTHO, %s, advanpix: Evaluate LOO and RelRes for irregularites.\n', musc);
+            end
+        end
+        IntraOrtho(X, musc, param);
+        fprintf('\n');
+    end
+end
+
+if symmath
+    param = [];
+    param.verbose = 1;
+    param.mp_package = 'symbolic math';
+    param.mp_digits = 32;
+    for i = 1:length(musc_list)
+        musc = musc_list{i}(1:end-2);
+        XY = InnerProd(X, Y, musc);
+        switch musc
+            case 'global'
+                fprintf('INNERPROD, global, symbolic math: %d\n', ...
+                    norm(trace(X'*Y)/s - XY(1,1)) == 0);
+            case 'global-no-scale'
+                fprintf('INNERPROD, global-no-scale, symbolic math: %d\n', ...
+                    norm(trace(X'*Y) - XY(1,1)) == 0);
+            otherwise
+                fprintf('INNERPROD, %s, symbolic math: %d\n', ...
+                    musc, norm(X'*Y - XY) == 0);
+        end
+        if i <= length(musc_list) - 2
+            if contains(musc,'qr')
+                fprintf('INTRAORTHO, %s, symbolic math\n', musc);
+            else
+                fprintf('INTRAORTHO, %s, symbolic math: Evaluate LOO and RelRes for irregularites.\n', musc);
+            end
+        end
+        IntraOrtho(X, musc, param);
+        fprintf('\n');
+    end
 end
 
 %% BGS
-ls('main\skeletons\')
+skel_list = {dir('main\skeletons\').name};
+skel_list(1:2) = [];
