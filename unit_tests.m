@@ -1,11 +1,17 @@
-% Unit tests
+%% Unit tests
+
+%% Set-up
 install_blockstab;
 
-% Turn off warnings (mostly for singular matrices)
+% Turn off warnings
 warning('off')
 
 % Clear workspace
 clear all; %#ok<*CLALL>
+
+% Open .txt file for writing report
+report_name = 'unit_tests_report.txt';
+fID = fopen('unit_tests_report','w');
 
 %% See which toolboxes are installed
 toolboxes = matlab.addons.installedAddons().Name;
@@ -31,8 +37,7 @@ if advanpix
     param.mp_package = 'advanpix';
     param.mp_digits = 34;
     qpa = @(x) mp_switch(x, param);
-    
-    fprintf('MP_SWITCH, ADVANPIX: %d\n', double(1+qpa(x) > 1));
+    fprintf(fID, 'MP_SWITCH, ADVANPIX: %d\n', double(1+qpa(x) > 1));
 end
 
 % Symbolic Math Toolbox
@@ -41,15 +46,15 @@ if symmath
     param.mp_package = 'symbolic math';
     param.mp_digits = 32;
     qps = @(x) mp_switch(x, param);
-    fprintf('MP_SWITCH, SYMBOLIC MATH: %d\n', double(1+qps(x) > 1));
+    fprintf(fID, 'MP_SWITCH, SYMBOLIC MATH: %d\n', double(1+qps(x) > 1));
 end
 
 % None
 param = [];
 param.mp_package = 'none';
 qpn = @(x) mp_switch(x, param);
-fprintf('MP_SWITCH, NONE: %d\n', 1+qpn(x) == 1);
-fprintf('\n');
+fprintf(fID, 'MP_SWITCH, NONE: %d\n', 1+qpn(x) == 1);
+fprintf(fID, '\n');
 
 %% CHOL_SWITCH
 % Check that CHOL_NAN returns NAN where expected, CHOL_FREE not, and
@@ -57,30 +62,30 @@ fprintf('\n');
 X = 2*eye(2);
 
 % CHOL_NAN
-fprintf('CHOL_NAN(+) = SQRT: %d\n', norm(chol_nan(X) - sqrt(X)) == 0);
-fprintf('CHOL_NAN(-) = NAN: %d\n', prod(isnan(chol_nan(-X)),'all'));
+fprintf(fID, 'CHOL_NAN(+) = SQRT: %d\n', norm(chol_nan(X) - sqrt(X)) == 0);
+fprintf(fID, 'CHOL_NAN(-) = NAN: %d\n', prod(isnan(chol_nan(-X)),'all'));
 
 % CHOL_NAN w/ Advanpix
 if advanpix
     Y = qpa(X);
-    fprintf('CHOL_NAN(+) = SQRT, ADVANPIX: %d\n',...
+    fprintf(fID, 'CHOL_NAN(+) = SQRT, ADVANPIX: %d\n',...
         norm(chol_nan(Y) - sqrt(Y) == 0));
-    fprintf('CHOL_NAN(-) = NAN, ADVANPIX: %d\n',...
+    fprintf(fID, 'CHOL_NAN(-) = NAN, ADVANPIX: %d\n',...
         prod(isnan(chol_nan(-Y)),'all'));
 end
 
 % CHOL_NAN w/ Symbolic Math
 if symmath
     Y = qps(X);
-    fprintf('CHOL_NAN(+) = SQRT, SYMBOLIC MATH: %d\n',...
+    fprintf(fID, 'CHOL_NAN(+) = SQRT, SYMBOLIC MATH: %d\n',...
         norm(chol_nan(Y) - sqrt(Y)) == 0);
-    fprintf('CHOL_NAN(-) = NAN, SYMBOLIC MATH: %d\n',...
+    fprintf(fID, 'CHOL_NAN(-) = NAN, SYMBOLIC MATH: %d\n',...
         prod(isnan(chol_nan(-Y)),'all'));
 end
 
 % CHOL_FREE
-fprintf('CHOL_FREE(+) = SQRT: %d\n', norm(chol_free(X) - sqrt(X)) == 0);
-fprintf('CHOL_FREE(-) = SQRT: %d\n', norm(chol_free(-X) - sqrt(-X)) == 0);
+fprintf(fID, 'CHOL_FREE(+) = SQRT: %d\n', norm(chol_free(X) - sqrt(X)) == 0);
+fprintf(fID, 'CHOL_FREE(-) = SQRT: %d\n', norm(chol_free(-X) - sqrt(-X)) == 0);
 
 % CHOL_FREE w/ Advanpix
 if advanpix
@@ -88,9 +93,9 @@ if advanpix
     param = [];
     param.mp_package = 'advanpix';
     param.mp_digits = 34;
-    fprintf('CHOL_FREE(+) = SQRT, ADVANPIX: %d\n',...
+    fprintf(fID, 'CHOL_FREE(+) = SQRT, ADVANPIX: %d\n',...
         norm(chol_free(Y,param) - sqrt(Y)) == 0);
-    fprintf('CHOL_FREE(-) = SQRT, ADVANPIX: %d\n',...
+    fprintf(fID, 'CHOL_FREE(-) = SQRT, ADVANPIX: %d\n',...
         norm(chol_free(-Y,param) - sqrt(-Y)) == 0);
 end
 
@@ -100,13 +105,13 @@ if symmath
     param = [];
     param.mp_package = 'symbolic math';
     param.mp_digits = 32;
-    fprintf('CHOL_FREE(+) = SQRT, SYMBOLIC MATH: %d\n',...
+    fprintf(fID, 'CHOL_FREE(+) = SQRT, SYMBOLIC MATH: %d\n',...
         norm(chol_free(Y,param) - sqrt(Y)) == 0);
-    fprintf('CHOL_FREE(-) = SQRT, SYMBOLIC MATH: %d\n',...
+    fprintf(fID, 'CHOL_FREE(-) = SQRT, SYMBOLIC MATH: %d\n',...
         norm(chol_free(-Y,param) - sqrt(-Y)) == 0);
 end
 
-fprintf('\n');
+fprintf(fID, '\n');
 
 %% Extract list of all muscles
 musc_list = {dir('main\muscles\').name};
@@ -124,30 +129,36 @@ param = [];
 param.verbose = 1;
 for i = 1:length(musc_list)
     musc = musc_list{i}(1:end-2);
+
+    % InnerProd
     XY = InnerProd(X, Y, musc);
     switch musc
         case 'global'
-            fprintf('INNERPROD, GLOBAL: %d\n', ...
+            fprintf(fID, 'INNERPROD, GLOBAL: %d\n', ...
                 norm(trace(X'*Y)/s - XY(1,1)) == 0);
         case 'global-no-scale'
-            fprintf('INNERPROD, GLOBAL-NO-SCALE: %d\n', ...
+            fprintf(fID, 'INNERPROD, GLOBAL-NO-SCALE: %d\n', ...
                 norm(trace(X'*Y) - XY(1,1)) == 0);
         otherwise
-            fprintf('INNERPROD, %s: %d\n', ...
+            fprintf(fID, 'INNERPROD, %s: %d\n', ...
                 upper(musc), norm(X'*Y - XY) == 0);
     end
+
+    % IntraOrtho
     if i <= length(musc_list) - 2
-        if contains(musc,'qr')
-            fprintf('INTRAORTHO, %s\n', upper(musc));
-        else
-            fprintf('INTRAORTHO, %s: Evaluate LOO and RelRes for irregularites.\n', upper(musc));
+        fprintf(fID, 'INTRAORTHO, %s\n', upper(musc));
+        try
+            [Q, R, T] = IntraOrtho(X, musc, param);
+            fprintf(fID, 'PASS\n');
+        catch ME
+            fprintf(fID, 'FAIL: %s\n', ME.message);
         end
+        fprintf(fID, '\n');
     end
-    IntraOrtho(X, musc, param);
-    fprintf('\n');
 end
 
 % Mixed precision
+musc_list(end-1:end) = []; % remove global and global-no-scale
 param = [];
 param.verbose = 1;
 
@@ -158,15 +169,14 @@ if advanpix
     param.mp_digits = 34;
     for i = 1:length(musc_list)
         musc = musc_list{i}(1:end-2);
-        if i <= length(musc_list) - 2
-            if contains(musc,'qr')
-                fprintf('INTRAORTHO, %s, ADVANPIX\n', upper(musc));
-            else
-                fprintf('INTRAORTHO, %s, ADVANPIX: Evaluate LOO and RelRes for irregularites.\n', upper(musc));
-            end
+        fprintf(fID, 'INTRAORTHO, %s, ADVANPIX\n', upper(musc));
+        try
+            [Q, R, T] = IntraOrtho(X, musc, param);
+            fprintf(fID, 'PASS\n');
+        catch ME
+            fprintf(fID, 'FAIL: %s\n', ME.message);
         end
-        IntraOrtho(X, musc, param);
-        fprintf('\n');
+        fprintf(fID, '\n');
     end
 end
 
@@ -177,20 +187,18 @@ if symmath
     param.mp_digits = 32;
     for i = 1:length(musc_list)
         musc = musc_list{i}(1:end-2);
-        if i <= length(musc_list) - 2
-            if contains(musc,'qr')
-                fprintf('INTRAORTHO, %s, SYMBOLIC MATH\n', upper(musc));
-            else
-                fprintf('INTRAORTHO, %s, SYMBOLIC MATH: Evaluate LOO and RelRes for irregularites.\n', upper(musc));
-            end
+        fprintf(fID, 'INTRAORTHO, %s, SYMBOLIC MATH\n', upper(musc));
+        try
+            [Q, R, T] = IntraOrtho(X, musc, param);
+            fprintf(fID, 'PASS\n');
+        catch ME
+            fprintf(fID, 'FAIL: %s\n', ME.message);
         end
-        [Q, R, T] = IntraOrtho(X, musc, param);
-        fprintf('\n');
+        fprintf(fID, '\n');
     end
 end
 
 %% BGS
-musc_list(end-1:end) = []; % remove global and global-no-scale
 skel_list = {dir('main\skeletons\').name};
 skel_list(1:2) = [];
 
@@ -206,25 +214,25 @@ for j = 1:length(skel_list)
     if strcmp(skel, 'bcgs_sror')
         % Skip unnecessary re-runs
         musc = 'cgs_sror';
-        fprintf('BGS, %s-%s:.\n', upper(skel), upper(musc));
+        fprintf(fID, 'BGS, %s-%s:.\n', upper(skel), upper(musc));
         try
             [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
-            fprintf('PASS\n')
+            fprintf(fID, 'PASS\n');
         catch ME
-            fprintf('ERROR: %s\n', ME.message)
+            fprintf(fID, 'FAIL: %s\n', ME.message);
         end
-        fprintf('\n');
+        fprintf(fID, '\n');
     else
         for i = 1:length(musc_list)
             musc = musc_list{i}(1:end-2);
-            fprintf('BGS, %s-%s:\n', upper(skel), upper(musc));
+            fprintf(fID, 'BGS, %s-%s:\n', upper(skel), upper(musc));
             try
                 [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
-                fprintf('PASS\n')
+                fprintf(fID, 'PASS\n');
             catch ME
-                fprintf('ERROR: %s\n', ME.message)
+                fprintf(fID, 'FAIL: %s\n', ME.message);
             end
-            fprintf('\n');
+            fprintf(fID, '\n');
         end
     end
 end
@@ -241,24 +249,24 @@ if advanpix
         if strcmp(skel, 'bcgs_sror')
             % Skip unnecessary re-runs
             musc = 'cgs_sror';
-            fprintf('BGS, %s-%s, ADVANPIX:\n', upper(skel), upper(musc));
+            fprintf(fID, 'BGS, %s-%s, ADVANPIX:\n', upper(skel), upper(musc));
             try
                 [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
-                fprintf('PASS\n')
+                fprintf(fID, 'PASS\n');
             catch ME
-                fprintf('ERROR: %s\n', ME.message)
+                fprintf(fID, 'FAIL: %s\n', ME.message);
             end
         else
             for i = 1:length(musc_list)
                 musc = musc_list{i}(1:end-2);
-                fprintf('BGS, %s-%s, ADVANPIX:\n', upper(skel), upper(musc));
+                fprintf(fID, 'BGS, %s-%s, ADVANPIX:\n', upper(skel), upper(musc));
                 try
                     [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
-                    fprintf('PASS\n')
+                    fprintf(fID, 'PASS\n');
                 catch ME
-                    fprintf('ERROR: %s\n', ME.message)
+                    fprintf(fID, 'FAIL: %s\n', ME.message);
                 end
-                fprintf('\n');
+                fprintf(fID, '\n');
             end
         end
     end
@@ -272,26 +280,29 @@ if symmath
         if strcmp(skel, 'bcgs_sror')
             % Skip unnecessary re-runs
             musc = 'cgs_sror';
-            fprintf('BGS, %s-%s, SYMBOLIC MATH:\n', upper(skel), upper(musc));
+            fprintf(fID, 'BGS, %s-%s, SYMBOLIC MATH:\n', upper(skel), upper(musc));
             try
                 [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
-                fprintf('PASS\n')
+                fprintf(fID, 'PASS\n');
             catch ME
-                fprintf('ERROR: %s\n', ME.message)
+                fprintf(fID, 'FAIL: %s\n', ME.message);
             end
-            fprintf('\n');
+            fprintf(fID, '\n');
         else
             for i = 1:length(musc_list)
                 musc = musc_list{i}(1:end-2);
-                fprintf('BGS, %s-%s, SYMBOLIC MATH:\n', upper(skel), upper(musc));
+                fprintf(fID, 'BGS, %s-%s, SYMBOLIC MATH:\n', upper(skel), upper(musc));
                 try
                     [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
-                    fprintf('PASS\n')
+                    fprintf(fID, 'PASS\n');
                 catch ME
-                    fprintf('ERROR: %s\n', ME.message)
+                    fprintf(fID, 'FAIL: %s\n', ME.message);
                 end
-                fprintf('\n');
+                fprintf(fID, '\n');
             end
         end
     end
 end
+
+%% Close file
+fclose(fID);

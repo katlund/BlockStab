@@ -9,8 +9,8 @@ function [QQ, RR] = bcgs_pip_iro_mp(XX, s, musc, param)
 % user-specified precision) precision.  See MP_SWITCH for details on the
 % param struct.
 %
-% See BGS for more details about the parameters, and INTRAORTHO for musc
-% options.
+% See BGS and MP_SWITCH for more details about the parameters, and
+% INTRAORTHO for musc options.
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
@@ -18,15 +18,9 @@ function [QQ, RR] = bcgs_pip_iro_mp(XX, s, musc, param)
 %%
 % Defaults
 if nargin < 4
-    param.verbose = 0;
-    param.mp_package = 'advanpix';
-end
-if ~isfield(param, 'chol')
-    param.chol = 'chol_free';
-else
-    if isempty(param.chol)
-        param.chol = 'chol_free';
-    end
+    param = mp_param_init;
+elseif nargin == 4
+    param = mp_param_init(param);
 end
 
 % Set up quad-precision subroutine
@@ -78,7 +72,7 @@ for k = 2:p
     tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
 
     % Compute Cholesky in quad
-    R2 = chol_switch( tmp(kk,:) - tmp(1:sk-s,:)' * tmp(1:sk-s,:) );
+    R2 = chol_switch( tmp(kk,:) - tmp(1:sk-s,:)' * tmp(1:sk-s,:), param);
     
     % Compute next basis vector
     QQ(:,kk) = ( W - QQ(:,1:sk-s) * tmp(1:sk-s,:) ) / R2;
@@ -95,4 +89,6 @@ for k = 2:p
             norm( XX(:,1:sk) - double(QQ(:,1:sk)) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end
 end
+% Cast QQ back to double
+QQ = double(QQ);
 end
