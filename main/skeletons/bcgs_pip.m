@@ -57,7 +57,7 @@ for k = 2:p
     RR(1:sk,kk) = tmp(1:sk,:);
 
     % Compute next basis vector
-    QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR(1:sk,kk) ) / RR(kk,kk);
+    QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR(1:sk-s,kk) ) / RR(kk,kk);
     
     if param.verbose
         fprintf('%3.0d:', k);

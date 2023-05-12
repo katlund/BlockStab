@@ -26,7 +26,7 @@ end
 if ~isfield(param, 'chol')
     param.chol = 'chol_free';
 else
-    if isempty(param, 'chol')
+    if isempty(param.chol)
         param.chol = 'chol_free';
     end
 end

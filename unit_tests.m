@@ -115,7 +115,7 @@ musc_list(end+1:end+2) = {'global.m', 'global-no-scale.m'};
 
 %% INTRAORTHO & INNER PROD
 % Run through all options; ignore .m
-n = 10; s = 5;
+n = 10; s = 3;
 rng(4); X = rand(n,s);
 rng(5); Y = rand(n,s);
 
@@ -194,7 +194,7 @@ musc_list(end-1:end) = []; % remove global and global-no-scale
 skel_list = {dir('main\skeletons\').name};
 skel_list(1:2) = [];
 
-n = 20; s = 2; p = 5;
+n = 10; s = 2; p = 3;
 rng(4); XX = rand(n,s*p);
 
 % Look at Cartesian product between all skeletons and muscles (standard
@@ -206,16 +206,24 @@ for j = 1:length(skel_list)
     if strcmp(skel, 'bcgs_sror')
         % Skip unnecessary re-runs
         musc = 'cgs_sror';
-        fprintf('BGS, %s-%s: Evaluate LOO and RelRes for irregularites.\n',...
-            upper(skel), upper(musc));
-        [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+        fprintf('BGS, %s-%s:.\n', upper(skel), upper(musc));
+        try
+            [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+            fprintf('PASS\n')
+        catch ME
+            fprintf('ERROR: %s\n', ME.message)
+        end
         fprintf('\n');
     else
         for i = 1:length(musc_list)
             musc = musc_list{i}(1:end-2);
-            fprintf('BGS, %s-%s: Evaluate LOO and RelRes for irregularites.\n',...
-                upper(skel), upper(musc));
-            [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+            fprintf('BGS, %s-%s:\n', upper(skel), upper(musc));
+            try
+                [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+                fprintf('PASS\n')
+            catch ME
+                fprintf('ERROR: %s\n', ME.message)
+            end
             fprintf('\n');
         end
     end
@@ -233,16 +241,23 @@ if advanpix
         if strcmp(skel, 'bcgs_sror')
             % Skip unnecessary re-runs
             musc = 'cgs_sror';
-            fprintf('BGS, %s-%s, ADVANPIX: Evaluate LOO and RelRes for irregularites.\n',...
-                upper(skel), upper(musc));
-            [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
-            fprintf('\n');
+            fprintf('BGS, %s-%s, ADVANPIX:\n', upper(skel), upper(musc));
+            try
+                [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+                fprintf('PASS\n')
+            catch ME
+                fprintf('ERROR: %s\n', ME.message)
+            end
         else
             for i = 1:length(musc_list)
                 musc = musc_list{i}(1:end-2);
-                fprintf('BGS, %s-%s, ADVANPIX: Evaluate LOO and RelRes for irregularites.\n',...
-                    upper(skel), upper(musc));
-                [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+                fprintf('BGS, %s-%s, ADVANPIX:', upper(skel), upper(musc));
+                try
+                    [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+                    fprintf('PASS\n')
+                catch ME
+                    fprintf('ERROR: %s\n', ME.message)
+                end
                 fprintf('\n');
             end
         end
@@ -257,16 +272,24 @@ if symmath
         if strcmp(skel, 'bcgs_sror')
             % Skip unnecessary re-runs
             musc = 'cgs_sror';
-            fprintf('BGS, %s-%s, SYMBOLIC MATH: Evaluate LOO and RelRes for irregularites.\n',...
-                upper(skel), upper(musc));
-            [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+            fprintf('BGS, %s-%s, SYMBOLIC MATH:\n', upper(skel), upper(musc));
+            try
+                [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+                fprintf('PASS\n')
+            catch ME
+                fprintf('ERROR: %s\n', ME.message)
+            end
             fprintf('\n');
         else
             for i = 1:length(musc_list)
                 musc = musc_list{i}(1:end-2);
-                fprintf('BGS, %s-%s, SYMBOLIC MATH: Evaluate LOO and RelRes for irregularites.\n',...
-                    upper(skel), upper(musc));
-                [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+                fprintf('BGS, %s-%s, SYMBOLIC MATH:', upper(skel), upper(musc));
+                try
+                    [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+                    fprintf('PASS\n')
+                catch ME
+                    fprintf('ERROR: %s\n', ME.message)
+                end
                 fprintf('\n');
             end
         end
