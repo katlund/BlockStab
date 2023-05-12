@@ -8,9 +8,7 @@ if nargin == 0
     param.mp_digits = 34;
     param.verbose = 0;
 elseif nargin == 1
-    if ~isfield(param, 'chol')
-        param.chol = 'chol_free';
-    end
+    param.chol = 'chol_free';
     if ~isfield(param, 'mp_package')
         param.mp_package = 'advanpix';
     end

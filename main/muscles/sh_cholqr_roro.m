@@ -1,10 +1,10 @@
-function [Q, R] = sh_cholqr_roro(X)
-% [Q, R] = SH_CHOLQR_RORO(X, verbose) computes a shifted Cholesky QR
+function [Q, R] = sh_cholqr_roro(X, param)
+% [Q, R] = SH_CHOLQR_RORO(X, param) computes a shifted Cholesky QR
 % factorization with reorthonormalization of the m x s matrix X.  This
 % algorithm is equivalent to Algorithm 4.2 (shiftedCholeskyQR3) of [Fukaya,
 % et al. 2020].
 %
-% See INTRAORTHO for more details about the parameters.
+% See INTRAORTHO and CHOL_SWITCH for more details about the parameters.
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
@@ -15,18 +15,11 @@ function [Q, R] = sh_cholqr_roro(X)
 % Shifted CholQR (round 1)
 sh = 11 * (m*s + s*(s+1)) * eps * norm(X,2)^2;
 A = X' * X + sh * eye(s);
-[~, flag] = chol(A);
-if flag == 0
-    R1 = chol(A);
-    Q = X / R1;
-else
-    Q = NaN(m,s);
-    R = NaN(s);
-    return;
-end
+R1 = chol_switch(A, param);
+Q = X / R1;
 
 % Rounds 2 and 3
-[Q, R2] = IntraOrtho(Q, 'cholqr_ro');
+[Q, R2] = cholqr_ro(Q, param);
 
 % Combine
 R = R2 * R1;

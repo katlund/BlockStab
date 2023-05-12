@@ -39,7 +39,7 @@ kk = 1:s;
 sk = s;
 
 W = qp(XX(:,kk));
-[QQ(:,kk), R_diag] = IntraOrtho(W, musc);
+[QQ(:,kk), R_diag] = IntraOrtho(W, musc, param);
 RR(kk,kk) = double(R_diag);
 
 if param.verbose

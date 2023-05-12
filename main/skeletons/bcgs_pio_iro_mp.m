@@ -37,7 +37,7 @@ kk = 1:s;
 sk = s;
 
 W = qp(XX(:,kk));
-[QQ(:,kk), R1] = IntraOrtho(W, musc);
+[QQ(:,kk), R1] = IntraOrtho(W, musc, param);
 RR(kk,kk) = double(R1);
 
 if param.verbose
@@ -60,7 +60,7 @@ for k = 2:p
     
     %% First step
     RR1 = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR1], musc);
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR1], musc, param);
     tmp = tmp' * tmp;
 
     % Compute Cholesky in quad
@@ -71,7 +71,7 @@ for k = 2:p
     
     %% Second step
     RR2 = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR2], musc); 
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR2], musc, param); 
     tmp = tmp' * tmp;
 
     % Compute Cholesky in quad
@@ -82,7 +82,7 @@ for k = 2:p
     
     % Assign RR in double and combine both steps
     RR(kk,kk) = double(R2) * double(R1);
-    RR(1:sk-s,kk) = double(RR1) + double(RR2) * double(RR1);
+    RR(1:sk-s,kk) = double(RR1) + double(RR2) * double(R1);
     
     if param.verbose
         fprintf('%3.0d:', k);

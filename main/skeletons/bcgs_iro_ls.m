@@ -99,7 +99,7 @@ RR(1:n-s, kk) = RR(1:n-s, kk) + Y;
 QQ(:,kk) = (U - QQ(:,1:n-s) * Y) / R_diag;
 
 if param.verbose
-    fprintf('%3.0d:', k+1);
+    fprintf('%3.0d:', k);
     fprintf('  %2.4e  |', norm( eye(n) - InnerProd(QQ, QQ, musc) ) );
     fprintf('  %2.4e\n', norm( XX - QQ * RR ) / norm(XX) );
 end

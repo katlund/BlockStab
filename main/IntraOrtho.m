@@ -43,8 +43,6 @@ function [Q, R, T] = IntraOrtho(X, musc, param)
 % Defaults
 if nargin == 2
     param.chol = 'chol_nan';
-    param.mp_package = 'advanpix';
-    param.mp_digits = 34;
     param.rpltol = [];
     param.verbose = 0;
 end
@@ -125,7 +123,7 @@ switch lower(musc)
         [Q, R] = iter_cholqr(X);
         
     case {'sh_cholqr_roro'}
-        [Q, R] = sh_cholqr_roro(X);
+        [Q, R] = sh_cholqr_roro(X, param);
 
     case {'cholqr_pinv'}
         [Q, R] = cholqr_pinv(X);

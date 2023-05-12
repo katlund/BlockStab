@@ -37,7 +37,7 @@ kk = 1:s;
 sk = s;
 
 W = qp(XX(:,kk));
-[QQ(:,kk), R1] = IntraOrtho(W, musc);
+[QQ(:,kk), R1] = IntraOrtho(W, musc, param);
 RR(kk,kk) = double(R1);
 
 if param.verbose
@@ -79,7 +79,7 @@ for k = 2:p
     
     % Assign RR in double and combine both steps
     RR(kk,kk) = double(R2) * double(R1);
-    RR(1:sk-s,kk) = double(RR1) + double(tmp(1:sk-s,:)) * double(RR1);
+    RR(1:sk-s,kk) = double(RR1) + double(tmp(1:sk-s,:)) * double(R1);
     
     if param.verbose
         fprintf('%3.0d:', k);

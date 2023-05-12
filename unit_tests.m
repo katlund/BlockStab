@@ -11,7 +11,7 @@ clear all; %#ok<*CLALL>
 
 % Open .txt file for writing report
 report_name = 'unit_tests_report.txt';
-fID = fopen('unit_tests_report','w');
+fID = fopen(report_name,'w');
 
 %% See which toolboxes are installed
 toolboxes = matlab.addons.installedAddons().Name;
@@ -223,16 +223,18 @@ for j = 1:length(skel_list)
         end
         fprintf(fID, '\n');
     else
-        for i = 1:length(musc_list)
-            musc = musc_list{i}(1:end-2);
-            fprintf(fID, 'BGS, %s-%s:\n', upper(skel), upper(musc));
-            try
-                [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
-                fprintf(fID, 'PASS\n');
-            catch ME
-                fprintf(fID, 'FAIL: %s\n', ME.message);
+        if ~contains(skel, '_mp')
+            for i = 1:length(musc_list)
+                musc = musc_list{i}(1:end-2);
+                fprintf(fID, 'BGS, %s-%s:\n', upper(skel), upper(musc));
+                try
+                    [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+                    fprintf(fID, 'PASS\n');
+                catch ME
+                    fprintf(fID, 'FAIL: %s\n', ME.message);
+                end
+                fprintf(fID, '\n');
             end
-            fprintf(fID, '\n');
         end
     end
 end

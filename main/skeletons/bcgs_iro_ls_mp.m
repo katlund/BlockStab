@@ -103,7 +103,7 @@ end
 % RR.  Note that this requires just one more sync, no IntraOrtho needed.
 tmp = InnerProd([QQ(:,1:n-s) U], U, musc);
 Y = tmp(1:n-s,:);
-R_diag = chol_switch(tmp(end-s+1:end,:) - Y' * Y);
+R_diag = chol_switch(tmp(end-s+1:end,:) - Y' * Y, param);
 RR(kk, kk) = double(R_diag);
 RR(1:n-s, kk) = RR(1:n-s, kk) + double(Y);
 QQ(:,kk) = (U - QQ(:,1:n-s) * Y) / R_diag;
@@ -112,7 +112,7 @@ QQ(:,kk) = (U - QQ(:,1:n-s) * Y) / R_diag;
 QQ = double(QQ);
 
 if param.verbose
-    fprintf('%3.0d:', k+1);
+    fprintf('%3.0d:', k);
     fprintf('  %2.4e  |', norm( eye(n) - QQ' * QQ ) );
     fprintf('  %2.4e\n', norm( XX - QQ * RR ) / norm(XX) );
 end
