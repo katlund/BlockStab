@@ -21,7 +21,7 @@ if isnan(loss_ortho)
     fprintf('%s failed to converge\n', mfilename);
     return
 end
-while loss_ortho > sqrt(s)*eps
+while abs(loss_ortho - sqrt(s)*eps) > eps
     iter = iter + 1;
     A = Q' * Q;
     [R2, flag] = chol(A);
