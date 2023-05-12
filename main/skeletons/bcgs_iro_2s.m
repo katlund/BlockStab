@@ -47,7 +47,7 @@ for k = 2:p
     sk = sk + s;
 
     % k.1
-    S_col = InnerProd(QQ(:,1:sk), XX(:,kk), musc);
+    S_col = InnerProd(QQ(:,1:sk-s), XX(:,kk), musc);
     W = XX(:,kk) - QQ(:,1:sk-s) * S_col;
 
     % k.2

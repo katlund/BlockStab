@@ -19,11 +19,11 @@ function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, param)
 %      default: 'chol_nan'
 %   - .mp_package: char specifying either 'advanpix' or 'symbolic toolbox'
 %      as the mixed precision package for routines with *_MP
-%      default: 'advanpix'
+%      default: []
 %   - .mp_digits: int specifiying number of precision digits, e.g., 34 for
 %      quadruple precision (in Advanpix) or 32 for quadruple precision in
 %      Symbolic Toolbox
-%      default: 34
+%      default: []
 %   - .rpltol: scalar argument for BCGS_SROR that determines the
 %      replacement tolerance
 %      default: 1
@@ -46,9 +46,16 @@ function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, param)
 % Defaults
 if nargin == 4
     param.chol = 'chol_nan';
-    param.mp_package = 'advanpix';
-    param.mp_digits = 34;
     param.rpltol = [];
+    param.verbose = 0;
+end
+if ~isfield(param, 'chol')
+    param.chol = 'chol_nan';
+end
+if ~isfield(param, 'rpltol')
+    param.rpltol = [];
+end
+if ~isfield(param, 'verbose')
     param.verbose = 0;
 end
 
@@ -71,15 +78,9 @@ switch lower(skel)
 
 % [Stewart 2008] variant --------------------------------------------------
     case {'bcgs_sror'}
-        if nargin >= 5
-            tic;
-            [QQ, RR] = bcgs_sror(XX, s, param.rpltol, param.verbose);
-            TotTime = toc;
-        else
-            tic;
-            [QQ, RR] = bcgs_sror(XX, s, [], param.verbose);
-            TotTime = toc;
-        end
+        tic;
+        [QQ, RR] = bcgs_sror(XX, s, param.rpltol, param.verbose);
+        TotTime = toc;
 
 % [Swirydowicz et al. 2020]/[Bielich et al. 2022] variant -----------------
     case {'bcgs_iro_ls'}

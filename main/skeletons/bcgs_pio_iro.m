@@ -8,8 +8,6 @@ function [QQ, RR] = bcgs_pio_iro(XX, s, musc, param)
 % options.
 
 %%
-addpath(genpath('../'))
-
 % Default: debugging off
 if nargin < 4
     param.verbose = 0;
@@ -55,7 +53,7 @@ for k = 2:p
     
     % Second step
     RR(1:sk-s,kk) = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s-s, s) RR(1:sk,kk)], musc);
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR(1:sk-s,kk)], musc);
     tmp = tmp' * tmp;
     RR(kk,kk) = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param);
     QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR(1:sk-s,kk) ) / RR(kk,kk);

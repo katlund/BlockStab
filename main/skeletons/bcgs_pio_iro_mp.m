@@ -9,8 +9,8 @@ function [QQ, RR] = bcgs_pio_iro_mp(XX, s, musc, param)
 % user-specified precision) precision.  See MP_SWITCH for details on the
 % param struct.
 %
-% See BGS for more details about the parameters, and INTRAORTHO for musc
-% options.
+% See BGS and MP_SWITCH for more details about the parameters, and
+% INTRAORTHO for musc options.
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
@@ -18,15 +18,9 @@ function [QQ, RR] = bcgs_pio_iro_mp(XX, s, musc, param)
 %%
 % Defaults
 if nargin < 4
-    param.verbose = 0;
-    param.mp_package = 'advanpix';
-end
-if ~isfield(param, 'chol')
-    param.chol = 'chol_free';
-else
-    if isempty(param, 'chol')
-        param.chol = 'chol_free';
-    end
+    param = mp_param_init;
+elseif nargin == 4
+    param = mp_param_init(param);
 end
 
 % Set up quad-precision subroutine
@@ -43,7 +37,7 @@ kk = 1:s;
 sk = s;
 
 W = qp(XX(:,kk));
-[QQ(:,kk), R1] = IntraOrtho(W, musc);
+[QQ(:,kk), R1] = IntraOrtho(W, musc, param);
 RR(kk,kk) = double(R1);
 
 if param.verbose
@@ -66,29 +60,29 @@ for k = 2:p
     
     %% First step
     RR1 = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR1], musc);
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR1], musc, param);
     tmp = tmp' * tmp;
 
     % Compute Cholesky in quad
-    R1 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end));
+    R1 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param);
 
     % Compute intermediate basis vector
     W = ( W - QQ(:,1:sk-s) * RR1 ) / R1;
     
     %% Second step
     RR2 = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR2], musc); 
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR2], musc, param); 
     tmp = tmp' * tmp;
 
     % Compute Cholesky in quad
-    R2 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end));
+    R2 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param);
 
     % Compute next basis vector
-    QQ(:,kk) = ( W - QQ(:,1:sk-s) * tmp(1:sk-s,:) ) / R2;
+    QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR2 ) / R2;
     
     % Assign RR in double and combine both steps
     RR(kk,kk) = double(R2) * double(R1);
-    RR(1:sk-s,kk) = double(RR1) + double(RR2) * double(RR1);
+    RR(1:sk-s,kk) = double(RR1) + double(RR2) * double(R1);
     
     if param.verbose
         fprintf('%3.0d:', k);
@@ -98,4 +92,5 @@ for k = 2:p
             norm( XX(:,1:sk) - double(QQ(:,1:sk)) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end
 end
+QQ = double(QQ);
 end

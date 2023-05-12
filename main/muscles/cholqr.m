@@ -16,6 +16,9 @@ function [Q, R] = cholqr(X, param)
 if nargin == 1
     param.chol = 'chol_nan';
 end
+if ~isfield(param, 'chol')
+    param.chol = 'chol_nan';
+end
 
 A = X' * X;
 R = chol_switch(A, param);

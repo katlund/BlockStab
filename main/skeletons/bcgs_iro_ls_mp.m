@@ -12,7 +12,8 @@ function [QQ, RR] = bcgs_iro_ls_mp(XX, s, musc, param)
 % user-specified precision)  precision.  See MP_SWITCH for details on the
 % param struct.
 %
-% See BGS and MP_SWITCH for more details about the parameters.
+% See BGS and MP_SWITCH for more details about the parameters, and
+% INTRAORTHO for musc options.
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
@@ -20,15 +21,9 @@ function [QQ, RR] = bcgs_iro_ls_mp(XX, s, musc, param)
 %%
 % Defaults
 if nargin < 4
-    param.verbose = 0;
-    param.mp_package = 'advanpix';
-end
-if ~isfield(param, 'chol')
-    param.chol = 'chol_free';
-else
-    if isempty(param, 'chol')
-        param.chol = 'chol_free';
-    end
+    param = mp_param_init;
+elseif nargin == 4
+    param = mp_param_init(param);
 end
 
 % Set up quad-precision subroutine
@@ -108,7 +103,7 @@ end
 % RR.  Note that this requires just one more sync, no IntraOrtho needed.
 tmp = InnerProd([QQ(:,1:n-s) U], U, musc);
 Y = tmp(1:n-s,:);
-R_diag = chol_switch(tmp(end-s+1:end,:) - Y' * Y);
+R_diag = chol_switch(tmp(end-s+1:end,:) - Y' * Y, param);
 RR(kk, kk) = double(R_diag);
 RR(1:n-s, kk) = RR(1:n-s, kk) + double(Y);
 QQ(:,kk) = (U - QQ(:,1:n-s) * Y) / R_diag;
@@ -117,7 +112,7 @@ QQ(:,kk) = (U - QQ(:,1:n-s) * Y) / R_diag;
 QQ = double(QQ);
 
 if param.verbose
-    fprintf('%3.0d:', k+1);
+    fprintf('%3.0d:', k);
     fprintf('  %2.4e  |', norm( eye(n) - QQ' * QQ ) );
     fprintf('  %2.4e\n', norm( XX - QQ * RR ) / norm(XX) );
 end

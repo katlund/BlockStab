@@ -8,7 +8,7 @@ Follow the download options from the Git repository main page.  Then navigate to
 
 ## What is new in this version
 
-* [ ] [Mixed precision implementations](#mixed-precision)
+* [x] [Mixed precision implementations](#mixed-precision)
 * [ ] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties
 * [ ] A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
 * [ ] A unified, streamlined test engine that avoids superfluous runs for solvers that don't take muscles, simplifies syntax, and improves display of figure outputs
@@ -22,7 +22,7 @@ Mixed precision routines (i.e., those ending with `_mp`) require one of the addi
 * [Advanpix Multiprecision Computing Toolbox](https://www.advanpix.com/), which requires a paid license.  The `mp` subroutine is used.
 * [Symbolic Math Toolbox](https://www.mathworks.com/products/symbolic.html), which may also require a paid license.  The subroutine [`vpa`](https://mathworks.com/help/symbolic/vpa.html) is used.
 
-The subroutine `mp_switch` manages which toolbox is called and at what precision.
+The subroutine `mp_switch` manages which toolbox is called and at what precision via the `param` struct (see below).
 
 ## Gram-Schmidt Routines
 
@@ -44,23 +44,25 @@ The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block ve
 
 * `skel` - char specifying BGS skeleton
 * `musc` - char specifying intra-orthogonalization muscle
-* param: a struct with the following optional fields:
-  * .chol: char specifying what type of Cholesky subroutine to call for
+* `param`: a struct with the following optional fields:
+  * `.chol`: char specifying what type of Cholesky subroutine to call for
      skeletons that hard-code Cholesky via a block Pythagorean trick
-     (e.g., BCGS_PIP, BCGS_PIO, BCGS_IRO_LS, BMGS_CWY, BMGS_ICWY, and
+     (e.g., `bcgs_pip`, `bcgs_pio`, `bcgs_iro_ls`, `bmgs_cwy`, `bmgs_icwy`, and
      their reorthogonalized and multi-precision versions)
-     default: 'chol_nan'
-  * .mp_package: char specifying either 'advanpix' or 'symbolic toolbox'
-     as the mixed precision package for routines with *_MP
-     default: 'advanpix'
-  * .mp_digits: int specifiying number of precision digits, e.g., 34 for
+     default: `'chol_nan'`
+  * `.global_scale`: boolean specifying whether to scale by s when musc is GlobalQR
+     default: true
+  * `.mp_package`: char specifying either `'advanpix'` or `'symbolic toolbox'`
+     as the mixed precision package
+     default: `'advanpix'`
+  * `.mp_digits`: int specifiying number of precision digits, e.g., 34 for
      quadruple precision (in Advanpix) or 32 for quadruple precision in
-     Symbolic Toolbox
+     Symbolic Math Toolbox
      default: 34
-  * .rpltol: scalar argument for BCGS_SROR that determines the
+  * `.rpltol`: scalar argument for `cgs_sror` that determines the
      replacement tolerance
      default: 1
-  * .verbose: boolean for whether to print intermediate loss of
+  * `.verbose`: boolean for whether to print intermediate loss of
      orthogonality (LOO) or relative residual (RelRes) per iteration
      default: 0
 

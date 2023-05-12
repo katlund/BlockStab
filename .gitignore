@@ -5,6 +5,7 @@
 *.asv
 *.mat
 *.fig
+*.txt
 
 poop
 results

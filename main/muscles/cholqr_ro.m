@@ -19,6 +19,5 @@ end
 
 [Q1, R1] = cholqr(X, param);
 [Q, R] = cholqr(Q1, param);
-R = R*R1;
-
+R = R * R1;
 end
