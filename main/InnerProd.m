@@ -8,7 +8,7 @@ function XY = InnerProd(X, Y, musc)
 %%
 % Defaults
 if nargin == 2
-    musc = [];
+    musc = '';
 end
 
 % Switch

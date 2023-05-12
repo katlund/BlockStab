@@ -1,8 +1,11 @@
 % Unit tests
 install_blockstab;
 
+% Turn off warnings (mostly for singular matrices)
+warning('off')
+
 % Clear workspace
-clear all; %#ok<*CLALL> 
+clear all; %#ok<*CLALL>
 
 %% See which toolboxes are installed
 toolboxes = matlab.addons.installedAddons().Name;
@@ -124,27 +127,27 @@ for i = 1:length(musc_list)
     XY = InnerProd(X, Y, musc);
     switch musc
         case 'global'
-            fprintf('INNERPROD, global: %d\n', ...
+            fprintf('INNERPROD, GLOBAL: %d\n', ...
                 norm(trace(X'*Y)/s - XY(1,1)) == 0);
         case 'global-no-scale'
-            fprintf('INNERPROD, global-no-scale: %d\n', ...
+            fprintf('INNERPROD, GLOBAL-NO-SCALE: %d\n', ...
                 norm(trace(X'*Y) - XY(1,1)) == 0);
         otherwise
             fprintf('INNERPROD, %s: %d\n', ...
-                musc, norm(X'*Y - XY) == 0);
+                upper(musc), norm(X'*Y - XY) == 0);
     end
     if i <= length(musc_list) - 2
         if contains(musc,'qr')
-            fprintf('INTRAORTHO, %s\n', musc);
+            fprintf('INTRAORTHO, %s\n', upper(musc));
         else
-            fprintf('INTRAORTHO, %s: Evaluate LOO and RelRes for irregularites.\n', musc);
+            fprintf('INTRAORTHO, %s: Evaluate LOO and RelRes for irregularites.\n', upper(musc));
         end
     end
     IntraOrtho(X, musc, param);
     fprintf('\n');
 end
 
-% Quadruple precision
+% Mixed precision
 param = [];
 param.verbose = 1;
 
@@ -155,23 +158,11 @@ if advanpix
     param.mp_digits = 34;
     for i = 1:length(musc_list)
         musc = musc_list{i}(1:end-2);
-        XY = InnerProd(X, Y, musc);
-        switch musc
-            case 'global'
-                fprintf('INNERPROD, global, advanpix: %d\n', ...
-                    norm(trace(X'*Y)/s - XY(1,1)) == 0);
-            case 'global-no-scale'
-                fprintf('INNERPROD, global-no-scale, advanpix: %d\n', ...
-                    norm(trace(X'*Y) - XY(1,1)) == 0);
-            otherwise
-                fprintf('INNERPROD, %s, advanpix: %d\n', ...
-                    musc, norm(X'*Y - XY) == 0);
-        end
         if i <= length(musc_list) - 2
             if contains(musc,'qr')
-                fprintf('INTRAORTHO, %s, advanpix\n', musc);
+                fprintf('INTRAORTHO, %s, ADVANPIX\n', upper(musc));
             else
-                fprintf('INTRAORTHO, %s, advanpix: Evaluate LOO and RelRes for irregularites.\n', musc);
+                fprintf('INTRAORTHO, %s, ADVANPIX: Evaluate LOO and RelRes for irregularites.\n', upper(musc));
             end
         end
         IntraOrtho(X, musc, param);
@@ -186,30 +177,98 @@ if symmath
     param.mp_digits = 32;
     for i = 1:length(musc_list)
         musc = musc_list{i}(1:end-2);
-        XY = InnerProd(X, Y, musc);
-        switch musc
-            case 'global'
-                fprintf('INNERPROD, global, symbolic math: %d\n', ...
-                    norm(trace(X'*Y)/s - XY(1,1)) == 0);
-            case 'global-no-scale'
-                fprintf('INNERPROD, global-no-scale, symbolic math: %d\n', ...
-                    norm(trace(X'*Y) - XY(1,1)) == 0);
-            otherwise
-                fprintf('INNERPROD, %s, symbolic math: %d\n', ...
-                    musc, norm(X'*Y - XY) == 0);
-        end
         if i <= length(musc_list) - 2
             if contains(musc,'qr')
-                fprintf('INTRAORTHO, %s, symbolic math\n', musc);
+                fprintf('INTRAORTHO, %s, SYMBOLIC MATH\n', upper(musc));
             else
-                fprintf('INTRAORTHO, %s, symbolic math: Evaluate LOO and RelRes for irregularites.\n', musc);
+                fprintf('INTRAORTHO, %s, SYMBOLIC MATH: Evaluate LOO and RelRes for irregularites.\n', upper(musc));
             end
         end
-        IntraOrtho(X, musc, param);
+        [Q, R, T] = IntraOrtho(X, musc, param);
         fprintf('\n');
     end
 end
 
 %% BGS
+musc_list(end-1:end) = []; % remove global and global-no-scale
 skel_list = {dir('main\skeletons\').name};
 skel_list(1:2) = [];
+
+n = 20; s = 2; p = 5;
+rng(4); XX = rand(n,s*p);
+
+% Look at Cartesian product between all skeletons and muscles (standard
+% double precision)
+param = [];
+param.verbose = 1;
+for j = 1:length(skel_list)
+    skel = skel_list{j}(1:end-2);
+    if strcmp(skel, 'bcgs_sror')
+        % Skip unnecessary re-runs
+        musc = 'cgs_sror';
+        fprintf('BGS, %s-%s: Evaluate LOO and RelRes for irregularites.\n',...
+            upper(skel), upper(musc));
+        [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+        fprintf('\n');
+    else
+        for i = 1:length(musc_list)
+            musc = musc_list{i}(1:end-2);
+            fprintf('BGS, %s-%s: Evaluate LOO and RelRes for irregularites.\n',...
+                upper(skel), upper(musc));
+            [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+            fprintf('\n');
+        end
+    end
+end
+
+% Look at Cartesian product between all skeletons and muscles (mixed
+% precision)
+param = [];
+param.verbose = 1;
+if advanpix
+    param.mp_package = 'advanpix';
+    param.mp_digits = 34;
+    for j = 1:length(skel_list)
+        skel = skel_list{j}(1:end-2);
+        if strcmp(skel, 'bcgs_sror')
+            % Skip unnecessary re-runs
+            musc = 'cgs_sror';
+            fprintf('BGS, %s-%s, ADVANPIX: Evaluate LOO and RelRes for irregularites.\n',...
+                upper(skel), upper(musc));
+            [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+            fprintf('\n');
+        else
+            for i = 1:length(musc_list)
+                musc = musc_list{i}(1:end-2);
+                fprintf('BGS, %s-%s, ADVANPIX: Evaluate LOO and RelRes for irregularites.\n',...
+                    upper(skel), upper(musc));
+                [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+                fprintf('\n');
+            end
+        end
+    end
+end
+
+if symmath
+    param.mp_package = 'symbolic math';
+    param.mp_digits = 32;
+    for j = 1:length(skel_list)
+        skel = skel_list{j}(1:end-2);
+        if strcmp(skel, 'bcgs_sror')
+            % Skip unnecessary re-runs
+            musc = 'cgs_sror';
+            fprintf('BGS, %s-%s, SYMBOLIC MATH: Evaluate LOO and RelRes for irregularites.\n',...
+                upper(skel), upper(musc));
+            [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+            fprintf('\n');
+        else
+            for i = 1:length(musc_list)
+                musc = musc_list{i}(1:end-2);
+                fprintf('BGS, %s-%s, SYMBOLIC MATH: Evaluate LOO and RelRes for irregularites.\n',...
+                    upper(skel), upper(musc));
+                [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
+                fprintf('\n');
+            end
+        end
+    end
+end

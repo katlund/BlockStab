@@ -11,7 +11,8 @@ function [R, nan_flag] = chol_switch(A, param)
 % - .mp_package: 'advanpix', 'symbolic math', or 'none'
 % - .mp_digits: the desired number of digits, according to the chosen
 %   package specifications.  The default for 'advanpix' is 34 (quad) and
-%   for 'symbolic math' is 32 (quad). 
+%   for 'symbolic math' is 32 (quad).
+% When these fields are left undefined, standard double precision is used.
 %
 % Note: both CHOL and CHOL_NAN are overloaded to operate in the precision
 % of the provided argument, i.e., if A is already stored in quadruple
