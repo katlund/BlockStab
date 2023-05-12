@@ -14,8 +14,6 @@ function [QQ, RR] = bcgs_sror(XX, s, rpltol, verbose)
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-addpath(genpath('../'))
-
 % Default: debugging off
 if nargin < 4
     verbose = 0;

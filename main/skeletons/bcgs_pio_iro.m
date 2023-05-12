@@ -8,8 +8,6 @@ function [QQ, RR] = bcgs_pio_iro(XX, s, musc, param)
 % options.
 
 %%
-addpath(genpath('../'))
-
 % Default: debugging off
 if nargin < 4
     param.verbose = 0;

@@ -251,7 +251,7 @@ if advanpix
         else
             for i = 1:length(musc_list)
                 musc = musc_list{i}(1:end-2);
-                fprintf('BGS, %s-%s, ADVANPIX:', upper(skel), upper(musc));
+                fprintf('BGS, %s-%s, ADVANPIX:\n', upper(skel), upper(musc));
                 try
                     [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
                     fprintf('PASS\n')
@@ -283,7 +283,7 @@ if symmath
         else
             for i = 1:length(musc_list)
                 musc = musc_list{i}(1:end-2);
-                fprintf('BGS, %s-%s, SYMBOLIC MATH:', upper(skel), upper(musc));
+                fprintf('BGS, %s-%s, SYMBOLIC MATH:\n', upper(skel), upper(musc));
                 try
                     [QQ, RR, TT] = BGS(XX, s, skel, musc, param);
                     fprintf('PASS\n')
