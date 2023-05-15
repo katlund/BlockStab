@@ -9,8 +9,8 @@ Follow the download options from the Git repository main page.  Then navigate to
 ## What is new in this version
 
 * [x] [Mixed precision implementations](#mixed-precision)
-* [ ] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties
-* [ ] A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
+* [x] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties
+* [x] A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
 * [ ] A unified, streamlined test engine that avoids superfluous runs for solvers that don't take muscles, simplifies syntax, and improves display of figure outputs
 
 To reproduce results from [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017), please use release [v1.2022](https://github.com/katlund/BlockStab/releases/tag/v1.2022).
