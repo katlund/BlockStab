@@ -9,8 +9,8 @@ Follow the download options from the Git repository main page.  Then navigate to
 ## What is new in this version
 
 * [x] [Mixed precision implementations](#mixed-precision)
-* [ ] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties
-* [ ] A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
+* [x] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties
+* [x] A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
 * [ ] A unified, streamlined test engine that avoids superfluous runs for solvers that don't take muscles, simplifies syntax, and improves display of figure outputs
 
 To reproduce results from [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017), please use release [v1.2022](https://github.com/katlund/BlockStab/releases/tag/v1.2022).
@@ -119,7 +119,7 @@ Example output:
 
 ## Test Routines
 
-There are several test files.  `MakeHeatmap` generates heatmaps comparing loss of orthogonality and residual across many skeleton-muscle combinations for the same test matrix.  `KappaPlot` and similar test files plot loss of orthogonality and residual trends against matrices with a range of condition numbers. As the Greek letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these plots as "kappa plots."  See the header for each for full descriptions of their functionalities.  To explore some interesting examples, try the following, and note that `[]` (empty) arguments call default options, which can be quite handy:
+There are several test files.  `MakeHeatmap` generates heatmaps comparing loss of orthogonality and residual across many skeleton-muscle combinations for the same test matrix.  `RunKappaPlot` and plots loss of orthogonality and residual trends against matrices with a range of condition numbers. As the Greek letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these plots as "kappa plots."  See the header for each for full descriptions of their functionalities.  To explore some interesting examples, try the following, and note that `[]` (empty) arguments call default options, which can be quite handy:
 
 * `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1)`
 * `KappaPlot([100 10], [], {'MGS', 'MGS_SVL', 'MGS_LTS', 'MGS_CWY', 'MGS_ICWY'})`
@@ -136,11 +136,8 @@ Each file contains a descriptive header.  See especially the following core file
 * `BGS.m` - switches between skeletons
 * `IntraOrtho.m` - switches between muscles
 * `InnerProd.m` - switches between inner products
-* `MatGen.m` - generates matrices used for tests
-* `CreateGluedMatrix.m` - generates glued matrices
 * `MakeHeatmap.m` - generates heatmaps for skeleton-muscle combinations; verbose = `true` prints tables to screen
-* `KappaPlot.m` - generates kappa plots for muscles
-* `BlockKappaPlot.m` - generates kappa plots for skeleton-muscle combinations
+* `RunKappaPlot.m` - generates kappa plots for muscles and skeleton-muscle combinations
 
 ## How we cite things
 
