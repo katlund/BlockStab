@@ -15,13 +15,6 @@ function [Q, R, T] = IntraOrtho(X, musc, param)
 %   - .global_scale: boolean specifying whether to scale by s when musc is
 %      GlobalQR
 %      default: true
-%   - .mp_package: char specifying either 'advanpix' or 'symbolic toolbox'
-%      as the mixed precision package for routines with *_MP
-%      default: 'advanpix'
-%   - .mp_digits: int specifiying number of precision digits, e.g., 34 for
-%      quadruple precision (in Advanpix) or 32 for quadruple precision in
-%      Symbolic Toolbox
-%      default: 34
 %   - .rpltol: scalar argument for CGS_SROR that determines the
 %      replacement tolerance
 %      default: 1
