@@ -1,4 +1,4 @@
-function tex_report(run_data, options)
+function tex_report(run_options, alg_list)
 %
 
 

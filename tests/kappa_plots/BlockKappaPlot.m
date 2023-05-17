@@ -144,7 +144,7 @@ plot(ax{1}, x, eps*x, 'k--', x, eps*(x.^2), 'k-')
 % Make plots pretty and save figures
 folder_str = sprintf('results/%s_m%d_p%d_s%d', fstr, m, p, s);
 mkdir(folder_str)
-PrettyKappaPlot(fg, ax, lgd_str, folder_str);
+pretty_kappa_plot(fg, ax, lgd_str, folder_str);
 
 % Save data
 savestr = sprintf('%s/out', folder_str);

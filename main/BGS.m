@@ -11,6 +11,7 @@ function [QQ, RR, TT, run_time] = BGS(XX, s, skel, musc, param)
 %   routine
 % - musc: char array specifying intra-orthogonalization (within block)
 %   routine; see INTRAORTHO for all possible options
+%   default: 'houseqr'
 % - param: a struct with the following optional fields:
 %   - .chol: char specifying what type of Cholesky subroutine to call for
 %      skeletons that hard-code Cholesky via a block Pythagorean trick
@@ -49,15 +50,26 @@ if nargin == 4
     param.chol = 'chol_nan';
     param.rpltol = [];
     param.verbose = 0;
+elseif nargin == 5
+    if isempty(param)
+        param.chol = 'chol_nan';
+        param.rpltol = [];
+        param.verbose = 0;
+    else
+        if ~isfield(param, 'chol')
+            param.chol = 'chol_nan';
+        end
+        if ~isfield(param, 'rpltol')
+            param.rpltol = [];
+        end
+        if ~isfield(param, 'verbose')
+            param.verbose = 0;
+        end
+    end
 end
-if ~isfield(param, 'chol')
-    param.chol = 'chol_nan';
-end
-if ~isfield(param, 'rpltol')
-    param.rpltol = [];
-end
-if ~isfield(param, 'verbose')
-    param.verbose = 0;
+
+if isempty(musc)
+    musc = 'houseqr';
 end
 
 switch lower(skel)

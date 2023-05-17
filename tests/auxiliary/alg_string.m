@@ -1,15 +1,15 @@
-function alg_str = AlgString(alg)
-% ALGSTRING(musc) converts the algorithm identifier given by alg into a
+function alg_str = alg_string(alg)
+% ALG_STRING(musc) converts the algorithm identifier given by alg into a
 % more legible string for plots
 
 %%
 if ischar(alg)
     alg = {alg};
 end
-nalg = length(alg);
+n_alg = length(alg);
 
 alg_str = lower(alg);
-for i = 1:nalg
+for i = 1:n_alg
     str = alg_str{i};
     if ~contains(str, 'qr')
         str = strrep(str, '_free', '');

@@ -1,14 +1,14 @@
-function alg_list = RunKappaPlot(options, alg_config)
-% alg_lsit = RUNKAPPAPLOT(options, alg_config) is a test manager for all
+function alg_list = RunKappaPlot(options, config_file)
+% alg_list = RUNKAPPAPLOT(options, config_file) is a test manager for all
 % KappaPlot tests.
 %
 % INPUTS:
 % - options struct with the following fields:
-%   - .matrix_type: 'default', 'glued', 'laeuchli', and 'monomial'
+%   - .mat_type: 'default', 'glued', 'laeuchli', and 'monomial'
 %      default: 'default'
 %   - .scale: vector determining how condition numbers of specified
-%      matrix_type vary
-%      default: built-in for each matrix_type
+%      mat_type vary
+%      default: built-in for each mat_type
 %   - .num_rows: (m) scalar denoting the number of rows in each trial
 %      matrix
 %      default: 100
@@ -25,7 +25,7 @@ function alg_list = RunKappaPlot(options, alg_config)
 %   - .tex_report: boolean for whether to generate a TeX report
 %      default: false
 %
-% - alg_config: string specifying a .json file encoding algorithm
+% - config_file: string specifying a .json file encoding algorithm
 %   configurations; tips to keep in mind:
 %   - all fields must be lowercase
 %   - the top-level field specifies either a muscle or a skeleton
@@ -59,69 +59,215 @@ function alg_list = RunKappaPlot(options, alg_config)
 % Defaults
 options = options_init(options);
 
-% Build algorithm configurations
-alg_list = jsondecode(fileread(alg_config));
+% Extract dimensions
+m = options.num_rows;
+p = options.num_partitions;
+s = options.block_size;
+n = p*s;
+I = eye(n);
 
-% Kappa plots
-switch lower(options.matrix_type)
+%% Build algorithm configurations
+alg_list = alg_config(config_file);
+
+%% Set up matrices
+n_mat = length(options.scale);
+X = cell(n_mat,1);
+switch lower(options.mat_type)
 
     case 'default'
-
+        rng(1); U = orth(randn(m,n));
+        rng(2); V = orth(randn(n,n));
+        for i = 1:n_mat
+            Sigma = diag(logspace(0, options.scale(i), n)');
+            X{i} = U * Sigma * V';
+        end
         
     case 'glued'
-        
+        % Fix glued dimensions
+        factors = factor(n);
+        mid_ind = round(length(n)/2);
+        r = prod(factors(1:mid_ind));
+        t = prod(factors(mid_ind+1:end));
+        for i = 1:n_mat
+            % Create glued matrix; if s matches glued block size, results
+            % are skewed
+            X{i} = create_glued_matrix(m, r, t,...
+                .5 * options.scale(i), options.scale(i));
+        end
         
     case 'laeuchli'
-        
+        for i = 1:n_mat
+            X{i} = laeuchli(m, n, options.scale(i));
+        end
         
     case 'monomial'
+        A = spdiags(linspace(.1,1,m)',0,m,m);
+        for i = 1:n_mat
+            mat_s = options.scale(i); mat_p = n/mat_s;
+            rng(4); Y = rand(m,mat_p*mat_s);
+            pp = 1:mat_p;
+            Y(:,pp) = Y(:,pp) / norm(Y(:,pp));
+            for k = 2:mat_s
+                pp = pp + mat_p;
+                Y(:,pp) = A * Y(:,pp - mat_p);
+            end
+            
+            % Reshape
+            Z = zeros(m,n);
+            ind = 1:mat_s:n;
+            kk = 1:mat_p;
+            for k = 1:mat_s
+                Z(:,ind) = Y(:,kk);
+                ind = ind + 1;
+                kk = kk + mat_p;
+            end
+            X{i} = Z;
+        end
+end
+
+%% Loop through alg_list and compute loo, rel_res, rel_chol_res
+n_alg = length(alg_list.skel);
+loss_ortho = zeros(n_mat, n_alg);
+rel_res = zeros(n_mat, n_alg);
+rel_chol_res = zeros(n_mat, n_alg);
+condX = zeros(n_mat, 1);
+normX = zeros(n_mat, 1);
+
+for i = 1:n_mat
+    % Compute cond(XX)
+    condX(i) = cond(X{i});
+    
+    % Compute norm(XX)
+    normX(i) = norm(X{i}, 2);
+
+    for j = 1:n_alg
+        if isempty(alg_list.skel{j})
+            % Call IntraOrtho muscle
+            [Q, R] = IntraOrtho(X{i},...
+                alg_list.musc{j}, alg_list.param{j});
+            
+        else
+            % Call BGS skeleton-muscle configuration
+            [Q, R] = BGS(X{i}, options.block_size, alg_list.skel{j},...
+                alg_list.musc{j}, alg_list.param{j});
+        end
+    
+        % Compute loss of orthonormality
+        loss_ortho(i,j) = norm(I - Q' * Q, 2);
+    
+        % Compute relative residual
+        rel_res(i,j) = norm(X{i} - Q * R, 2) / normX(j);
         
+        % Compute relative residual for Cholesky relation
+        rel_chol_res(i,j) = norm(X{i}' * X{i} - R' * R, 2) / normX(j)^2;
         
+        % Clear computed variables before next run
+        clear Q R
+    end
 end
 
 %% Save data
-folder_str = sprintf('results/%s_m%d_p%d_s%d', fstr, m, p, s);
-mkdir(folder_str)
-savestr = sprintf('%s/out', folder_str);
-save(savestr, 'x', 'loss_ortho','res');
+dir_str = sprintf('results/%s_m%d_p%d_s%d', options.mat_type, m, p, s);
+mkdir(dir_str)
+save_str = sprintf('%s/run_data', dir_str);
+save(save_str, loss_ortho, rel_res, rel_chol_res, condX, normX);
 
 %% Generate plots
-skel_cmap = lines(nskel);
-musc_lbl = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
-
-x = XXcond;
-lgd_str = {};
+alg_cmap = lines(n_alg);
+symb = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
+n_symb = length(symb);
+lgd_str = cell(1,n_mat);
+plot_str = {'loss_ortho', 'rel_res', 'rel_chol_res'};
 
 % Initialize figures and axes
 fg = cell(1,3); ax = cell(1,3);
-for i = 1:3
-    fg{i} = figure;
-    ax{i} = gca;
+for k = 1:3
+    fg{k} = figure;
+    ax{k} = gca;
     hold on;
 end
 
 % Plot data
-for j = 1:nskel
-    for k = 1:nmusc
-        plot(ax{1}, x, loss_ortho(:,j,k),...
-            musc_lbl{k}, 'Color', skel_cmap(j,:),'MarkerSize',10,'LineWidth',1);
-        plot(ax{2}, x, res(:,j,k),... 
-            musc_lbl{k}, 'Color', skel_cmap(j,:),'MarkerSize',10,'LineWidth',1);
-        plot(ax{3}, x, res_chol(:,j,k),...
-            musc_lbl{k}, 'Color', skel_cmap(j,:),'MarkerSize',10,'LineWidth',1);
-        lgd_str{end+1} = sprintf('%s $\\circ$ %s', skel_str{j}, musc_str{k});
-    end
+for j = 1:n_alg
+    k = mod(j,n_symb) + 1;
+    plot(ax{1}, condX, loss_ortho(:,j),...
+        symb{k}, 'Color', alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
+    plot(ax{2}, condX, rel_res(:,j),... 
+        symb{k}, 'Color', alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
+    plot(ax{3}, condX, rel_chol_res(:,j),...
+        symb{k}, 'Color', alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
+
+    % Build Legend
+    lgd_str{j} = alg_string(...
+        sprintf('%s $\\circ$ %s', alg_list.skel{j}, alg_list.musc{j}) );
 end
-plot(ax{1}, x, eps*x, 'k--', x, eps*(x.^2), 'k-')
+plot(ax{1}, condX, eps*condX, 'k--', condX, eps*(condX.^2), 'k-')
 
-% Make plots pretty and save figures
-pretty_kappa_plot(fg, ax, lgd_str, folder_str);
+% Make plots pretty and save them
+for k = 1:3
+    % Aesthetics
+    set(ax{k}, 'Yscale', 'log', 'Xscale', 'log',...
+        'XGrid', 'on', 'YGrid', 'on',...
+        'XMinorGrid', 'off', 'YMinorGrid', 'off',...
+        'FontSize', 14);
+    
+    % X-axis label
+    xlabel(ax{k}, '$\kappa(\mathcal{X})$', ...
+        'Interpreter', 'Latex', ...
+        'FontSize', 16)
+    
+    % Legends and titles
+    if k == 1
+        lgd_str_loo = lgd_str;
+        lgd_str_loo{end+1} = '$O(\varepsilon) \kappa(\mathcal{X})$'; %#ok<*AGROW> 
+        lgd_str_loo{end+1} = '$O(\varepsilon) \kappa^2(\mathcal{X})$';
+        legend(ax{k}, lgd_str_loo, 'Location', 'NorthWest', ...
+            'Interpreter', 'Latex', ...
+            'FontSize', 10, ...
+            'EdgeColor','none', ...
+            'Color','none');
+        title(ax{k}, ...
+            ['Loss of Orthogonality: ' ...
+            '$\Vert I - \bar\mathcal{Q}^T \bar\mathcal{Q}\Vert$'], ...
+            'Interpreter', 'Latex', ...
+            'FontSize', 16);
+    else
+        legend(ax{k}, lgd_str, 'Location', 'NorthWest', ...
+            'Interpreter', 'Latex', ...
+            'FontSize', 10, ...
+            'EdgeColor', 'none', ...
+            'Color', 'none');
+        if k == 2
+            title(ax{k}, ...
+                ['Relative Residual: ' ...
+                '$\Vert \mathcal{X} - ' ...
+                '\bar\mathcal{Q}\bar\mathcal{R}\Vert/\Vert X\Vert$'], ...
+                'Interpreter', 'Latex', ...
+                'FontSize', 16);
+        elseif k == 3
+            title(ax{k}, ...
+                ['Relative Cholesky Residual: ' ...
+                '$\Vert \mathcal{X}^T \mathcal{X} - ' ...
+                '\bar\mathcal{R}^T \bar\mathcal{R}\Vert/ ' ...
+                '\Vert \mathcal{X}\Vert^2$'], ...
+                'Interpreter', 'Latex', ...
+                'FontSize', 16);
+        end
+    end
 
-% Save plots
-if options.save_eps
+    % Save figures
+    save_str = sprintf('%s/%s', dir_str, plot_str{k});
+    if save_eps
+        saveas(fg{k}, save_str, 'epsc');
+    end
 
+    if save_fig
+        savefig(fg{k}, save_str, 'compact');
+    end
 
-% Generate report
+end
 
-
+%% Generate TeX report
+if options.tex_report
+    tex_report(options, alg_list);
 end
