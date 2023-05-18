@@ -24,16 +24,6 @@
     "mgs": []
   },
   "bcgs_iro_ls": {
-    "param": [
-      {
-        "chol": "chol_nan"
-      },
-      {
-        "chol": "chol_free"
-      }
-    ]
-  },
-  "bcgs_pip": {
     "mgs_cwy": [],
     "param": [
       {
@@ -46,10 +36,6 @@
   },
   "bcgs_pip_mp": {
     "param": [
-      {
-        "chol": "chol_nan",
-        "mp_package": "symbolic math"
-      },
       {
         "chol": "chol_free",
         "mp_package": "symbolic math"

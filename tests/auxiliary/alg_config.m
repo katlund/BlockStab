@@ -69,92 +69,132 @@ for i = 1:n_alg_opts
                 param_opts = alg_struct.(alg_opts{i}).param;
                 n_param_opts = length(param_opts);
             else
-                n_param_opts = 1;
+                n_param_opts = 0;
             end
 
-            % Cycle through all possible combinations
-            for j = 1:n_param_opts
-                % Prescribe muscles
-                switch alg_opts{i}
-                    case 'bcgs_sror'
-                        % Prescribe skeleton
-                        skel{end+1} = alg_opts{i};
-    
-                        % Prescribe parameters
-                        if n_param_opts == 1
-                            param{end+1} = [];
-                        else
+            if n_param_opts > 0
+                % Cycle through all possible combinations
+                for j = 1:n_param_opts
+                    % Prescribe muscles
+                    switch alg_opts{i}
+                        case 'bcgs_sror'
+                            % Prescribe skeleton
+                            skel{end+1} = alg_opts{i};
+        
+                            % Prescribe parameters
                             param{end+1} = param_opts(j);
-                        end
-                        
-                        % Muscle is fixed as cgs_sror
-                        musc{end+1} = 'cgs_sror';
-                        
-                    case {'bcgs_iro_ls', 'bcgs_iro_ls_mp'}
-                        % Prescribe skeleton
-                        skel{end+1} = alg_opts{i};
-    
-                        % Prescribe parameters
-                        if n_param_opts == 1
-                            param{end+1} = [];
-                        else
+                            
+                            % Muscle is fixed as cgs_sror
+                            musc{end+1} = 'cgs_sror';
+                            
+                        case {'bcgs_iro_ls', 'bcgs_iro_ls_mp'}
+                            % Prescribe skeleton
+                            skel{end+1} = alg_opts{i};
+        
+                            % Prescribe parameters
                             param{end+1} = param_opts(j);
-                        end
-
-                        % All muscles ignored
-                        musc{end+1} = [];
-                        
-                    otherwise
-                        n_musc_opts = length(musc_opts);
-                        if n_musc_opts > 0
-                            for k = 1:n_musc_opts
-                                if isempty(alg_struct.(alg_opts{i}).(musc_opts{k}))
-                                    % No muscle-level parameters
-                                    skel{end+1} = alg_opts{i};
-                                    musc{end+1} = musc_opts{k};
-                
-                                    % Prescribe skeleton-level parameters
-                                    if n_param_opts == 1
-                                        param{end+1} = [];
-                                    else
-                                        param{end+1} = param_opts(j);
-                                    end
-                                else
-                                    % Extract muscle-level parameters
-                                    musc_param_opts = ...
-                                        alg_struct.(alg_opts{i}).(musc_opts{k}).param;
-                                    n_musc_param_opts = length(musc_param_opts);
-                        
-                                    for ll = 1:n_musc_param_opts
-                                        % Prescribe skeleton & muscle
+    
+                            % All muscles ignored
+                            musc{end+1} = [];
+                            
+                        otherwise
+                            n_musc_opts = length(musc_opts);
+                            if n_musc_opts > 0
+                                for k = 1:n_musc_opts
+                                    if isempty(alg_struct.(alg_opts{i}).(musc_opts{k}))
+                                        % No muscle-level parameters
                                         skel{end+1} = alg_opts{i};
                                         musc{end+1} = musc_opts{k};
                     
-                                        % Prescribe appended parameters
-                                        if n_param_opts == 1
-                                            param{end+1} =...
-                                                musc_param_opts(ll);
-                                        else
+                                        % Prescribe skeleton-level parameters
+                                        param{end+1} = param_opts(j);
+                                    else
+                                        % Extract muscle-level parameters
+                                        musc_param_opts = ...
+                                            alg_struct.(alg_opts{i}).(musc_opts{k}).param;
+                                        n_musc_param_opts = length(musc_param_opts);
+                            
+                                        for ll = 1:n_musc_param_opts
+                                            % Prescribe skeleton & muscle
+                                            skel{end+1} = alg_opts{i};
+                                            musc{end+1} = musc_opts{k};
+                        
+                                            % Prescribe appended parameters
                                             param{end+1} = catstruct(...
                                                 param_opts(j),...
                                                 musc_param_opts(ll));
                                         end
                                     end
                                 end
-                            end
-                        else
-                            % Prescribe skeleton and default muscle
-                            skel{end+1} = alg_opts{i};
-                            musc{end+1} = [];
-        
-                            % Prescribe skeleton-level parameters
-                            if n_param_opts == 1
-                                param{end+1} = [];
                             else
+                                % Prescribe skeleton and default muscle
+                                skel{end+1} = alg_opts{i};
+                                musc{end+1} = [];
+            
+                                % Prescribe skeleton-level parameters
                                 param{end+1} = param_opts(j);
                             end
-                        end
+                    end
                 end
+            else
+                % Assign default skeleton parameters
+                    switch alg_opts{i}
+                        case 'bcgs_sror'
+                            % Prescribe skeleton
+                            skel{end+1} = alg_opts{i};
+        
+                            % Prescribe parameters
+                            param{end+1} = [];
+                            
+                            % Muscle is fixed as cgs_sror
+                            musc{end+1} = 'cgs_sror';
+                            
+                        case {'bcgs_iro_ls', 'bcgs_iro_ls_mp'}
+                            % Prescribe skeleton
+                            skel{end+1} = alg_opts{i};
+        
+                            % Prescribe parameters
+                            param{end+1} = [];
+    
+                            % All muscles ignored
+                            musc{end+1} = [];
+                            
+                        otherwise
+                            n_musc_opts = length(musc_opts);
+                            if n_musc_opts > 0
+                                for k = 1:n_musc_opts
+                                    if isempty(alg_struct.(alg_opts{i}).(musc_opts{k}))
+                                        % No muscle-level parameters
+                                        skel{end+1} = alg_opts{i};
+                                        musc{end+1} = musc_opts{k};
+                    
+                                        % Prescribe skeleton-level parameters
+                                        param{end+1} = [];
+                                    else
+                                        % Extract muscle-level parameters
+                                        musc_param_opts = ...
+                                            alg_struct.(alg_opts{i}).(musc_opts{k}).param;
+                                        n_musc_param_opts = length(musc_param_opts);
+                            
+                                        for ll = 1:n_musc_param_opts
+                                            % Prescribe skeleton & muscle
+                                            skel{end+1} = alg_opts{i};
+                                            musc{end+1} = musc_opts{k};
+                        
+                                            % Prescribe appended parameters
+                                            param{end+1} = musc_param_opts(ll);
+                                        end
+                                    end
+                                end
+                            else
+                                % Prescribe skeleton and default muscle
+                                skel{end+1} = alg_opts{i};
+                                musc{end+1} = [];
+            
+                                % Prescribe skeleton-level parameters
+                                param{end+1} = [];
+                            end
+                    end
             end
         end
     else

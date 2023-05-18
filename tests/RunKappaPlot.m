@@ -77,6 +77,9 @@ I = eye(n);
 %% Build algorithm configurations
 [skel, musc, param] = alg_config(config_file);
 
+% Build legend
+lgd = alg_string(skel, musc, param);
+
 %% Set up matrices
 n_mat = length(options.scale);
 XX = cell(n_mat,1);
@@ -142,6 +145,9 @@ condXX = zeros(n_mat, 1);
 normXX = zeros(n_mat, 1);
 
 for i = 1:n_mat
+    % Display matrix ID
+    fprintf('Matrix #%d\n', i);
+
     % Compute cond(XX)
     condXX(i) = cond(XX{i});
     
@@ -149,6 +155,9 @@ for i = 1:n_mat
     normXX(i) = norm(XX{i}, 2);
 
     for j = 1:n_alg
+        % Display algorithm ID
+        disp(lgd{j});
+
         if isempty(skel{j})
             % Call IntraOrtho muscle
             [QQ, RR] = IntraOrtho(XX{i}, musc{j}, param{j});
@@ -170,6 +179,7 @@ for i = 1:n_mat
         % Clear computed variables before next run
         clear QQ RR
     end
+    fprintf('\n')
 end
 
 %% Save data
@@ -183,9 +193,6 @@ alg_cmap = lines(n_alg);
 symb = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
 n_symb = length(symb);
 plot_str = {'loss_ortho', 'rel_res', 'rel_chol_res'};
-
-%% Build legend
-lgd_str = alg_string(skel, musc, param);
 
 % Initialize figures and axes
 fg = cell(1,3); ax = cell(1,3);
@@ -223,7 +230,7 @@ for k = 1:3
     
     % Legends and titles
     if k == 1
-        lgd_str_loo = lgd_str;
+        lgd_str_loo = lgd;
         lgd_str_loo{end+1} = '$O(\varepsilon) \kappa(\mathcal{X})$'; %#ok<*AGROW> 
         lgd_str_loo{end+1} = '$O(\varepsilon) \kappa^2(\mathcal{X})$';
         legend(ax{k}, lgd_str_loo, 'Location', 'NorthWest', ...
@@ -237,7 +244,7 @@ for k = 1:3
             'Interpreter', 'Latex', ...
             'FontSize', 16);
     else
-        legend(ax{k}, lgd_str, 'Location', 'NorthWest', ...
+        legend(ax{k}, lgd, 'Location', 'NorthWest', ...
             'Interpreter', 'Latex', ...
             'FontSize', 10, ...
             'EdgeColor', 'none', ...

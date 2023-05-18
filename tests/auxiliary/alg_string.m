@@ -33,7 +33,7 @@ for i = 1:n_alg
         if isempty(musc{i})
             switch skel{i}
                 case {'bcgs_iro_ls', 'bcgs_iro_ls_mp', 'bcgs_sror'}
-                    str{i} = sprintf('(%d) %s$', ...
+                    str{i} = sprintf('(%d) %s', ...
                         i, basic_strrep(skel{i}));
 
                 otherwise
