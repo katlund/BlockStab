@@ -23,16 +23,24 @@ skel_config = [];
 musc_config = [];
 param_config = [];
 for i = 1:n_fn1
-    % Extract next level
-    fn2 = fieldnames(alg_struct.(fn1{i}));
-
-    % Set up muscle
+    % Set up muscle as main solver
     if any(strcmp(musc_list, [fn1{i} '.m']))
-        
-        % Identify all parameter options
-        
+        if isempty(alg_struct.(fn1{i}))
+            % Then set defaults for this muscle
+            skel_config{end+1} = [];
+            musc_config{end+1} = fn1{i};
+            param_config{end+1} = [];
 
-    % Set up skeleton-muscle
+        else
+            % Extract parameter arrays
+            fn2 = fieldnames(alg_struct.(fn1{i}));
+            for k = 1:length(fn2)
+                skel_config{end+1} = [];
+                musc_config{end+1} = fn1{i};
+                param_config{end+1} = alg_struct.(fn1{i}).(fn2{k});
+            end
+
+    % Set up skeleton-muscle as main solver
     elseif any(strcmp(skel_list, [fn1{i} '.m']))
 
         switch fn1{i}

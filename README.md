@@ -46,7 +46,6 @@ The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block ve
 * `musc` - char specifying intra-orthogonalization muscle
 * `param`: a struct with the following optional fields:
   * `.chol`: char specifying what type of Cholesky subroutine to call for skeletons that hard-code Cholesky via a block Pythagorean trick (e.g., `bcgs_pip`, `bcgs_pio`, `bcgs_iro_ls`, `bmgs_cwy`, `bmgs_icwy`, and their reorthogonalized and multi-precision versions); default for non-MP versions is `'chol_nan'`, and `'chol_free'` for MP
-  * `.global_scale`: boolean specifying whether to scale by `s` when `musc` is `globalqr`; default: 1
   * `.mp_package`: char specifying either `'advanpix'` or `'symbolic toolbox'` as the mixed precision package; default: `'advanpix'`
   * `.mp_digits`: int specifiying number of precision digits, e.g., 34 for quadruple precision (in Advanpix) or 32 for quadruple precision in Symbolic Math Toolbox; default: 34
   * `.rpltol`: scalar argument for `cgs_sror` that determines the replacement tolerance; default: 1

@@ -133,6 +133,9 @@ switch lower(musc)
 
     case {'cholqr_pinv'}
         [Q, R] = cholqr_pinv(X);
+
+    case {'global', 'globalqr'}
+        [Q, R] = globalqr(X);
         
     otherwise
         error('%s is not a viable muscle option', musc);
