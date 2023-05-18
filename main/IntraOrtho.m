@@ -12,9 +12,6 @@ function [Q, R, T] = IntraOrtho(X, musc, param)
 %      (e.g., BCGS_PIP, BCGS_PIO, BCGS_IRO_LS, BMGS_CWY, BMGS_ICWY, and
 %      their reorthogonalized and multi-precision versions)
 %      default: 'chol_nan'
-%   - .global_scale: boolean specifying whether to scale by s when musc is
-%      GlobalQR
-%      default: true
 %   - .rpltol: scalar argument for CGS_SROR that determines the
 %      replacement tolerance
 %      default: 1
@@ -136,10 +133,6 @@ switch lower(musc)
 
     case {'cholqr_pinv'}
         [Q, R] = cholqr_pinv(X);
-        
-% Global QR ---------------------------------------------------------------
-    case {'global', 'global-no-scale', 'globalqr'}
-        [Q, R] = globalqr(X, param);
         
     otherwise
         error('%s is not a viable muscle option', musc);

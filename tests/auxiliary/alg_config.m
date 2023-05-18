@@ -3,8 +3,7 @@ function alg_list = alg_config(config_file)
 
 %%
 % Param list; any other provided parameters are ignored
-param_list = {'chol', 'global_scale', 'mp_package', ...
-    'mp_digits', 'rpltol', 'verbose'};
+param_list = {'chol', 'mp_package', 'mp_digits', 'rpltol'};
 
 % Convert .json to struct
 alg_struct = jsondecode(fileread(config_file));
@@ -24,14 +23,17 @@ skel_config = [];
 musc_config = [];
 param_config = [];
 for i = 1:n_fn1
+    % Extract next level
+    fn2 = fieldnames(alg_struct.(fn1{i}));
+
     % Set up muscle
     if any(strcmp(musc_list, [fn1{i} '.m']))
-
+        
+        % Identify all parameter options
+        
 
     % Set up skeleton-muscle
     elseif any(strcmp(skel_list, [fn1{i} '.m']))
-        % Extract parameters and muscles for this specific skeleton
-        fn2 = fieldnames(alg_struct.(fn1{i}));
 
         switch fn1{i}
             case 'bcgs_sror'
@@ -42,7 +44,7 @@ for i = 1:n_fn1
 
             case {'bcgs_iro_ls', 'bcgs_iro_ls_mp'}
                 % Muscle is fixed
-                
+
 
             otherwise
                 % Split into muscles and parameters, which apply for all
