@@ -1,6 +1,9 @@
 function [skel, musc, param] = alg_config(config_file)
 % [skel, musc, param] = ALG_CONFIG(config_file) configures cells skel,
 % musc, and param for RUNKAPPAPLOT.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 % Default for debugging

@@ -2,6 +2,9 @@ function str = alg_string(skel, musc, param)
 % str = ALG_STRING(skel, musc, param) converts the algorithm identifiers
 % given by the cells skel, musc, and param into unique, legible strings for
 % plots and reports.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 % Assume all inputs have same length are formatted as cell arrays

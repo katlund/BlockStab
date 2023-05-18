@@ -77,9 +77,6 @@ I = eye(n);
 %% Build algorithm configurations
 [skel, musc, param] = alg_config(config_file);
 
-% Build legend
-lgd = alg_string(skel, musc, param);
-
 %% Set up matrices
 n_mat = length(options.scale);
 XX = cell(n_mat,1);
@@ -155,16 +152,35 @@ for i = 1:n_mat
     normXX(i) = norm(XX{i}, 2);
 
     for j = 1:n_alg
-        % Display algorithm ID
-        disp(lgd{j});
-
         if isempty(skel{j})
             % Call IntraOrtho muscle
             [QQ, RR] = IntraOrtho(XX{i}, musc{j}, param{j});
+
+            % Display algorithm configuration
+            fprintf('{%d} musc: %s\n', j, musc{j});
+            if ~isempty(param{j})
+                disp(param{j})
+            else
+                fprintf('\n')
+            end
             
         else
             % Call BGS skeleton-muscle configuration
             [QQ, RR] = BGS(XX{i}, s, skel{j}, musc{j}, param{j});
+
+            % Display algorithm configuration
+            fprintf('{%d} skel: %s, ', j, skel{j})
+            if ~isempty(musc{j})
+                fprintf('musc: default\n');
+            else
+                fprintf('musc: %s\n', musc{j});
+            end
+                
+            if ~isempty(param{j})
+                disp(param{j})
+            else
+                fprintf('\n')
+            end
         end
     
         % Compute loss of orthonormality
@@ -193,6 +209,9 @@ alg_cmap = lines(n_alg);
 symb = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
 n_symb = length(symb);
 plot_str = {'loss_ortho', 'rel_res', 'rel_chol_res'};
+
+% Build legend
+lgd = alg_string(skel, musc, param);
 
 % Initialize figures and axes
 fg = cell(1,3); ax = cell(1,3);
@@ -230,10 +249,10 @@ for k = 1:3
     
     % Legends and titles
     if k == 1
-        lgd_str_loo = lgd;
-        lgd_str_loo{end+1} = '$O(\varepsilon) \kappa(\mathcal{X})$'; %#ok<*AGROW> 
-        lgd_str_loo{end+1} = '$O(\varepsilon) \kappa^2(\mathcal{X})$';
-        legend(ax{k}, lgd_str_loo, 'Location', 'NorthWest', ...
+        lgd_loo = lgd;
+        lgd_loo{end+1} = '$O(\varepsilon) \kappa(\mathcal{X})$'; %#ok<*AGROW> 
+        lgd_loo{end+1} = '$O(\varepsilon) \kappa^2(\mathcal{X})$';
+        legend(ax{k}, lgd_loo, 'Location', 'NorthWest', ...
             'Interpreter', 'Latex', ...
             'FontSize', 10, ...
             'EdgeColor','none', ...
@@ -280,6 +299,7 @@ for k = 1:3
 end
 
 %% Generate TeX report
-if options.tex_report
-    tex_report(options, alg_list);
+if options.tex_report && options.save_eps
+    tex_report(options, dir_str, skel, musc, param);
+end
 end

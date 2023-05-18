@@ -1,4 +1,4 @@
-function tex_report(run_options, alg_list)
+function tex_report(run_options, dir_str, skel, musc, param)
 %
 
 
@@ -8,6 +8,10 @@ function tex_report(run_options, alg_list)
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
+% Set-up
+plot_str = {'loss_ortho', 'rel_res', 'rel_chol_res'};
+
+
 % Open new file
 save_str = sprintf('%s/figures.tex', run_data.save_str);
 fID = fopen(save_str,'w');
