@@ -18,6 +18,9 @@ function [QQ, RR, TT, run_time] = BGS(XX, s, skel, musc, param)
 %      (e.g., BCGS_PIP, BCGS_PIO, BCGS_IRO_LS, BMGS_CWY, BMGS_ICWY, and
 %      their reorthogonalized and multi-precision versions)
 %      default: 'chol_nan'
+%   - .global_scale: boolean specifying whether to scale by s when musc is
+%      GlobalQR
+%      default: true
 %   - .mp_package: char specifying either 'advanpix' or 'symbolic toolbox'
 %      as the mixed precision package for routines with *_MP
 %      default: []
