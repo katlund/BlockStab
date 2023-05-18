@@ -67,11 +67,11 @@ n = p*s;
 I = eye(n);
 
 %% Build algorithm configurations
-alg_list = alg_config(config_file);
+[skel, musc, param] = alg_config(config_file);
 
 %% Set up matrices
 n_mat = length(options.scale);
-X = cell(n_mat,1);
+XX = cell(n_mat,1);
 switch lower(options.mat_type)
 
     case 'default'
@@ -79,7 +79,7 @@ switch lower(options.mat_type)
         rng(2); V = orth(randn(n,n));
         for i = 1:n_mat
             Sigma = diag(logspace(0, options.scale(i), n)');
-            X{i} = U * Sigma * V';
+            XX{i} = U * Sigma * V';
         end
         
     case 'glued'
@@ -91,13 +91,13 @@ switch lower(options.mat_type)
         for i = 1:n_mat
             % Create glued matrix; if s matches glued block size, results
             % are skewed
-            X{i} = create_glued_matrix(m, r, t,...
+            XX{i} = create_glued_matrix(m, r, t,...
                 .5 * options.scale(i), options.scale(i));
         end
         
     case 'laeuchli'
         for i = 1:n_mat
-            X{i} = laeuchli(m, n, options.scale(i));
+            XX{i} = laeuchli(m, n, options.scale(i));
         end
         
     case 'monomial'
@@ -121,48 +121,46 @@ switch lower(options.mat_type)
                 ind = ind + 1;
                 kk = kk + mat_p;
             end
-            X{i} = Z;
+            XX{i} = Z;
         end
 end
 
 %% Loop through alg_list and compute loo, rel_res, rel_chol_res
-n_alg = length(alg_list.skel);
+n_alg = length(skel);
 loss_ortho = zeros(n_mat, n_alg);
 rel_res = zeros(n_mat, n_alg);
 rel_chol_res = zeros(n_mat, n_alg);
-condX = zeros(n_mat, 1);
-normX = zeros(n_mat, 1);
+condXX = zeros(n_mat, 1);
+normXX = zeros(n_mat, 1);
 
 for i = 1:n_mat
     % Compute cond(XX)
-    condX(i) = cond(X{i});
+    condXX(i) = cond(XX{i});
     
     % Compute norm(XX)
-    normX(i) = norm(X{i}, 2);
+    normXX(i) = norm(XX{i}, 2);
 
     for j = 1:n_alg
-        if isempty(alg_list.skel{j})
+        if isempty(skel{j})
             % Call IntraOrtho muscle
-            [Q, R] = IntraOrtho(X{i},...
-                alg_list.musc{j}, alg_list.param{j});
+            [QQ, RR] = IntraOrtho(XX{i}, musc{j}, param{j});
             
         else
             % Call BGS skeleton-muscle configuration
-            [Q, R] = BGS(X{i}, options.block_size, alg_list.skel{j},...
-                alg_list.musc{j}, alg_list.param{j});
+            [QQ, RR] = BGS(XX{i}, s, skel{j}, musc{j}, param{j});
         end
     
         % Compute loss of orthonormality
-        loss_ortho(i,j) = norm(I - Q' * Q, 2);
+        loss_ortho(i,j) = norm(I - QQ' * QQ, 2);
     
         % Compute relative residual
-        rel_res(i,j) = norm(X{i} - Q * R, 2) / normX(j);
+        rel_res(i,j) = norm(XX{i} - QQ * RR, 2) / normXX(j);
         
         % Compute relative residual for Cholesky relation
-        rel_chol_res(i,j) = norm(X{i}' * X{i} - R' * R, 2) / normX(j)^2;
+        rel_chol_res(i,j) = norm(XX{i}' * XX{i} - RR' * RR, 2) / normXX(j)^2;
         
         % Clear computed variables before next run
-        clear Q R
+        clear QQ RR
     end
 end
 
@@ -170,7 +168,7 @@ end
 dir_str = sprintf('results/%s_m%d_p%d_s%d', options.mat_type, m, p, s);
 mkdir(dir_str)
 save_str = sprintf('%s/run_data', dir_str);
-save(save_str, loss_ortho, rel_res, rel_chol_res, condX, normX);
+save(save_str, loss_ortho, rel_res, rel_chol_res, condXX, normXX);
 
 %% Generate plots
 alg_cmap = lines(n_alg);
@@ -190,18 +188,18 @@ end
 % Plot data
 for j = 1:n_alg
     k = mod(j,n_symb) + 1;
-    plot(ax{1}, condX, loss_ortho(:,j),...
+    plot(ax{1}, condXX, loss_ortho(:,j),...
         symb{k}, 'Color', alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
-    plot(ax{2}, condX, rel_res(:,j),... 
+    plot(ax{2}, condXX, rel_res(:,j),... 
         symb{k}, 'Color', alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
-    plot(ax{3}, condX, rel_chol_res(:,j),...
+    plot(ax{3}, condXX, rel_chol_res(:,j),...
         symb{k}, 'Color', alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
 
     % Build Legend
     lgd_str{j} = alg_string(...
-        sprintf('%s $\\circ$ %s', alg_list.skel{j}, alg_list.musc{j}) );
+        sprintf('%s $\\circ$ %s', skel{j}, musc{j}) );
 end
-plot(ax{1}, condX, eps*condX, 'k--', condX, eps*(condX.^2), 'k-')
+plot(ax{1}, condXX, eps*condXX, 'k--', condXX, eps*(condXX.^2), 'k-')
 
 % Make plots pretty and save them
 for k = 1:3

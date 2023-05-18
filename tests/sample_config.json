@@ -1,57 +1,71 @@
 {
   "bcgs_iro": {
-    "cholqr": [
+    "cholqr": {
+      "param": [
+        {
+          "chol": "chol_nan"
+        },
+        {
+          "chol": "chol_free"
+        }
+      ]
+    },
+    "cgs_sror": {
+      "param": [
+        {
+          "rpltol": 0
+        },
+        {
+          "rpltol": 10
+        }
+      ]
+    },
+    "houseqr": [],
+    "mgs": []
+  },
+  "bcgs_iro_ls": {
+    "param": [
       {
         "chol": "chol_nan"
       },
       {
         "chol": "chol_free"
       }
-    ],
-    "cgs_sror": [
+    ]
+  },
+  "bcgs_pip": {
+    "mgs_cwy": [],
+    "param": [
       {
-        "rpltol": 0
+        "chol": "chol_nan"
       },
       {
-        "rpltol": 10
+        "chol": "chol_free"
       }
-    ],
-    "houseqr": [],
-    "mgs": []
+    ]
   },
-  "bcgs_iro_ls": [
-    {
-      "chol": "chol_nan"
-    },
-    {
-      "chol": "chol_free"
-    }
-  ],
-  "bcgs_pip": [
-    {
-      "chol": "chol_nan"
-    },
-    {
-      "chol": "chol_free"
-    }
-  ],
-  "bcgs_pip_mp": [
-    {
-      "chol": "chol_nan",
-      "mp_package": "symbolic math"
-    },
-    {
-      "chol": "chol_free",
-      "mp_package": "symbolic math"
-    }
-  ],
+  "bcgs_pip_mp": {
+    "param": [
+      {
+        "chol": "chol_nan",
+        "mp_package": "symbolic math"
+      },
+      {
+        "chol": "chol_free",
+        "mp_package": "symbolic math"
+      }
+    ]
+  },
   "cgs_p": [],
-  "cholqr": [
-    {
-      "chol": "chol_nan"
-    },
-    {
-      "chol": "chol_free"
-    }
-  ]
+  "cholqr": {
+    "param": [
+      {
+        "chol": "chol_nan"
+      },
+      {
+        "chol": "chol_free"
+      }
+    ]
+  },
+  "bmgs": []
 }
