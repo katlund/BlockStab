@@ -5,9 +5,9 @@ function options = options_init(options)
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-if nargin == 1
+if nargin == 0
     options = struct( ...
-        'matrix_type', 'default', ...
+        'mat_type', 'default', ...
         'scale', -(1:16), ...
         'num_rows', 100, ...
         'num_partitions', 10, ...
@@ -16,12 +16,12 @@ if nargin == 1
         'save_fig', false, ...
         'tex_report', false);
 else
-    if ~isfield(options, 'matrix_type')
-        options.matrix_type = 'default';
+    if ~isfield(options, 'mat_type')
+        options.mat_type = 'default';
     end
 
     if ~isfield(options, 'scale')
-        switch matrix_type
+        switch mat_type
             case 'default'
                 options.scale = -(1:16);
                 

@@ -1,6 +1,6 @@
-function alg_list = RunKappaPlot(options, config_file)
-% alg_list = RUNKAPPAPLOT(options, config_file) is a test manager for all
-% KappaPlot tests.
+function [skel, musc, param] = RunKappaPlot(options, config_file)
+% [skel, musc, param] = RUNKAPPAPLOT(options, config_file) is a test
+% manager for all KappaPlot tests.
 %
 % INPUTS:
 % - options struct with the following fields:
@@ -44,7 +44,7 @@ function alg_list = RunKappaPlot(options, config_file)
 %           options.block_size
 %           - each parameter subfield can be made multivalued by assigning
 %           a cell array; a Cartesian product of all parmeters will be run
-%   default: see sample_config.json
+%   default: see demo_config.json
 %
 % Note on problem dimensions: trial matrices are constructed with dimension
 % m x ps.  A non-block problem can be constructed from either p = 1 or s =
@@ -57,7 +57,15 @@ function alg_list = RunKappaPlot(options, config_file)
 
 %%
 % Defaults
-options = options_init(options);
+if nargin == 0
+    options = options_init;
+    config_file = 'demo_config.json';
+elseif nargin == 1
+    options = options_init(options);
+    config_file = 'demo_config.json';
+elseif nargin == 2
+    options = options_init(options);
+end
 
 % Extract dimensions
 m = options.num_rows;
@@ -168,14 +176,16 @@ end
 dir_str = sprintf('results/%s_m%d_p%d_s%d', options.mat_type, m, p, s);
 mkdir(dir_str)
 save_str = sprintf('%s/run_data', dir_str);
-save(save_str, loss_ortho, rel_res, rel_chol_res, condXX, normXX);
+save(save_str, 'loss_ortho', 'rel_res', 'rel_chol_res', 'condXX', 'normXX');
 
 %% Generate plots
 alg_cmap = lines(n_alg);
 symb = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
 n_symb = length(symb);
-lgd_str = cell(1,n_mat);
 plot_str = {'loss_ortho', 'rel_res', 'rel_chol_res'};
+
+%% Build legend
+lgd_str = alg_string(skel, musc, param);
 
 % Initialize figures and axes
 fg = cell(1,3); ax = cell(1,3);
@@ -194,11 +204,8 @@ for j = 1:n_alg
         symb{k}, 'Color', alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
     plot(ax{3}, condXX, rel_chol_res(:,j),...
         symb{k}, 'Color', alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
-
-    % Build Legend
-    lgd_str{j} = alg_string(...
-        sprintf('%s $\\circ$ %s', skel{j}, musc{j}) );
 end
+% Plot comparison lines
 plot(ax{1}, condXX, eps*condXX, 'k--', condXX, eps*(condXX.^2), 'k-')
 
 % Make plots pretty and save them
@@ -255,11 +262,11 @@ for k = 1:3
 
     % Save figures
     save_str = sprintf('%s/%s', dir_str, plot_str{k});
-    if save_eps
+    if options.save_eps
         saveas(fg{k}, save_str, 'epsc');
     end
 
-    if save_fig
+    if options.save_fig
         savefig(fg{k}, save_str, 'compact');
     end
 
