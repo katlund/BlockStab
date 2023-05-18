@@ -31,7 +31,7 @@ s1 = kk;
 s2 = s1 + s;
 
 % Initial step
-[QQ(:,kk), RR(kk,kk)] = IntraOrtho(XX(:,kk), musc);
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(XX(:,kk), musc, param);
 
 if param.verbose
     fprintf('         LOO      |    RelRes\n');

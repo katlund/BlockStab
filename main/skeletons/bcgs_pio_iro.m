@@ -24,7 +24,7 @@ kk = 1:s;
 sk = s;
 
 W = XX(:,kk);
-[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
 
 if param.verbose
     fprintf('         LOO      |    RelRes\n');
@@ -46,14 +46,16 @@ for k = 2:p
     
     % First step
     RR1 = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR1], musc);
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR1],...
+        musc, param);
     tmp = tmp' * tmp;
     R1 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param);
     W = ( W - QQ(:,1:sk-s) * RR1 ) / R1;
     
     % Second step
     RR(1:sk-s,kk) = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR(1:sk-s,kk)], musc);
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR(1:sk-s,kk)],...
+        musc, param);
     tmp = tmp' * tmp;
     RR(kk,kk) = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param);
     QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR(1:sk-s,kk) ) / RR(kk,kk);

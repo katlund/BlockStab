@@ -28,8 +28,8 @@ sk = s;
 
 W = XX(:,kk);
 
-[W, RR1] = IntraOrtho(W, musc);
-[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);   % reorthogonalize first step
+[W, RR1] = IntraOrtho(W, musc, param);
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);   % reorthogonalize first step
 RR(kk,kk) = RR(kk,kk) * RR1;
 
 if param.verbose
@@ -51,12 +51,12 @@ for k = 1:p-1
     % First BCGS step
     RR1 = InnerProd(QQ(:,1:sk), W, musc);
     W = W - QQ(:,1:sk) * RR1;
-    [W, R1] = IntraOrtho(W, musc);
+    [W, R1] = IntraOrtho(W, musc, param);
     
     % Second BCGS step
     RR(1:sk,kk) = InnerProd(QQ(:,1:sk), W, musc);
     W = W - QQ(:,1:sk) * RR(1:sk,kk);
-    [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
+    [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
     
     % Combine both steps
     RR(1:sk,kk) = RR1 + RR(1:sk,kk) * R1;

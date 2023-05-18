@@ -72,7 +72,7 @@ for k = 1:p-1
             norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end
 end
-[QQ(:,kk), RR(kk,kk)] = IntraOrtho(Q_tmp, musc);
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(Q_tmp, musc, param);
 
 if param.verbose
     fprintf('%3.0d:', k+1);

@@ -31,7 +31,7 @@ kk = 1:s;
 sk = s;
 
 W = XX(:,kk);
-[QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(W, musc);
+[QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(W, musc, param);
 
 if param.verbose
     fprintf('         LOO      |    RelRes\n');
@@ -50,7 +50,7 @@ for k = 1:p-1
     W = XX(:,kk);
     RR(1:sk,kk) = TT(1:sk, 1:sk)' * InnerProd(QQ(:,1:sk), W, musc);    
     W = W - QQ(:,1:sk) * RR(1:sk,kk);
-    [QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(W, musc);
+    [QQ(:,kk), RR(kk,kk), TT(kk,kk)] = IntraOrtho(W, musc, param);
     TT(1:sk,kk) = -TT(1:sk,1:sk)*...
         InnerProd(QQ(:,1:sk), QQ(:,kk), musc) * TT(kk,kk);
     
