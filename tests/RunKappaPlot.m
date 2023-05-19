@@ -15,10 +15,10 @@ function run_data = RunKappaPlot(options, config_file)
 %      default: 100; 120 for 'monomial'
 %   - .num_partitions: (p) scalar denoting the number of block partitions
 %      in each trial matrix
-%      default: 5; 12 for 'monomial'
+%      default: 10; 20 for 'monomial'
 %   - .block_size: (s) scalar denoting size of block partitions in each
 %      trial matrix
-%      default: 2; 10 for ;onomial'
+%      default: 2; 6 for 'monomial'
 %   - .save_eps: boolean for whether to save figures as .eps files
 %      default: false
 %   - .save_fig: boolean for whether to save figures as .fig files

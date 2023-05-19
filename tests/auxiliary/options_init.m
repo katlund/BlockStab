@@ -56,31 +56,31 @@ else
     if ~isfield(options, 'num_partitions')
         switch options.mat_type
             case 'monomial'
-                options.num_partitions = 12;
+                options.num_partitions = 20;
             otherwise
-                options.num_partitions = 5;
+                options.num_partitions = 10;
         end
     end
 
     if ~isfield(options, 'block_size')
         switch options.mat_type
             case 'monomial'
-                options.block_size = 10;
+                options.block_size = 6;
             otherwise
                 options.block_size = 2;
         end
     end
 
     if ~isfield(options, 'save_eps')
-        options.save_eps = false;
+        options.save_eps = true;
     end
 
     if ~isfield(options, 'save_fig')
-        options.save_fig = false;
+        options.save_fig = true;
     end
 
     if ~isfield(options, 'tex_report')
-        options.tex_report = false;
+        options.tex_report = true;
     end
 end
 
