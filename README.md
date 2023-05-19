@@ -11,7 +11,7 @@ Follow the download options from the Git repository main page.  Then navigate to
 * [x] [Mixed precision implementations](#mixed-precision)
 * [x] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties
 * [x] A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
-* [ ] A unified, streamlined test engine that avoids superfluous runs for solvers that don't take muscles, simplifies syntax, and improves display of figure outputs
+* [x] `RunKappaPlot`(#new-test-driver): a unified, streamlined test engine that avoids redundant runs of skeleton-muscle combinations, simplifies syntax via an options struct, improves display of figure outputs, allows for toggling how and whether figures are saved, and allows for automatic TeX report generation.
 
 To reproduce results from [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017), please use release [v1.2022](https://github.com/katlund/BlockStab/releases/tag/v1.2022).
 
@@ -46,7 +46,6 @@ The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block ve
 * `musc` - char specifying intra-orthogonalization muscle
 * `param`: a struct with the following optional fields:
   * `.chol`: char specifying what type of Cholesky subroutine to call for skeletons that hard-code Cholesky via a block Pythagorean trick (e.g., `bcgs_pip`, `bcgs_pio`, `bcgs_iro_ls`, `bmgs_cwy`, `bmgs_icwy`, and their reorthogonalized and multi-precision versions); default for non-MP versions is `'chol_nan'`, and `'chol_free'` for MP
-  * `.global_scale`: boolean specifying whether to scale by `s` when `musc` is `globalqr`; default: 1
   * `.mp_package`: char specifying either `'advanpix'` or `'symbolic toolbox'` as the mixed precision package; default: `'advanpix'`
   * `.mp_digits`: int specifiying number of precision digits, e.g., 34 for quadruple precision (in Advanpix) or 32 for quadruple precision in Symbolic Math Toolbox; default: 34
   * `.rpltol`: scalar argument for `cgs_sror` that determines the replacement tolerance; default: 1
@@ -119,15 +118,25 @@ Example output:
 
 ## Test Routines
 
-There are several test files.  `MakeHeatmap` generates heatmaps comparing loss of orthogonality and residual across many skeleton-muscle combinations for the same test matrix.  `KappaPlot` and similar test files plot loss of orthogonality and residual trends against matrices with a range of condition numbers. As the Greek letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these plots as "kappa plots."  See the header for each for full descriptions of their functionalities.  To explore some interesting examples, try the following, and note that `[]` (empty) arguments call default options, which can be quite handy:
+There are two main test drivers, `MakeHeatmap` and `RunKappaPlot`.  `MakeHeatmap` generates heatmaps comparing loss of orthogonality and residual across many skeleton-muscle combinations for the same test matrix.  `RunKappaPlot` plots loss of orthogonality and residual trends against matrices with a range of condition numbers. As the Greek letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these plots as "kappa plots."  See the header for each for full descriptions of their functionalities.  To explore some interesting examples, try the following, and note that `[]` (empty) arguments call default options, which can be quite handy:
 
-* `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1)`
-* `KappaPlot([100 10], [], {'MGS', 'MGS_SVL', 'MGS_LTS', 'MGS_CWY', 'MGS_ICWY'})`
-* `BlockKappaPlot([100 20 2], [], {'BCGS', 'BCGS_IRO', 'BCGS_IRO_LS'}, {'CGS', 'MGS', 'HouseQR'})`
-* `GluedKappaPlot([], [], {'CGS', 'CGS_P', 'MGS', 'CGS_IRO', 'CGS_IRO_LS'})`
-* `GluedBlockKappaPlot([], [], {'BCGS', 'BCGS_PIP', 'BCGS_PIO'}, 'HouseQR')`
-* `GluedBlockKappaPlotVaryS([], [], [2 5], {'BCGS', 'BMGS'})`
-* `MonomialBlockKappaPlot([1000 100],[1 2 5 10],{'BCGS', 'BMGS', 'BCGS_IRO'}, {'CholQR', 'MGS', 'HouseQR'})`
+* `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1);`
+* `RunKappaPlot('laeuchli', [], 'demo.json');`
+
+### New test driver
+
+A major difference compared to the previous version is that all $\kappa$ plots are now managed by a single driver, `RunKappaPlot`, which takes three arguments:
+
+* `mat_type`: `'default'`, `'glued'`, `'laeuchli'`, and `'monomial'`
+* `options`: a struct with fields pertaining to the size and scale of trial matrices, as well as flags for saving figures and generating a TeX report
+* `config_file`: a JSON file processed by the subroutine `alg_config`
+
+Setting up the JSON configuration file is a bit tricky, but a number of templates are included.  `demo.json` in particular demonstrates all possible quirks.  There are multiple upsides to the more abstract configuration file:
+
+* Redundancies in skeleton-muscle combinations are avoided, in particular, for skeletons like `bcgs_sror` and `bcgs_iro_ls`, which take only one muscle or none, respectively.
+* Direct comparisons between muscles and skeleton-muscle algorithms can be made.  For example, we can plot `cholqr` and `bmgs` with `houseqr` on the same $\kappa$ plot.
+* Direct comparisons between different implementations of the same algorithm are possible.  For example, Cholesky-based routines can be implemented with `chol_nan` or `chol_free`.  `demo.json` encodes both configurations for several algorithms.
+* Direct comparisons between multi-precision and standard double precision implementations of algorithms are also possible.  Again, see `demo.json` for examples.
 
 ## Documentation
 
@@ -136,11 +145,8 @@ Each file contains a descriptive header.  See especially the following core file
 * `BGS.m` - switches between skeletons
 * `IntraOrtho.m` - switches between muscles
 * `InnerProd.m` - switches between inner products
-* `MatGen.m` - generates matrices used for tests
-* `CreateGluedMatrix.m` - generates glued matrices
 * `MakeHeatmap.m` - generates heatmaps for skeleton-muscle combinations; verbose = `true` prints tables to screen
-* `KappaPlot.m` - generates kappa plots for muscles
-* `BlockKappaPlot.m` - generates kappa plots for skeleton-muscle combinations
+* `RunKappaPlot.m` - generates kappa plots for muscles and skeleton-muscle combinations
 
 ## How we cite things
 

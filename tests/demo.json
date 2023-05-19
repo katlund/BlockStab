@@ -1,0 +1,57 @@
+{
+  "bcgs_iro": {
+    "cholqr": {
+      "param": [
+        {
+          "chol": "chol_nan"
+        },
+        {
+          "chol": "chol_free"
+        }
+      ]
+    },
+    "cgs_sror": {
+      "param": [
+        {
+          "rpltol": 0
+        },
+        {
+          "rpltol": 10
+        }
+      ]
+    },
+    "mgs": []
+  },
+  "bcgs_iro_ls": {
+    "mgs_cwy": [],
+    "param": [
+      {
+        "chol": "chol_nan"
+      },
+      {
+        "chol": "chol_free"
+      }
+    ]
+  },
+  "bcgs_pip_mp": {
+    "cholqr": [],
+    "param": [
+      {
+        "chol": "chol_free",
+        "mp_package": "symbolic math"
+      }
+    ]
+  },
+  "cgs_p": [],
+  "cholqr": {
+    "param": [
+      {
+        "chol": "chol_nan"
+      },
+      {
+        "chol": "chol_free"
+      }
+    ]
+  },
+  "bmgs": []
+}

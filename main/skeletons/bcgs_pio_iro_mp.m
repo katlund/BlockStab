@@ -60,7 +60,8 @@ for k = 2:p
     
     %% First step
     RR1 = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR1], musc, param);
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR1],...
+        musc, param);
     tmp = tmp' * tmp;
 
     % Compute Cholesky in quad
@@ -71,7 +72,8 @@ for k = 2:p
     
     %% Second step
     RR2 = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR2], musc, param); 
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR2],...
+        musc, param); 
     tmp = tmp' * tmp;
 
     % Compute Cholesky in quad

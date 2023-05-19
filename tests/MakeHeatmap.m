@@ -106,6 +106,10 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 % MAKEHEATMAP([], 'monomial', {'BCGS', 'BCGS_IRO'}, {'HouseQR', 'CGS_RO'})
 % will generate a heatmap for the monomial matrix and the four specified
 % skeleton-muscle combinations.
+%
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines
@@ -149,8 +153,8 @@ if ischar(musc)
 end
 
 % Default strings and format strings for plot legends
-skel_str = AlgString(skel);
-musc_str = AlgString(musc);
+skel_str = basic_strrep(skel);
+musc_str = basic_strrep(musc);
 
 nmat = length(mat);
 nskel = length(skel);
@@ -168,7 +172,7 @@ for i = 1:nmat
     if exist(checkstr, 'file') == 2
         load(checkstr, 'XX', 'XXstr', 'XXprops');
     else
-        [XX, XXstr, XXprops] = MatGen(mat{i}, XXdim);
+        [XX, XXstr, XXprops] = mat_gen(mat{i}, XXdim);
     end
     cd ..
     fprintf('%s, cond(XX) = %2.2e\n', XXstr, XXprops.cond)
@@ -182,10 +186,13 @@ for i = 1:nmat
     for j = 1:nskel
         for k = 1:nmusc
             if strcmpi(skel{j}, 'bcgs_sror')
+                param = [];
                 if strcmpi(musc{k}, 'cgs_sror')
-                    [QQ, RR, ~, tt] = BGS(XX, s, 'bcgs_sror', 'cgs_sror', rpltol);
+                    param.rpltol = rpltol;
+                    [QQ, RR, ~, tt] = BGS(XX, s, 'bcgs_sror', 'cgs_sror', param);
                 elseif strcmpi(musc{k}, 'cgs_sro')
-                    [QQ, RR, ~, tt] = BGS(XX, s, 'bcgs_sror', 'cgs_sro', 0);
+                    param.rpltol = 0;
+                    [QQ, RR, ~, tt] = BGS(XX, s, 'bcgs_sror', 'cgs_sro', param);
                 else
                     QQ = NaN(m, n);
                     RR = NaN(n, n);
@@ -193,7 +200,7 @@ for i = 1:nmat
                 end
             else
                 % Call BGS skeleton-muscle configuration
-                [QQ, RR, ~, tt] = BGS(XX, s, skel{j}, musc{k}, rpltol);
+                [QQ, RR, ~, tt] = BGS(XX, s, skel{j}, musc{k});
             end
             
             % Compute loss of orthonormality
@@ -223,10 +230,10 @@ for i = 1:nmat
     end
     
     %% Generate and save heatmaps as .eps files (for TeX use)
-    mkdir results
-    cd results
+    mkdir results\heatmap
+    cd results\heatmap
     mkdir(matstr);
-    cd ..
+    cd ..\..
     
     hax = cell(3,1);
     hfg = cell(3,1);
@@ -257,15 +264,15 @@ for i = 1:nmat
             'MissingDataColor', .75*ones(1,3),...
             'FontSize', 14);
         
-        savestr = sprintf('results/%s/out',matstr);
+        savestr = sprintf('results/heatmap/%s/out', matstr);
         save(savestr,'loss_ortho','res','run_time', 'XXprops');        
-        savestr2 = sprintf('results/%s/%s', matstr, measstr{j});
+        savestr2 = sprintf('results/heatmap/%s/%s', matstr, measstr{j});
         savefig(hfg{j}, savestr2, 'compact');
         saveas(hfg{j}, savestr2, 'epsc')
     end
     close all;  % frees up memory; otherwise Matlab keeps all figures open in the background
 end
-fprintf('To open figures, navigate to ''results'' and the desired\n');
+fprintf('To open figures, navigate to ''results/heatmap'' and the desired\n');
 fprintf('subfolder therein and use OPENFIG with ''visible'' option.\n');
 
 % matProps(XXdim);    % Generate table for paper

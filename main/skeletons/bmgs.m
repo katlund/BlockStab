@@ -26,7 +26,7 @@ p = n/s;
 kk = 1:s;
 
 W = XX(:,kk);
-[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
 
 if param.verbose
     fprintf('         LOO      |    RelRes\n');
@@ -51,7 +51,7 @@ for k = 1:p-1
         W = W - QQ(:,jj)*RR(jj,kk);
         jj = jj + s;
     end
-    [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
+    [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
     
     if param.verbose
         fprintf('%3.0d:', k+1);

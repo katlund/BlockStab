@@ -12,16 +12,6 @@ function [Q, R, T] = IntraOrtho(X, musc, param)
 %      (e.g., BCGS_PIP, BCGS_PIO, BCGS_IRO_LS, BMGS_CWY, BMGS_ICWY, and
 %      their reorthogonalized and multi-precision versions)
 %      default: 'chol_nan'
-%   - .global_scale: boolean specifying whether to scale by s when musc is
-%      GlobalQR
-%      default: true
-%   - .mp_package: char specifying either 'advanpix' or 'symbolic toolbox'
-%      as the mixed precision package for routines with *_MP
-%      default: 'advanpix'
-%   - .mp_digits: int specifiying number of precision digits, e.g., 34 for
-%      quadruple precision (in Advanpix) or 32 for quadruple precision in
-%      Symbolic Toolbox
-%      default: 34
 %   - .rpltol: scalar argument for CGS_SROR that determines the
 %      replacement tolerance
 %      default: 1
@@ -45,6 +35,22 @@ if nargin == 2
     param.chol = 'chol_nan';
     param.rpltol = [];
     param.verbose = 0;
+elseif nargin == 3
+    if isempty(param)
+        param.chol = 'chol_nan';
+        param.rpltol = [];
+        param.verbose = 0;
+    else
+        if ~isfield(param, 'chol')
+            param.chol = 'chol_nan';
+        end
+        if ~isfield(param, 'rpltol')
+            param.rpltol = [];
+        end
+        if ~isfield(param, 'verbose')
+            param.verbose = 0;
+        end
+    end
 end
 
 switch lower(musc)
@@ -127,10 +133,9 @@ switch lower(musc)
 
     case {'cholqr_pinv'}
         [Q, R] = cholqr_pinv(X);
-        
-% Global QR ---------------------------------------------------------------
-    case {'global', 'global-no-scale', 'globalqr'}
-        [Q, R] = globalqr(X, param);
+
+    case {'global', 'globalqr'}
+        [Q, R] = globalqr(X);
         
     otherwise
         error('%s is not a viable muscle option', musc);

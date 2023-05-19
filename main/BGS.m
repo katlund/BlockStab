@@ -1,7 +1,7 @@
-function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, param)
-% [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, param) is
-% a wrapper function for calling different Block Gram-Schmidt
-% skeleton-muscle configurations.
+function [QQ, RR, TT, run_time] = BGS(XX, s, skel, musc, param)
+% [QQ, RR, TT, run_time] = BGS(XX, s, skel, musc, param) is a wrapper
+% function for calling different Block Gram-Schmidt skeleton-muscle
+% configurations.
 % 
 % INPUTS:
 % - XX: n x m matrix
@@ -11,6 +11,7 @@ function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, param)
 %   routine
 % - musc: char array specifying intra-orthogonalization (within block)
 %   routine; see INTRAORTHO for all possible options
+%   default: 'houseqr'
 % - param: a struct with the following optional fields:
 %   - .chol: char specifying what type of Cholesky subroutine to call for
 %      skeletons that hard-code Cholesky via a block Pythagorean trick
@@ -37,7 +38,8 @@ function [QQ, RR, TT, TotTime] = BGS(XX, s, skel, musc, param)
 % - TT: m x m triangular matrix returned by routines such as BMGS_SVL and
 %   BMGS_LTS; regardless of TT, it should hold that
 %                      XX = QQ * RR.
-% - TotTime: total time elapsed measured by tic and toc
+% - run_time: total time elapsed measured by tic and toc; does not exclude
+%   screen outputs from verbose
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
@@ -48,15 +50,26 @@ if nargin == 4
     param.chol = 'chol_nan';
     param.rpltol = [];
     param.verbose = 0;
+elseif nargin == 5
+    if isempty(param)
+        param.chol = 'chol_nan';
+        param.rpltol = [];
+        param.verbose = 0;
+    else
+        if ~isfield(param, 'chol')
+            param.chol = 'chol_nan';
+        end
+        if ~isfield(param, 'rpltol')
+            param.rpltol = [];
+        end
+        if ~isfield(param, 'verbose')
+            param.verbose = 0;
+        end
+    end
 end
-if ~isfield(param, 'chol')
-    param.chol = 'chol_nan';
-end
-if ~isfield(param, 'rpltol')
-    param.rpltol = [];
-end
-if ~isfield(param, 'verbose')
-    param.verbose = 0;
+
+if isempty(musc)
+    musc = 'houseqr';
 end
 
 switch lower(skel)
@@ -64,148 +77,148 @@ switch lower(skel)
     case {'bcgs'}
         tic;
         [QQ, RR] = bcgs(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
 
     case {'bcgs_ro'}
         tic;
         [QQ, RR] = bcgs_ro(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
     case {'bcgs_iro'}
         tic;
         [QQ, RR] = bcgs_iro(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
 
 % [Stewart 2008] variant --------------------------------------------------
     case {'bcgs_sror'}
         tic;
         [QQ, RR] = bcgs_sror(XX, s, param.rpltol, param.verbose);
-        TotTime = toc;
+        run_time = toc;
 
 % [Swirydowicz et al. 2020]/[Bielich et al. 2022] variant -----------------
     case {'bcgs_iro_ls'}
         tic;
         [QQ, RR] = bcgs_iro_ls(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
 
 % "Roadmap" variants ------------------------------------------------------
     case {'bcgs_iro_3s'}
         tic;
         [QQ, RR] = bcgs_iro_3s(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
 
     case {'bcgs_iro_2s'}
         tic;
         [QQ, RR] = bcgs_iro_2s(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
     case {'bcgs_iro_1s'}
         tic;
         [QQ, RR] = bcgs_iro_1s(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
 
 % Standard BMGS -----------------------------------------------------------
     case {'bmgs'}
         tic;
         [QQ, RR] = bmgs(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
 % 3-sync BMGS variants ----------------------------------------------------
     case {'bmgs_svl'}
         tic;
         [QQ, RR, TT] = bmgs_svl(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
     case {'bmgs_lts'}
         tic;
         [QQ, RR, TT] = bmgs_lts(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
 % 1-sync BMGS variants ----------------------------------------------------
     case {'bmgs_cwy'}
         tic;
         [QQ, RR, TT] = bmgs_cwy(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
     case {'bmgs_icwy'}
         tic;
         [QQ, RR, TT] = bmgs_icwy(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
 % T-variants --------------------------------------------------------------
     case {'bcgs_iro_t'}
         tic;
         [QQ, RR, TT] = bcgs_iro_t(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
     case {'bmgs_t'}
         tic;
         [QQ, RR, TT] = bmgs_t(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
 % Reorthogonalize first step ----------------------------------------------
     case {'bcgs_iro_1'}
         tic;
         [QQ, RR] = bcgs_iro_1(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
 % P-variants --------------------------------------------------------------
     case {'bcgs_pio'}
         tic;
         [QQ, RR] = bcgs_pio(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
     case {'bcgs_pip'}
         tic;
         [QQ, RR] = bcgs_pip(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
 
 % Reorthogonalized P-variants ---------------------------------------------
     case {'bcgs_pio_ro'}
         tic;
         [QQ, RR] = bcgs_pio_ro(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
 
     case {'bcgs_pio_iro'}
         tic;
         [QQ, RR] = bcgs_pio_iro(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
 
     case {'bcgs_pip_ro'}
         tic;
         [QQ, RR] = bcgs_pip_ro(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
 
     case {'bcgs_pip_iro'}
         tic;
         [QQ, RR] = bcgs_pip_iro(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
 		
 % Mixed Precision variants ------------------------------------------------
     case {'bcgs_iro_ls_mp'}
         tic;
         [QQ, RR] = bcgs_iro_ls_mp(XX, s, musc, param);
-        TotTime = toc;    
+        run_time = toc;    
         
     case {'bcgs_pio_mp'}
         tic;
         [QQ, RR] = bcgs_pio_mp(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
     case {'bcgs_pip_mp'}
         tic;
         [QQ, RR] = bcgs_pip_mp(XX, s, musc, param);
-        TotTime = toc;  
+        run_time = toc;  
     
 	case {'bcgs_pip_iro_mp'}
         tic;
         [QQ, RR] = bcgs_pip_iro_mp(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
     case {'bcgs_pio_iro_mp'}
         tic;
         [QQ, RR] = bcgs_pio_iro_mp(XX, s, musc, param);
-        TotTime = toc;
+        run_time = toc;
         
     otherwise
         error('%s is not a viable skeleton option', skel);

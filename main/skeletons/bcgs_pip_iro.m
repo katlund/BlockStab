@@ -27,7 +27,7 @@ kk = 1:s;
 sk = s;
 
 W = XX(:,kk);
-[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc);
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
 
 if param.verbose
     fprintf('         LOO      |    RelRes\n');

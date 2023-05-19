@@ -16,11 +16,7 @@ musc = lower(musc);
 switch musc
     case {'global'}
         s = size(X,2);
-        XY = (trace(X'*Y)/s) * eye(s);  % with s-scaling
-        
-    case {'global-no-scale'}
-        s = size(X,2);
-        XY = trace(X'*Y) * eye(s);
+        XY = (trace(X'*Y)/s) * eye(s);
         
     otherwise
         XY = X'*Y;

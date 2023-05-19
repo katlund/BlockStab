@@ -1,0 +1,39 @@
+{
+  "bcgs_iro": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_nan"
+      }
+    }
+  },
+  "bcgs_iro_3s": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_nan"
+      }
+    }
+  },
+  "bcgs_iro_2s": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_nan"
+      }
+    }
+  },
+  "bcgs_iro_1s": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_nan"
+      }
+    }
+  },
+  "bcgs_iro_ls": {
+    "param": {
+      "chol": "chol_nan"
+    }
+  }
+}

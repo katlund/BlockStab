@@ -62,7 +62,8 @@ for k = 2:p
 
     % Sync points in quad precision
     R_col = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s,s) R_col], musc, param); 
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s,s) R_col],...
+        musc, param); 
     tmp = tmp' * tmp;
     R_diag = chol_switch( tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param );
     
