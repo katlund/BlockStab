@@ -35,29 +35,40 @@ else
         switch options.mat_type
             case 'default'
                 options.scale = -(1:16);
-                
             case 'glued'
                 options.scale = 1:8;
-                
             case 'laeuchli'
                 options.scale = logspace(-1, -16, 16);
-                
             case 'monomial'
                 options.scale = 2:2:12;
-
         end
     end
 
     if ~isfield(options, 'num_rows')
-        options.num_rows = 100;
+        switch options.mat_type
+            case 'monomial'
+                options.num_rows = 120;
+            otherwise
+                options.num_rows = 100;
+        end
     end
 
     if ~isfield(options, 'num_partitions')
-        options.num_partitions = 10;
+        switch options.mat_type
+            case 'monomial'
+                options.num_partitions = 12;
+            otherwise
+                options.num_partitions = 5;
+        end
     end
 
     if ~isfield(options, 'block_size')
-        options.block_size = 2;
+        switch options.mat_type
+            case 'monomial'
+                options.block_size = 10;
+            otherwise
+                options.block_size = 2;
+        end
     end
 
     if ~isfield(options, 'save_eps')
