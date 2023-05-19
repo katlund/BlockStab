@@ -84,7 +84,7 @@ for i = 1:n_alg
                     fprintf(fID, '\t\\begin{itemize}\n');
                 end
                 param_flag = true;
-                fprintf(fID, '\t\t\\item MP Digits: %d', ...
+                fprintf(fID, '\t\t\\item MP Digits: %d\n', ...
                     run_data.param{i}.mp_digits);
             end
         end
@@ -94,7 +94,7 @@ for i = 1:n_alg
                     fprintf(fID, '\t\\begin{itemize}\n');
                 end
                 param_flag = true;
-                fprintf(fID, '\t\t\\item Replacement tolerance: %2.2e', ...
+                fprintf(fID, '\t\t\\item Replacement tolerance: %2.2e\n', ...
                     run_data.param{i}.rpltol);
             end
         end
