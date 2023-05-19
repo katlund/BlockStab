@@ -51,7 +51,7 @@ for k = 2:p
     W = XX(:,kk) - QQ(:,1:sk-s) * S_col;
 
     % k.2
-    tmp = InnerProd([QQ(:,1:sk) W], W, musc);
+    tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
     Y_col = tmp(1:sk-s,:);
     Y_diag = chol_switch(tmp(kk,:) - Y_col' * Y_col, param);
     QQ(:,kk) = (W - QQ(:,1:sk-s) * Y_col ) / Y_diag;
