@@ -84,14 +84,18 @@ if nargin == 0
     mat_type = 'default';
     options = options_init(mat_type);
     config_file = 'demo.json';
-elseif nargin >= 1
+elseif nargin == 1
+    if isempty(mat_type)
+        mat_type = 'default';
+    end
+    options = options_init(mat_type);
+    config_file = 'demo.json';
+elseif nargin == 2
     if isempty(mat_type)
         mat_type = 'default';
     end
     options = options_init(mat_type, options);
-    if nargin == 1
-        config_file = 'demo.json';
-    end
+    config_file = 'demo.json';    
 end
 
 % Extract dimensions
@@ -311,7 +315,7 @@ for k = 1:3
             ['Loss of Orthogonality: ' ...
             '$\Vert I - \bar\mathcal{Q}^T \bar\mathcal{Q}\Vert$'], ...
             'Interpreter', 'Latex', ...
-            'FontSize', 12);
+            'FontSize', 10);
         movegui(fg{1},'northwest')
     else
         legend(ax{k}, lgd, 'Location', 'BestOutside', ...
@@ -325,7 +329,7 @@ for k = 1:3
                 '$\Vert \mathcal{X} - ' ...
                 '\bar\mathcal{Q}\bar\mathcal{R}\Vert/\Vert X\Vert$'], ...
                 'Interpreter', 'Latex', ...
-                'FontSize', 12);
+                'FontSize', 10);
             movegui(fg{2},'northeast')
         elseif k == 3
             title(ax{k}, ...
@@ -334,7 +338,7 @@ for k = 1:3
                 '\bar\mathcal{R}^T \bar\mathcal{R}\Vert/ ' ...
                 '\Vert \mathcal{X}\Vert^2$'], ...
                 'Interpreter', 'Latex', ...
-                'FontSize', 12);
+                'FontSize', 10);
             movegui(fg{3},'south')
         end
     end
