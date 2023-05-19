@@ -1,0 +1,34 @@
+{
+  "bcgs_iro": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_free"
+      }
+    }
+  },
+  "bcgs_iro_3s": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_free"
+      }
+    }
+  },
+  "bcgs_iro_2s": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_free"
+      }
+    }
+  },
+  "bcgs_iro_1s": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_free"
+      }
+    }
+  }
+}
