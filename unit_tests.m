@@ -1,5 +1,5 @@
 %% Unit tests
-
+%
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
@@ -318,4 +318,8 @@ mat_type = {'default', 'glued', 'laeuchli', 'monomial'};
 for i = 1:4
     options.mat_type = mat_type{i};
     RunKappaPlot(options);
+    close all;
 end
+
+%% Basic MakeHeatmap test
+MakeHeatmap([100 10 2], 'stewart', {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1)

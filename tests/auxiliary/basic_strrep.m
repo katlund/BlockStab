@@ -1,40 +1,73 @@
-function alg_list = basic_strrep(alg_list)
-% str = BASIC_STRREP(str) performs a basic string replacement for
+function alg = basic_strrep(alg)
+% alg = BASIC_STRREP(alg) performs a basic string replacement for
 % algorithm names in str.  See ALG_STRING.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-if ischar(alg_list)
-    alg_list = char(alg_list);
-end
-for i = 1:length(alg_list)
-    alg_list{i} = lower(alg_list{i});
-    if ~contains(alg_list{i}, 'qr')
-        alg_list{i} = strrep(alg_list{i}, '_iro_', 'i+');
-        alg_list{i} = strrep(alg_list{i}, '_iro', 'i+');
-        alg_list{i} = strrep(alg_list{i}, '_sro', 's+');
-        alg_list{i} = strrep(alg_list{i}, '_ro_', '+');
-        alg_list{i} = strrep(alg_list{i}, 'ro_', '+');
-        alg_list{i} = strrep(alg_list{i}, '_ro', '+');
-        alg_list{i} = strrep(alg_list{i}, 'ro', '+');
-        alg_list{i} = strrep(alg_list{i}, '_', '-');
-        alg_list{i} = upper(alg_list{i});
+if ischar(alg)
+    alg = lower(alg);
+    if ~contains(alg, 'qr')
+        alg = strrep(alg, '_iro_', 'i+');
+        alg = strrep(alg, '_iro', 'i+');
+        alg = strrep(alg, '_sro', 's+');
+        alg = strrep(alg, '_ro_', '+');
+        alg = strrep(alg, 'ro_', '+');
+        alg = strrep(alg, '_ro', '+');
+        alg = strrep(alg, 'ro', '+');
+        alg = strrep(alg, '_', '-');
+        alg = upper(alg);
 
     else
-        switch alg_list{i}
+        switch alg
             case 'cholqr'
-                alg_list{i} = 'CholQR';
+                alg = 'CholQR';
             case 'iter_cholqr'
-                alg_list{i} = 'IterCholQR';
+                alg = 'IterCholQR';
             case 'sh_cholqr_roro'
-                alg_list{i} = 'ShCholQR++';
+                alg = 'ShCholQR++';
             case 'cholqr_ro'
-                alg_list{i} = 'CholQR+';
+                alg = 'CholQR+';
             case 'houseqr'
-                alg_list{i} = 'HouseQR';
+                alg = 'HouseQR';
             case 'cholqr_pinv'
-                alg_list{i} = 'CholQR-pinv';
+                alg = 'CholQR-pinv';
             case 'globalqr'
-                alg_list{i} = 'GlobalQR';
+                alg = 'GlobalQR';
+        end
+    end
+else
+    for i = 1:length(alg)
+        alg{i} = lower(alg{i});
+        if ~contains(alg{i}, 'qr')
+            alg{i} = strrep(alg{i}, '_iro_', 'i+');
+            alg{i} = strrep(alg{i}, '_iro', 'i+');
+            alg{i} = strrep(alg{i}, '_sro', 's+');
+            alg{i} = strrep(alg{i}, '_ro_', '+');
+            alg{i} = strrep(alg{i}, 'ro_', '+');
+            alg{i} = strrep(alg{i}, '_ro', '+');
+            alg{i} = strrep(alg{i}, 'ro', '+');
+            alg{i} = strrep(alg{i}, '_', '-');
+            alg{i} = upper(alg{i});
+    
+        else
+            switch alg{i}
+                case 'cholqr'
+                    alg{i} = 'CholQR';
+                case 'iter_cholqr'
+                    alg{i} = 'IterCholQR';
+                case 'sh_cholqr_roro'
+                    alg{i} = 'ShCholQR++';
+                case 'cholqr_ro'
+                    alg{i} = 'CholQR+';
+                case 'houseqr'
+                    alg{i} = 'HouseQR';
+                case 'cholqr_pinv'
+                    alg{i} = 'CholQR-pinv';
+                case 'globalqr'
+                    alg{i} = 'GlobalQR';
+            end
         end
     end
 end

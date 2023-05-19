@@ -210,10 +210,10 @@ for i = 1:n_mat
         loss_ortho(i,j) = norm(I - QQ' * QQ, 2);
     
         % Compute relative residual
-        rel_res(i,j) = norm(XX{i} - QQ * RR, 2) / normXX(j);
+        rel_res(i,j) = norm(XX{i} - QQ * RR, 2) / normXX(i);
         
         % Compute relative residual for Cholesky relation
-        rel_chol_res(i,j) = norm(XX{i}' * XX{i} - RR' * RR, 2) / normXX(j)^2;
+        rel_chol_res(i,j) = norm(XX{i}' * XX{i} - RR' * RR, 2) / normXX(i)^2;
         
         % Clear computed variables before next run
         clear QQ RR
