@@ -311,3 +311,11 @@ end
 
 %% Close file
 fclose(fID);
+
+%% Generate RunKappaPlot reports for all matrix types
+cd tests
+mat_type = {'default', 'glued', 'laeuchli', 'monomial'};
+for i = 1:4
+    options.mat_type = mat_type{i};
+    RunKappaPlot(options);
+end

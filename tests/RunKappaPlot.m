@@ -227,7 +227,7 @@ dir_str = sprintf('results/%s_m%d_p%d_s%d', options.mat_type, m, p, s);
 mkdir(dir_str)
 
 % Build legend
-lgd = alg_string(skel, musc, param);
+lgd = alg_string(skel, musc);
 
 % Build struct
 run_data = struct( ...
