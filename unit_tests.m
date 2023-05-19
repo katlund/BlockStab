@@ -316,8 +316,7 @@ fclose(fID);
 cd tests
 mat_type = {'default', 'glued', 'laeuchli', 'monomial'};
 for i = 1:4
-    options.mat_type = mat_type{i};
-    RunKappaPlot(options);
+    RunKappaPlot(mat_type{i});
     close all;
 end
 

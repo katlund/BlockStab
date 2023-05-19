@@ -1,15 +1,15 @@
-function run_data = RunKappaPlot(options, config_file)
-% run_data = RUNKAPPAPLOT(options, config_file) is a test manager for all
-% KappaPlot tests.
+function run_data = RunKappaPlot(mat_type, options, config_file)
+% run_data = RUNKAPPAPLOT(mat_type, options, config_file) is a test manager
+% for all KappaPlot tests.
 %
 % INPUTS:
+% - mat_type: 'default', 'glued', 'laeuchli', and 'monomial';
+%   trial matrices are stored in the cell XX throughout this routine
+%   default: 'default'
 % - options struct with the following fields:
-%   - .mat_type: 'default', 'glued', 'laeuchli', and 'monomial';
-%      trial matrices are stored in the cell XX
-%      default: 'default'
 %   - .scale: vector determining how condition numbers of specified
 %      mat_type vary
-%      default: built-in for each mat_type
+%      default: built-in for each mat_type; see OPTIONS_INIT
 %   - .num_rows: (m) scalar denoting the number of rows in each trial
 %      matrix
 %      default: 100; 120 for 'monomial'
@@ -45,7 +45,7 @@ function run_data = RunKappaPlot(options, config_file)
 %           options.block_size
 %           - each parameter subfield can be made multivalued by assigning
 %           a cell array; a Cartesian product of all parmeters will be run
-%   default: see demo_config.json
+%   default: see demo.json
 %
 % Note on problem dimensions: trial matrices are constructed with dimension
 % m x ps.  A non-block problem can be constructed from either p = 1 or s =
@@ -81,13 +81,17 @@ dtnow = datetime('now');
 
 % Defaults
 if nargin == 0
-    options = options_init;
-    config_file = 'demo_config.json';
-elseif nargin == 1
-    options = options_init(options);
-    config_file = 'demo_config.json';
-elseif nargin == 2
-    options = options_init(options);
+    mat_type = 'default';
+    options = options_init(mat_type);
+    config_file = 'demo.json';
+elseif nargin >= 1
+    if isempty(mat_type)
+        mat_type = 'default';
+    end
+    options = options_init(mat_type, options);
+    if nargin == 1
+        config_file = 'demo.json';
+    end
 end
 
 % Extract dimensions
@@ -103,7 +107,7 @@ I = eye(n);
 %% Set up matrices
 n_mat = length(options.scale);
 XX = cell(n_mat,1);
-switch lower(options.mat_type)
+switch lower(mat_type)
 
     case 'default'
         rng(1); U = orth(randn(m,n));
@@ -223,7 +227,8 @@ end
 
 %% Save data
 % Create directory
-dir_str = sprintf('results/%s_m%d_p%d_s%d', options.mat_type, m, p, s);
+dir_str = sprintf('results/%s/%s_m%d_p%d_s%d', ...
+    config_file(1:end-5), mat_type, m, p, s);
 mkdir(dir_str)
 
 % Build legend
@@ -232,10 +237,12 @@ lgd = alg_string(skel, musc);
 % Build struct
 run_data = struct( ...
     'condXX', {condXX}, ...
+    'config_file', config_file, ...
     'datetime', dtnow, ...
     'dir_str', dir_str, ...
     'lgd', {lgd}, ...
     'loss_ortho', {loss_ortho}, ...
+    'mat_type', mat_type, ...
     'musc', {musc}, ...
     'normXX', {normXX}, ...
     'options', options, ...
@@ -247,6 +254,7 @@ run_data = struct( ...
 % Save run_data
 save_str = sprintf('%s/run_data', dir_str);
 save(save_str, 'run_data');
+fprintf('MAT file saved in %s\n', dir_str);
 
 %% Generate plots
 alg_cmap = lines(n_alg);
@@ -335,15 +343,18 @@ for k = 1:3
     save_str = sprintf('%s/%s', dir_str, plot_str{k});
     if options.save_eps
         saveas(fg{k}, save_str, 'epsc');
+        fprintf('EPS files saved in %s\n', dir_str);
     end
 
     if options.save_fig
         savefig(fg{k}, save_str, 'compact');
+        fprintf('FIG files saved in %s\n', dir_str);
     end
 end
 
 %% Generate TeX report
 if options.tex_report && options.save_eps
     tex_report(run_data);
+    fprintf('TEX file saved in %s\n', dir_str);
 end
 end
