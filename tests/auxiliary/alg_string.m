@@ -1,7 +1,7 @@
-function str = alg_string(skel, musc, param)
-% str = ALG_STRING(skel, musc, param) converts the algorithm identifiers
-% given by the cells skel, musc, and param into unique, legible strings for
-% plots and reports.
+function str = alg_string(skel, musc)
+% str = ALG_STRING(skel, musc) converts the algorithm identifiers given by
+% the cells skel and musc into unique, legible strings for plots and
+% reports.
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
@@ -14,12 +14,9 @@ end
 if ischar(musc)
     musc = {musc};
 end
-if ischar(param)
-    param = {param};
-end
 n_alg = length(skel);
-if n_alg ~= length(musc) || n_alg ~= length(param)
-    error('Cell arrays skel, musc, and param must all have the same length.')
+if n_alg ~= length(musc)
+    error('Cell arrays skel and musc must all have the same length.')
 end
 
 % Allocate space for str
@@ -49,38 +46,4 @@ for i = 1:n_alg
         end
     end
 end
-end
-
-%% Auxiliary
-function str = basic_strrep(str)
-    str = lower(str);
-    if ~contains(str, 'qr')
-        str = strrep(str, '_iro_', 'i+');
-        str = strrep(str, '_iro', 'i+');
-        str = strrep(str, '_sro', 's+');
-        str = strrep(str, '_ro_', '+');
-        str = strrep(str, 'ro_', '+');
-        str = strrep(str, '_ro', '+');
-        str = strrep(str, 'ro', '+');
-        str = strrep(str, '_', '-');
-        str = upper(str);
-
-    else
-        switch str
-            case 'cholqr'
-                str = 'CholQR';
-            case 'iter_cholqr'
-                str = 'IterCholQR';
-            case 'sh_cholqr_roro'
-                str = 'ShCholQR++';
-            case 'cholqr_ro'
-                str = 'CholQR+';
-            case 'houseqr'
-                str = 'HouseQR';
-            case 'cholqr_pinv'
-                str = 'CholQR-pinv';
-            case 'globalqr'
-                str = 'GlobalQR';
-        end
-    end
 end
