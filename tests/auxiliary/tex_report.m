@@ -5,7 +5,7 @@ function tex_report(run_data)
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
-%%
+%%  
 % Open new file
 save_str = sprintf('%s/report.tex', run_data.dir_str);
 fID = fopen(save_str,'w');
@@ -14,12 +14,13 @@ fID = fopen(save_str,'w');
 fprintf(fID, '\\documentclass[10pt]{article}\n');
 fprintf(fID, '\\usepackage{booktabs, makecell} %% for column headers\n');
 fprintf(fID, '\\usepackage{datetime2}\n');
+fprintf(fID, '\\usepackage{enumerate}\n');
 fprintf(fID, '\\usepackage{epsfig, epstopdf}\n');
 fprintf(fID, '\\usepackage{float}\n');
 fprintf(fID, '\\usepackage{geometry, graphicx}\n');
 fprintf(fID, '\\geometry{a4paper}\n');
 fprintf(fID, '\n');
-fprintf(fID, '\\title{$\\kappa$ Plots}\n');
+fprintf(fID, '\\title{Report}\n');
 fprintf(fID, '\\author{}\n');
 fprintf(fID, '\\date{%s}\n',char(run_data.datetime,'dd-MMM-yyyy HH:mm:ss'));
 fprintf(fID, '\n');
@@ -30,11 +31,11 @@ fprintf(fID, '\\maketitle\n');
 fprintf(fID, '\n');
 
 % Run details
-fprintf(fID, '\\section{Test Details}\n');
+fprintf(fID, '\\section*{Test Details}\n');
 fprintf(fID, '\\begin{itemize}\n');
 fprintf(fID, '\t\\item Matrix type: \\texttt{%s}\n', ...
     run_data.options.mat_type);
-fprintf(fID, '\t\\item Dimensions of $X$: $n = %d$, $p = %d$, $s = %d$\n', ...
+fprintf(fID, '\t\\item Dimensions of $X$: $m = %d$, $p = %d$, $s = %d$\n', ...
     run_data.options.num_rows, ...
     run_data.options.num_partitions, ...
     run_data.options.block_size);
@@ -42,21 +43,75 @@ fprintf(fID, '\\end{itemize}\n');
 
 % Print algorithm configurations
 n_alg = length(run_data.skel);
+fprintf(fID, '\\section*{Algorithm Configurations}\n');
+fprintf(fID, '\\begin{enumerate}[(1)]\n');
 for i = 1:n_alg
     lgd_str = split(run_data.lgd{i},') ');
-    fprintf(fID, '\\begin{enumerate}[(1)]\n');
-    fprintf(fID, '\t\\item %s', lgd_str{2});
-    fprintf(fID, '\\end{enumerate}\n');
+    fprintf(fID, '\t\\item %s\n', lgd_str{2});
+    param_flag = false;
+    if ~isempty(run_data.param{i})
+        if isfield(run_data.param{i}, 'chol')
+            if ~isempty(run_data.param{i}.chol)
+                param_flag = true;
+                fprintf(fID, '\t\\begin{itemize}\n');
+                switch run_data.param{i}.chol
+                    case 'chol'
+                        fprintf(fID, '\t\t\\item Cholesky: built-in \\texttt{chol}\n');
+                    case 'chol_nan'
+                        fprintf(fID, '\t\t\\item Cholesky: \\texttt{chol\\_nan}\n');
+                    case 'chol_free'
+                        fprintf(fID, '\t\t\\item Cholesky: \\texttt{chol\\_free}\n');
+                end
+            end
+        end
+        if isfield(run_data.param{i}, 'mp_package')
+            if ~isempty(run_data.param{i}.mp_package)
+                if ~param_flag
+                    fprintf(fID, '\t\\begin{itemize}\n');
+                end
+                param_flag = true;
+                switch run_data.param{i}.mp_package
+                    case 'advanpix'
+                        fprintf(fID, '\t\t\\item MP Package: Advanpix\n');
+                    case {'symbolic math', 'symbolic toolbox', 'vpa'}
+                        fprintf(fID, '\t\t\\item MP Package: Symbolic Math\n');
+                end
+            end
+        end
+        if isfield(run_data.param{i}, 'mp_digits')
+            if ~isempty(run_data.param{i}.mp_digits)
+                if ~param_flag
+                    fprintf(fID, '\t\\begin{itemize}\n');
+                end
+                param_flag = true;
+                fprintf(fID, '\t\t\\item MP Digits: %d', ...
+                    run_data.param{i}.mp_digits);
+            end
+        end
+        if isfield(run_data.param{i}, 'rpltol')
+            if ~isempty(run_data.param{i}.rpltol)
+                if ~param_flag
+                    fprintf(fID, '\t\\begin{itemize}\n');
+                end
+                param_flag = true;
+                fprintf(fID, '\t\t\\item Replacement tolerance: %2.2e', ...
+                    run_data.param{i}.rpltol);
+            end
+        end
+        if param_flag
+            fprintf(fID, '\t\\end{itemize}\n');
+        end
+    end
 end
+fprintf(fID, '\\end{enumerate}\n');
 
 % Kappa Plots
+fprintf(fID, '\\section*{$\\kappa$ Plots}\n');
 plot_str = {'loss_ortho', 'rel_res', 'rel_chol_res'};
 for i = 1:3
-    save_str = sprintf('%s/%s', run_data.dir_str, plot_str{i});
-    fprintf(fID, '\\begin{figure}\n');
+    fprintf(fID, '\\begin{figure}[H]\n');
     fprintf(fID, '\t\\begin{center}\n');
-    fprintf(fID, '\t\t\\resizebox{.9\\textwidth}{!}{\\includegraphics{%s.eps}} \\\\\n', save_str);
-    fprintf(fID, '\t\\end{tabular}\n');
+    fprintf(fID, '\t\t\\resizebox{.95\\textwidth}{!}{\\includegraphics{%s.eps}}\n', plot_str{i});
     fprintf(fID, '\t\\end{center}\n');
     fprintf(fID, '\\end{figure}\n');
     fprintf(fID, '\n');
