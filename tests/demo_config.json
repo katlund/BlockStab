@@ -20,7 +20,6 @@
         }
       ]
     },
-    "houseqr": [],
     "mgs": []
   },
   "bcgs_iro_ls": {
@@ -35,6 +34,7 @@
     ]
   },
   "bcgs_pip_mp": {
+    "cholqr": [],
     "param": [
       {
         "chol": "chol_free",

@@ -1,19 +1,13 @@
-function tex_report(run_options, dir_str, skel, musc, param)
-%
-
-
-% Modified from https://gitlab.mpi-magdeburg.mpg.de/lund/low-sync-block-arnoldi/-/blob/main/main/tex_bfom.m
+function tex_report(run_data)
+% TEX_REPORT(run_data) generates a LaTeX report from RUNKAPPAPLOT requiring
+% only basic packages.
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-% Set-up
-plot_str = {'loss_ortho', 'rel_res', 'rel_chol_res'};
-
-
 % Open new file
-save_str = sprintf('%s/figures.tex', run_data.save_str);
+save_str = sprintf('%s/report.tex', run_data.dir_str);
 fID = fopen(save_str,'w');
 
 % Preamble
@@ -36,34 +30,36 @@ fprintf(fID, '\\maketitle\n');
 fprintf(fID, '\n');
 
 % Run details
-fprintf(fID, '\\section{Run Details}\n');
+fprintf(fID, '\\section{Test Details}\n');
 fprintf(fID, '\\begin{itemize}\n');
-fprintf(fID, '\t\\item Matrix type: \\texttt{%s}\n', replace(options.matrix_type, '_', '\_') );
-fprintf(fID, '\t\\item Dimensions of $X$: $%d \\times %d$\n', run_data.prob_size);
-fprintf(fID, '\t\\item Block size: $%d$\n', run_data.block_size);
+fprintf(fID, '\t\\item Matrix type: \\texttt{%s}\n', ...
+    run_data.options.mat_type);
+fprintf(fID, '\t\\item Dimensions of $X$: $n = %d$, $p = %d$, $s = %d$\n', ...
+    run_data.options.num_rows, ...
+    run_data.options.num_partitions, ...
+    run_data.options.block_size);
 fprintf(fID, '\\end{itemize}\n');
 
+% Print algorithm configurations
+n_alg = length(run_data.skel);
+for i = 1:n_alg
+    lgd_str = split(run_data.lgd{i},') ');
+    fprintf(fID, '\\begin{enumerate}[(1)]\n');
+    fprintf(fID, '\t\\item %s', lgd_str{2});
+    fprintf(fID, '\\end{enumerate}\n');
+end
+
 % Kappa Plots
-for i = 1
-    for a = 1:num_alg
-        if mod(a,2)
-            if a ~= num_alg
-                fprintf(fID, '\\begin{figure}[H]\n');
-                fprintf(fID, '\t\\begin{tabular}{cc}\n');
-                fprintf(fID, '\t\t\\resizebox{.45\\textwidth}{!}{\\includegraphics{%s_%s.eps}} &\n', alg_config{a}, conv_str{i});
-            else % then a is the last one
-                fprintf(fID, '\\begin{figure}[H]\n');
-                fprintf(fID, '\t\\resizebox{.45\\textwidth}{!}{\\includegraphics{%s_%s.eps}}\n', alg_config{a}, conv_str{i});
-                fprintf(fID, '\\end{figure}\n');
-                fprintf(fID, '\n');
-            end
-        else
-            fprintf(fID, '\t\t\\resizebox{.45\\textwidth}{!}{\\includegraphics{%s_%s.eps}} \\\\\n', alg_config{a}, conv_str{i});
-            fprintf(fID, '\t\\end{tabular}\n');
-            fprintf(fID, '\\end{figure}\n');
-            fprintf(fID, '\n');
-        end
-    end
+plot_str = {'loss_ortho', 'rel_res', 'rel_chol_res'};
+for i = 1:3
+    save_str = sprintf('%s/%s', run_data.dir_str, plot_str{i});
+    fprintf(fID, '\\begin{figure}\n');
+    fprintf(fID, '\t\\begin{center}\n');
+    fprintf(fID, '\t\t\\resizebox{.9\\textwidth}{!}{\\includegraphics{%s.eps}} \\\\\n', save_str);
+    fprintf(fID, '\t\\end{tabular}\n');
+    fprintf(fID, '\t\\end{center}\n');
+    fprintf(fID, '\\end{figure}\n');
+    fprintf(fID, '\n');
 end
 
 % End document
