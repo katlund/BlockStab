@@ -138,6 +138,8 @@ Setting up the JSON configuration file is a bit tricky, but a number of template
 * Direct comparisons between different implementations of the same algorithm are possible.  For example, Cholesky-based routines can be implemented with `chol_nan` or `chol_free`.  `demo.json` encodes both configurations for several algorithms.
 * Direct comparisons between multi-precision and standard double precision implementations of algorithms are also possible.  Again, see `demo.json` for examples.
 
+If you are unfamiliar with JSON, have a look at [JSON formatter](https://jsonformatter.org/json-parser), which provides a nice GUI for parsing and formatting files.
+
 ## Documentation
 
 Each file contains a descriptive header.  See especially the following core files:

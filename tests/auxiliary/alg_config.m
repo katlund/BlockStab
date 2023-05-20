@@ -8,7 +8,7 @@ function [skel, musc, param] = alg_config(config_file)
 %%
 % Default for debugging
 if nargin == 0
-    config_file = 'demo_config.json';
+    config_file = 'demo.json';
     disp(config_file)
 end
 
@@ -21,7 +21,14 @@ n_alg_opts = length(alg_opts);
 
 % Extract all muscles and skeletons
 musc_list = {dir('..\main\muscles\').name};
-musc_list(1:2) = [];
+try
+    musc_list(1:2) = [];
+catch
+    error(['alg_config tries to list all muscle and skeleton routines ' ...
+        'using ''dir''. Please ensure you are calling alg_config from the ' ...
+        '''tests'' folder (i.e., from ''RunKappaPlot'' in the ''tests'' ' ...
+        'folder) otherwise this operation will not work.'])
+end
 skel_list = {dir('..\main\skeletons\').name};
 skel_list(1:2) = [];
 
@@ -208,7 +215,7 @@ end
 %% Verify configurations for debugging
 if nargin == 0
     for i = 1:length(skel)
-        fprintf('{%d} skel: %s, musc: %s\n', i, skel{i}, musc{i});
+        fprintf('(%d) skel: %s, musc: %s\n', i, skel{i}, musc{i});
         if ~isempty(param{i})
             disp(param{i})
         else

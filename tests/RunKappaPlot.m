@@ -79,6 +79,10 @@ function run_data = RunKappaPlot(mat_type, options, config_file)
 % Set time and date
 dtnow = datetime('now');
 
+% Turn off warnings for coherent screen print-outs (primarily avoids
+% "Matrix is singular...")
+warnings('off')
+
 % Defaults
 if nargin == 0
     mat_type = 'default';
@@ -95,7 +99,15 @@ elseif nargin == 2
         mat_type = 'default';
     end
     options = options_init(mat_type, options);
-    config_file = 'demo.json';    
+    config_file = 'demo.json';
+elseif nargin == 3
+    if isempty(mat_type)
+        mat_type = 'default';
+    end
+    options = options_init(mat_type, options);
+    if isempty(config_file)
+        config_file = 'demo.json';
+    end
 end
 
 % Extract dimensions
@@ -188,7 +200,7 @@ for i = 1:n_mat
             [QQ, RR] = IntraOrtho(XX{i}, musc{j}, param{j});
 
             % Display algorithm configuration
-            fprintf('{%d} musc: %s\n', j, musc{j});
+            fprintf('(%d) musc: %s\n', j, musc{j});
             if ~isempty(param{j})
                 disp(param{j})
             else
@@ -200,8 +212,8 @@ for i = 1:n_mat
             [QQ, RR] = BGS(XX{i}, s, skel{j}, musc{j}, param{j});
 
             % Display algorithm configuration
-            fprintf('{%d} skel: %s, ', j, skel{j})
-            if ~isempty(musc{j})
+            fprintf('(%d) skel: %s, ', j, skel{j})
+            if isempty(musc{j})
                 fprintf('musc: default\n');
             else
                 fprintf('musc: %s\n', musc{j});
@@ -347,13 +359,19 @@ for k = 1:3
     save_str = sprintf('%s/%s', dir_str, plot_str{k});
     if options.save_eps
         saveas(fg{k}, save_str, 'epsc');
-        fprintf('EPS files saved in %s\n', dir_str);
     end
 
     if options.save_fig
         savefig(fg{k}, save_str, 'compact');
-        fprintf('FIG files saved in %s\n', dir_str);
     end
+end
+
+% Print where figures are saved
+if options.save_eps
+    fprintf('EPS files saved in %s\n', dir_str);
+end
+if options.save_fig
+    fprintf('FIG files saved in %s\n', dir_str);
 end
 
 %% Generate TeX report
