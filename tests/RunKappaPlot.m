@@ -81,7 +81,7 @@ dtnow = datetime('now');
 
 % Turn off warnings for coherent screen print-outs (primarily avoids
 % "Matrix is singular...")
-warnings('off')
+warning('off')
 
 % Defaults
 if nargin == 0
@@ -282,6 +282,7 @@ fg = cell(1,3);
 ax = cell(1,3);
 for k = 1:3
     fg{k} = figure;
+    fg{k}.Position(3) = 700; % slightly stretches horizontally
     ax{k} = gca;
     hold on;
 end
