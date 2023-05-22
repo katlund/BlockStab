@@ -1,5 +1,5 @@
 function [QQ, RR] = bcgs_pip_ro(XX, s, musc, param)
-% [QQ, RR] = BCGS_PIP_IRO(XX, s, musc, param) performs Block Classical
+% [QQ, RR] = BCGS_PIP_RO(XX, s, musc, param) performs Block Classical
 % Gram-Schmidt with Pythagorean Inner Product modification and (outer)
 % ReOrthogonalization on the m x n matrix XX with p = n/s block partitions
 % each of size s with intra-orthogonalization procedure determined by musc.
