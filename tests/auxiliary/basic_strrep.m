@@ -18,6 +18,7 @@ if ischar(alg)
         alg = strrep(alg, 'ro', '+');
         alg = strrep(alg, '_', '-');
         alg = upper(alg);
+        alg = strrep(alg, '-MP', '$^{\rm{MP}}$');
 
     else
         switch alg
@@ -50,6 +51,7 @@ else
             alg{i} = strrep(alg{i}, 'ro', '+');
             alg{i} = strrep(alg{i}, '_', '-');
             alg{i} = upper(alg{i});
+            alg{i} = strrep(alg{i}, '-MP', '$^{\rm{MP}}$');
     
         else
             switch alg{i}

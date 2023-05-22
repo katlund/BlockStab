@@ -45,5 +45,6 @@ for i = 1:n_alg
                 i, basic_strrep(skel{i}), basic_strrep(musc{i}));
         end
     end
+    str{i} = strrep(str{i}, '$$', ''); % for MP routines with superscripts
 end
 end
