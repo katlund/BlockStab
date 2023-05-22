@@ -66,9 +66,9 @@ for k = 2:p
 
     % Batched IntraOrtho; cast to qp; note that standard operations are
     % overloaded
-    [~, tmp] = qp(IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR1],...
-        musc, param)); % returned in qp
-    tmp = tmp' * tmp; % returned in qp
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR1],...
+        musc, param); % returned in double
+    tmp = qp(tmp)' * qp(tmp); % returned in qp
 
     % Compute Cholesky in qp
     R1 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param); % returned in qp
@@ -78,9 +78,9 @@ for k = 2:p
     
     %% Second step
     RR2 = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = qp(IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR2],...
-        musc, param));  % returned in qp
-    tmp = tmp' * tmp; % returned in qp
+    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR2],...
+        musc, param);  % returned in double
+    tmp = qp(tmp)' * qp(tmp); % returned in qp
 
     % Compute Cholesky in qp
     R2 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param); % returned in qp
