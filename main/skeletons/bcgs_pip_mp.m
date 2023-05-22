@@ -70,8 +70,8 @@ for k = 2:p
     R_diag = chol_switch(tmp(kk,:) - tmp(1:sk-s,:)' * tmp(1:sk-s,:), param); % returned in qp
     
     % Assign RR in double
-    RR(kk,kk) = double(R_diag); 
     RR(1:sk-s,kk) = double(tmp(1:sk-s,:));
+    RR(kk,kk) = double(R_diag); 
 
     % Compute next basis vector and cast to double
     QQ(:,kk) = double(qp(W - QQ(:,1:sk-s) * tmp(1:sk-s,:)) / R_diag);

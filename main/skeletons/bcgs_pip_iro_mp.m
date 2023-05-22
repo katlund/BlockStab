@@ -83,8 +83,8 @@ for k = 2:p
     QQ(:,kk) = double(qp(W - QQ(:,1:sk-s) * tmp(1:sk-s,:)) / R2);
     
     % Assign RR in double and combine both steps
-    RR(kk,kk) = double(R2) * double(R1);
     RR(1:sk-s,kk) = double(RR1) + double(tmp(1:sk-s,:)) * double(R1);
+    RR(kk,kk) = double(R2) * double(R1);
     
     if param.verbose
         fprintf('%3.0d:', k-1);

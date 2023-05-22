@@ -53,8 +53,8 @@ for k = 2:p
     tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
     
     % Assign RR
-    RR(kk,kk) = chol_switch(tmp(kk,:) - RR(1:sk-s,kk)'* RR(1:sk-s,kk), param);
-    RR(1:sk,kk) = tmp(1:sk,:);
+    RR(1:sk-s,kk) = tmp(1:sk-s,:);
+    RR(kk,kk) = chol_switch(tmp(kk,:) - tmp(1:sk-s,:)'* tmp(1:sk-s,:), param);
 
     % Compute next basis vector
     QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR(1:sk-s,kk) ) / RR(kk,kk);
