@@ -230,10 +230,10 @@ for i = 1:nmat
     end
     
     %% Generate and save heatmaps as .eps files (for TeX use)
-    mkdir results\heatmap
-    cd results\heatmap
+    mkdir results/heatmap
+    cd results/heatmap
     mkdir(matstr);
-    cd ..\..
+    cd ../..
     
     hax = cell(3,1);
     hfg = cell(3,1);
