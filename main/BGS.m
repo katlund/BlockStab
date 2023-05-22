@@ -204,20 +204,30 @@ switch lower(skel)
         tic;
         [QQ, RR] = bcgs_pio_mp(XX, s, musc, param);
         run_time = toc;
-        
-    case {'bcgs_pip_mp'}
+
+    case {'bcgs_pio_ro_mp'}
         tic;
-        [QQ, RR] = bcgs_pip_mp(XX, s, musc, param);
-        run_time = toc;  
-    
-	case {'bcgs_pip_iro_mp'}
-        tic;
-        [QQ, RR] = bcgs_pip_iro_mp(XX, s, musc, param);
+        [QQ, RR] = bcgs_pio_iro_mp(XX, s, musc, param);
         run_time = toc;
         
     case {'bcgs_pio_iro_mp'}
         tic;
         [QQ, RR] = bcgs_pio_iro_mp(XX, s, musc, param);
+        run_time = toc;
+        
+    case {'bcgs_pip_mp'}
+        tic;
+        [QQ, RR] = bcgs_pip_mp(XX, s, musc, param);
+        run_time = toc;  
+
+    case {'bcgs_pip_ro_mp'}
+        tic;
+        [QQ, RR] = bcgs_pip_ro_mp(XX, s, musc, param);
+        run_time = toc;
+    
+	case {'bcgs_pip_iro_mp'}
+        tic;
+        [QQ, RR] = bcgs_pip_iro_mp(XX, s, musc, param);
         run_time = toc;
         
     otherwise

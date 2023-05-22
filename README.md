@@ -24,6 +24,11 @@ Mixed precision routines (i.e., those ending with `_mp`) require one of the addi
 
 The subroutine `mp_switch` manages which toolbox is called and at what precision via the `param` struct (see below).
 
+The principles behind our implementation of mixed-precision are as follows:
+
+* We switch to quad (or the user-specified) precision for quantities that feed into Cholesky, and we perform Cholesky in quad.  We aim to study the circumstances under which we can lift condition number bounds on $X$ for routines that use the block Pythagorean theorem.
+* To simulate performance-optimized implementations, we only store vectors in double and recast them to quad whenever they are needed for computations feeding into Cholesky.
+
 ## Gram-Schmidt Routines
 
 Each skeleton and muscle can be run individually or via the drivers
