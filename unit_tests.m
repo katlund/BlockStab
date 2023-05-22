@@ -117,7 +117,7 @@ end
 fprintf(fID, '\n');
 
 %% Extract list of all muscles
-musc_list = {dir('main\muscles\').name};
+musc_list = {dir('main/muscles/').name};
 musc_list(1:2) = [];
 musc_list(end+1:end+2) = {'global.m', 'global-no-scale.m'};
 
@@ -202,7 +202,7 @@ if symmath
 end
 
 %% BGS
-skel_list = {dir('main\skeletons\').name};
+skel_list = {dir('main/skeletons/').name};
 skel_list(1:2) = [];
 
 n = 10; s = 2; p = 3;
