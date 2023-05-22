@@ -22,7 +22,7 @@ Mixed precision routines (i.e., those ending with `_mp`) require one of the addi
 * [Advanpix Multiprecision Computing Toolbox](https://www.advanpix.com/), which requires a paid license.  The `mp` subroutine is used.
 * [Symbolic Math Toolbox](https://www.mathworks.com/products/symbolic.html), which may also require a paid license.  The subroutine [`vpa`](https://mathworks.com/help/symbolic/vpa.html) is used.
 
-The subroutine `mp_switch` manages which toolbox is called and at what precision via the `param` struct (see [below](#L47)).
+The subroutine `mp_switch` manages which toolbox is called and at what precision via the `param` struct (see below).
 
 ## Gram-Schmidt Routines
 
