@@ -25,18 +25,18 @@ end
 % Switch
 switch param.mp_package
     case {'advanpix'}
-        if ~isfield(param, 'mp_digits')
-            mp.Digits(34);
-        else
-            mp.Digits(param.mp_digits)
+        if isfield(param, 'mp_digits')
+            mp.Digits(param.mp_digits);
+
+            % otherwise do nothing-- default is 34 (quad)
         end
         A =  mp(A);
 
     case {'symbolic math', 'symbolic toolbox', 'vpa'}
-        if ~isfield(param, 'mp_digits')
-            digits(34);
-        else
+        if isfield(param, 'mp_digits')
             digits(param.mp_digits);
+
+            % otherwise do nothing-- default is 32 (quad)
         end
         A = vpa(A);
 
