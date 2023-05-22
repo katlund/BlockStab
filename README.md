@@ -22,7 +22,7 @@ Mixed precision routines (i.e., those ending with `_mp`) require one of the addi
 * [Advanpix Multiprecision Computing Toolbox](https://www.advanpix.com/), which requires a paid license.  The `mp` subroutine is used.
 * [Symbolic Math Toolbox](https://www.mathworks.com/products/symbolic.html), which may also require a paid license.  The subroutine [`vpa`](https://mathworks.com/help/symbolic/vpa.html) is used.
 
-The subroutine `mp_switch` manages which toolbox is called and at what precision via the `param` struct (see below).
+The subroutine `mp_switch` manages which toolbox is called and at what precision via the `param` struct (see [below](#L47)).
 
 ## Gram-Schmidt Routines
 
@@ -38,9 +38,9 @@ and
 IntraOrtho(X, musc, param)
 ```
 
-for skeletons (`BGS`) and muscles (`IntraOrtho`), respectively.
+for skeletons ([`BGS`](https://github.com/katlund/BlockStab/blob/master/main/BGS.m)) and muscles ([`IntraOrtho`](https://github.com/katlund/BlockStab/blob/master/main/IntraOrtho.m)), respectively.
 
-The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block vectors, and `s` columns per block vector, i.e., $m = ps$.  `X` denotes a single block vector (or a tall-and-skinny matrix) with `m` rows and `s` columns, $s \leq m$. As for the other parameters:
+The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block vectors, and `s` columns per block vector, i.e., $m = ps$.  `X` denotes a single block vector (or a tall-and-skinny matrix) with `m` rows and `s` columns, $s \leq m$. As for the other input variables:
 
 * `skel` - char specifying BGS skeleton
 * `musc` - char specifying intra-orthogonalization muscle
@@ -51,7 +51,7 @@ The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block ve
   * `.rpltol`: scalar argument for `cgs_sror` that determines the replacement tolerance; default: 1
   * `.verbose`: boolean for whether to print intermediate loss of orthogonality (LOO) or relative residual (RelRes) per iteration; default: 0
 
-For a list of all currently implemented skeletons and muscles, see `BGS` and`IntraOrtho`. Try, for example:
+For all currently implemented skeletons and muscles, see [`main/skeletons`](https://github.com/katlund/BlockStab/tree/master/main/skeletons) and [`main/muscles`](https://github.com/katlund/BlockStab/tree/master/main/muscles). Try, for example:
 
 ```matlab
 rng(4);
@@ -66,7 +66,7 @@ param.verbose = true;
 IntraOrtho(randn(100,10), 'MGS', param);
 ```
 
-Example output:
+Expected output (which will vary up to machine-precision errors for different machines and operating systems):
 
 ```matlab
          LOO      |    RelRes
@@ -99,7 +99,7 @@ param.verbose = true;
 BGS(randn(100,20), 2, 'BMGS', 'HouseQR', param);
 ```
 
-Example output:
+Expected output:
 
 ```matlab
          LOO      |    RelRes
@@ -118,7 +118,7 @@ Example output:
 
 ## Test Routines
 
-There are two main test drivers, `MakeHeatmap` and `RunKappaPlot`.  `MakeHeatmap` generates heatmaps comparing loss of orthogonality and residual across many skeleton-muscle combinations for the same test matrix.  `RunKappaPlot` plots loss of orthogonality and residual trends against matrices with a range of condition numbers. As the Greek letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these plots as "kappa plots."  See the header for each for full descriptions of their functionalities.  To explore some interesting examples, try the following, and note that `[]` (empty) arguments call default options, which can be quite handy:
+There are two main test drivers, [`MakeHeatmap`](https://github.com/katlund/BlockStab/blob/master/tests/MakeHeatmap.m) and [`RunKappaPlot`](https://github.com/katlund/BlockStab/blob/master/tests/RunKappaPlot.m).  `MakeHeatmap` generates heatmaps comparing loss of orthogonality and residual across many skeleton-muscle combinations for the same test matrix.  `RunKappaPlot` plots loss of orthogonality and residual trends against matrices with a range of condition numbers. As the Greek letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these plots as "kappa plots."  See the header for each for full descriptions of their functionalities.  To explore some interesting examples, try the following, and note that `[]` (empty) arguments call default options, which can be quite handy:
 
 * `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1);`
 * `RunKappaPlot('laeuchli', [], 'demo.json');`
@@ -129,12 +129,12 @@ A major difference compared to the previous version is that all $\kappa$ plots a
 
 * `mat_type`: `'default'`, `'glued'`, `'laeuchli'`, and `'monomial'`
 * `options`: a struct with fields pertaining to the size and scale of trial matrices, as well as flags for saving figures and generating a TeX report
-* `config_file`: a JSON file processed by the subroutine `alg_config`
+* `config_file`: a JSON file processed by the subroutine [`alg_config`](https://github.com/katlund/BlockStab/blob/master/tests/auxiliary/alg_config.m)
 
-Setting up the JSON configuration file is a bit tricky, but a number of templates are included.  `demo.json` in particular demonstrates all possible quirks.  There are multiple upsides to the more abstract configuration file:
+Setting up the JSON configuration file is a bit tricky, but a number of templates are included.  [`demo.json`](https://github.com/katlund/BlockStab/blob/master/tests/alg_config/demo.json) in particular demonstrates all possible quirks.  There are multiple upsides to the more abstract configuration file:
 
 * Redundancies in skeleton-muscle combinations are avoided, in particular, for skeletons like `bcgs_sror` and `bcgs_iro_ls`, which take only one muscle or none, respectively.
-* Direct comparisons between muscles and skeleton-muscle algorithms can be made.  For example, we can plot `cholqr` and `bmgs` with `houseqr` on the same $\kappa$ plot.
+* Direct comparisons between muscles and skeleton-muscle algorithms can be made.  For example, we can plot `cholqr` and `bmgs`$\circ$`houseqr` on the same $\kappa$ plot.
 * Direct comparisons between different implementations of the same algorithm are possible.  For example, Cholesky-based routines can be implemented with `chol_nan` or `chol_free`.  `demo.json` encodes both configurations for several algorithms.
 * Direct comparisons between multi-precision and standard double precision implementations of algorithms are also possible.  Again, see `demo.json` for examples.
 
