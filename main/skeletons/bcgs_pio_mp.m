@@ -31,25 +31,27 @@ qp = @(x) mp_switch(x, param);
 % Pre-allocate memory for QQ and RR
 [m, n] = size(XX);
 RR = zeros(n,n);
-QQ = qp(zeros(m,n));
+QQ = zeros(m,n);
 p = n/s; 
 
 % Set up block indices
 kk = 1:s;
 sk = s;
 
-W = qp(XX(:,kk));
-[QQ(:,kk), R_diag] = IntraOrtho(W, musc, param);
-RR(kk,kk) = double(R_diag);
+% Pull out block vector (keeps MATLAB from copying full X repeatedly)
+W = XX(:,kk);
+
+% First step
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
 
 if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
     fprintf('  %2.4e  |',...
-        norm( eye(s) - InnerProd(double(QQ(:, 1:s)), double(QQ(:, 1:s)), musc) ) );
+        norm( eye(s) - InnerProd(QQ(:, 1:s), QQ(:, 1:s), musc) ) );
     fprintf('  %2.4e\n',...
-        norm( XX(:,1:s) - double(QQ(:,1:s)) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
+        norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
 
 for k = 2:p
@@ -57,32 +59,34 @@ for k = 2:p
     kk = kk + s;
     sk = sk + s;
     
-    % Set up next vector
-    W = qp(XX(:,kk));
+    % Pull out block vector (keeps MATLAB from copying full X repeatedly)
+    W = XX(:,kk);
 
-    % Sync points in quad precision
+    % Project W
     R_col = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s,s) R_col],...
-        musc, param); 
-    tmp = tmp' * tmp;
-    R_diag = chol_switch( tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param );
+
+    % Batched IntraOrtho; cast to qp; note that standard operations are
+    % overloaded
+    [~, tmp] = qp(IntraOrtho([W zeros(size(W)); zeros(sk-s,s) R_col],...
+        musc, param)); % returned in qp
+    tmp = tmp' * tmp; % returned in qp
+
+    % Compute Cholesky in qp
+    R_diag = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param); % returned in qp
     
-    % Assign RR in double
+    % Assign finished entries of RR; cast to double
     RR(kk,kk) = double(R_diag);
-    RR(1:sk-s,kk) = double(R_col);
+    RR(1:sk-s,kk) = R_col;
     
     % Compute next basis vector    
-    QQ(:,kk) = ( W - QQ(:,1:sk-s) * R_col ) / R_diag;
+    QQ(:,kk) = double(qp(W - QQ(:,1:sk-s) * R_col) / R_diag);
     
     if param.verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - InnerProd(double(QQ(:, 1:sk)), double(QQ(:, 1:sk)), musc) ) );
+            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...
-            norm( XX(:,1:sk) - double(QQ(:,1:sk)) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
+            norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end
 end
-
-% Cast QQ back to double
-QQ = double(QQ);
 end

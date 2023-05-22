@@ -31,25 +31,27 @@ qp = @(x) mp_switch(x, param);
 % Pre-allocate memory for QQ and RR
 [m, n] = size(XX);
 RR = zeros(n,n);
-QQ = qp(zeros(m,n));
+QQ = zeros(m,n);
 p = n/s;
 
 % Set up block indices
 kk = 1:s;
 sk = s;
 
-W = qp(XX(:,kk));
-[QQ(:,kk), R_diag] = IntraOrtho(W, musc, param);
-RR(kk,kk) = double(R_diag);
+% Pull out block vector (keeps MATLAB from copying full X repeatedly)
+W = XX(:,kk);
+
+% First step
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
 
 if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
     fprintf('  %2.4e  |',...
-        norm( eye(s) - InnerProd(double(QQ(:, 1:s)), double(QQ(:, 1:s)), musc) ) );
+        norm( eye(s) - InnerProd(QQ(:, 1:s), QQ(:, 1:s), musc) ) );
     fprintf('  %2.4e\n',...
-        norm( XX(:,1:s) - double(QQ(:,1:s)) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
+        norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
 
 for k = 2:p
@@ -57,31 +59,29 @@ for k = 2:p
     kk = kk + s;
     sk = sk + s;
     
-    % Extract next block vector in quad storage
-    W = qp(XX(:,kk));
+    % Pull out block vector (keeps MATLAB from copying full X repeatedly)
+    W = XX(:,kk);
     
-    % Only sync point; in quad precision
-    tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
+    % Compute temporary quantities (inner product) in qp.  Note that
+    % standard operations are overloaded.
+    tmp = InnerProd(qp([QQ(:,1:sk-s) W]), qp(W), musc); % returned in qp
 
-    % Compute Cholesky in quad
-    R_diag = chol_switch(tmp(kk,:) - tmp(1:sk-s,:)' * tmp(1:sk-s,:), param);
+    % Compute Cholesky in qp
+    R_diag = chol_switch(tmp(kk,:) - tmp(1:sk-s,:)' * tmp(1:sk-s,:), param); % returned in qp
     
     % Assign RR in double
     RR(kk,kk) = double(R_diag); 
     RR(1:sk-s,kk) = double(tmp(1:sk-s,:));
 
-    % Compute next basis vector
-    QQ(:,kk) = ( W - QQ(:,1:sk-s) * tmp(1:sk-s,:) ) / R_diag;
+    % Compute next basis vector and cast to double
+    QQ(:,kk) = double(qp(W - QQ(:,1:sk-s) * tmp(1:sk-s,:)) / R_diag);
     
     if param.verbose
-        fprintf('%3.0d:', k);
+        fprintf('%3.0d:', k-1);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - InnerProd(double(QQ(:, 1:sk)), double(QQ(:, 1:sk)), musc) ) );
+            norm( eye(sk-s) - InnerProd(QQ(:, 1:sk-s), QQ(:, 1:sk-s), musc) ) );
         fprintf('  %2.4e\n',...
-            norm( XX(:,1:sk) - double(QQ(:,1:sk)) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
+            norm( XX(:,1:sk-s) - QQ(:,1:sk-s) * RR(1:sk-s,1:sk-s) ) / norm(XX(:,1:sk-s)) );
     end
 end
-
-% Cast QQ back to double
-QQ = double(QQ);
 end

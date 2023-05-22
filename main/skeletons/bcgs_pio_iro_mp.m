@@ -29,25 +29,27 @@ qp = @(x) mp_switch(x, param);
 % Pre-allocate memory for QQ and RR
 [m, n] = size(XX);
 RR = zeros(n,n);
-QQ = qp(zeros(m,n));
+QQ = zeros(m,n);
 p = n/s;
 
 % Set up block indices
 kk = 1:s;
 sk = s;
 
-W = qp(XX(:,kk));
-[QQ(:,kk), R1] = IntraOrtho(W, musc, param);
-RR(kk,kk) = double(R1);
+% Pull out block vector (keeps MATLAB from copying full X repeatedly)
+W = XX(:,kk);
+
+% First step
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
 
 if param.verbose
     fprintf('         LOO      |    RelRes\n');
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
     fprintf('  %2.4e  |',...
-        norm( eye(s) - InnerProd(double(QQ(:, 1:s)), double(QQ(:, 1:s)), musc) ) );
+        norm( eye(s) - InnerProd(QQ(:, 1:s), QQ(:, 1:s), musc) ) );
     fprintf('  %2.4e\n',...
-        norm( XX(:,1:s) - double(QQ(:,1:s)) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
+        norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
 
 for k = 2:p
@@ -55,44 +57,47 @@ for k = 2:p
     kk = kk + s;
     sk = sk + s;
     
-    % Extract next block vector in quad storage
-    W = qp(XX(:,kk));
+    % Pull out block vector (keeps MATLAB from copying full X repeatedly)
+    W = XX(:,kk);
     
     %% First step
+    % Project W
     RR1 = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR1],...
-        musc, param);
-    tmp = tmp' * tmp;
 
-    % Compute Cholesky in quad
-    R1 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param);
+    % Batched IntraOrtho; cast to qp; note that standard operations are
+    % overloaded
+    [~, tmp] = qp(IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR1],...
+        musc, param)); % returned in qp
+    tmp = tmp' * tmp; % returned in qp
 
-    % Compute intermediate basis vector
-    W = ( W - QQ(:,1:sk-s) * RR1 ) / R1;
+    % Compute Cholesky in qp
+    R1 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param); % returned in qp
+
+    % Compute intermediate basis vector; cast to double
+    W = double(qp(W - QQ(:,1:sk-s) * RR1) / R1);
     
     %% Second step
     RR2 = InnerProd(QQ(:,1:sk-s), W, musc);
-    [~, tmp] = IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR2],...
-        musc, param); 
-    tmp = tmp' * tmp;
+    [~, tmp] = qp(IntraOrtho([W zeros(size(W)); zeros(sk-s, s) RR2],...
+        musc, param));  % returned in qp
+    tmp = tmp' * tmp; % returned in qp
 
-    % Compute Cholesky in quad
-    R2 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param);
+    % Compute Cholesky in qp
+    R2 = chol_switch(tmp(1:s,1:s) - tmp(end-s+1:end, end-s+1:end), param); % returned in qp
 
-    % Compute next basis vector
-    QQ(:,kk) = ( W - QQ(:,1:sk-s) * RR2 ) / R2;
+    % Compute next basis vector; cast to double
+    QQ(:,kk) = double(qp(W - QQ(:,1:sk-s) * RR2) / R2);
     
     % Assign RR in double and combine both steps
     RR(kk,kk) = double(R2) * double(R1);
-    RR(1:sk-s,kk) = double(RR1) + double(RR2) * double(R1);
+    RR(1:sk-s,kk) = RR1 + RR2 * double(R1);
     
     if param.verbose
         fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - InnerProd(double(QQ(:, 1:sk)), double(QQ(:, 1:sk)), musc) ) );
+            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...
-            norm( XX(:,1:sk) - double(QQ(:,1:sk)) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
+            norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end
 end
-QQ = double(QQ);
 end
