@@ -20,7 +20,7 @@ alg_opts = fieldnames(alg_struct);
 n_alg_opts = length(alg_opts);
 
 % Extract all muscles and skeletons
-musc_list = {dir('..\main\muscles\').name};
+musc_list = {dir('../main/muscles/').name};
 try
     musc_list(1:2) = [];
 catch
@@ -29,7 +29,7 @@ catch
         '''tests'' folder (i.e., from ''RunKappaPlot'' in the ''tests'' ' ...
         'folder) otherwise this operation will not work.'])
 end
-skel_list = {dir('..\main\skeletons\').name};
+skel_list = {dir('../main/skeletons/').name};
 skel_list(1:2) = [];
 
 % Construct algorithm configurations
