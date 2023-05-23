@@ -21,6 +21,7 @@ n_alg_opts = length(alg_opts);
 
 % Extract all muscles and skeletons
 musc_list = {dir('../main/muscles/').name};
+musc_list{end+1} = 'houseqr.m';
 try
     musc_list(1:2) = [];
 catch

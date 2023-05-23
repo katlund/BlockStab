@@ -1,0 +1,24 @@
+{
+    "bcgs": {
+        "houseqr": [],
+        "cholqr": []
+    },
+    "bcgs_pip": {
+        "houseqr": [],
+        "cholqr": []
+    },
+    "bcgs_iro_ls": [],
+    "bmgs_cwy": {
+        "houseqr": [],
+        "cholqr": []
+    },
+    "bmgs_icwy": {
+        "houseqr": [],
+        "cholqr": []
+    },
+    "bmgs": {
+        "houseqr": [],
+        "cholqr": []
+    },
+    "houseqr": []
+}
