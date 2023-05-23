@@ -275,7 +275,8 @@ fprintf('MAT file saved in %s\n', dir_str);
 
 %% Generate plots
 alg_cmap = lines(n_alg);
-symb = {'s-', 'o-', '*-', '^-', 'p-', '.-', 'h-', 'd-'};
+symb = {'s-', 'o-', '*-', '^-', 'p-', 'h-', 'd-', ...
+    's--', 'o--', '*--', '^--', 'p--', 'h--', 'd--'};
 n_symb = length(symb);
 
 % Initialize figures and axes
