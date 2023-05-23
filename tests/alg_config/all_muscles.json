@@ -1,0 +1,23 @@
+    {
+       "cgs": [],
+       "cgs_iro": [],
+       "cgs_iro_ls": [],
+       "cgs_p": [],
+       "cgs_p_iro": [],
+       "cgs_p_ro": [],
+       "cgs_ro": [],
+       "cgs_sror": [],
+       "cholqr": [],
+       "cholqr_pinv": [],
+       "cholqr_ro": [],
+       "globalqr": [],
+       "iter_cholqr": [],
+       "mgs": [],
+       "mgs_cwy": [],
+       "mgs_icwy": [],
+       "mgs_iro": [],
+       "mgs_lts": [],
+       "mgs_ro": [],
+       "mgs_svl": [],
+       "sh_cholqr_roro": []
+    }

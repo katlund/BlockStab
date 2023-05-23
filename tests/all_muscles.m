@@ -1,5 +1,5 @@
-% All one-sync methods in comparison with BMGS and HouseQR
-config_file = 'one_sync.json';
+% All muscles
+config_file = 'all_muscles.json';
 
 mat_type = {'glued', 'laeuchli', 'default'};
 options.num_rows = 1000;
