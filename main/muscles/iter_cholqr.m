@@ -3,6 +3,8 @@ function [Q, R] = iter_cholqr(X)
 % of the m x s matrix X.  This algorithm is equivalent to Algorithm 4.1 of
 % [Fukaya, et. al. 2018].
 %
+% The number of iterations is limited to 10.
+%
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 

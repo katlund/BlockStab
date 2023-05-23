@@ -32,25 +32,9 @@ function [Q, R, T] = IntraOrtho(X, musc, param)
 %%
 % Defaults
 if nargin == 2
-    param.chol = 'chol_nan';
-    param.rpltol = [];
-    param.verbose = 0;
+    param = param_init;
 elseif nargin == 3
-    if isempty(param)
-        param.chol = 'chol_nan';
-        param.rpltol = [];
-        param.verbose = 0;
-    else
-        if ~isfield(param, 'chol')
-            param.chol = 'chol_nan';
-        end
-        if ~isfield(param, 'rpltol')
-            param.rpltol = [];
-        end
-        if ~isfield(param, 'verbose')
-            param.verbose = 0;
-        end
-    end
+    param = param_init(param);
 end
 
 switch lower(musc)

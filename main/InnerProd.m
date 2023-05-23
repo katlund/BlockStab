@@ -7,8 +7,14 @@ function XY = InnerProd(X, Y, musc)
 
 %%
 % Defaults
-if nargin == 2
+if nargin <= 1
+    error('Two arguments must be provided.')
+elseif nargin == 2
     musc = '';
+elseif nargin == 3
+    if isempty(musc)
+        musc = '';
+    end
 end
 
 % Switch

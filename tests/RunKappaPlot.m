@@ -227,13 +227,14 @@ for i = 1:n_mat
         end
     
         % Compute loss of orthonormality
-        loss_ortho(i,j) = norm(I - QQ' * QQ, 2);
+        loss_ortho(i,j) = norm(I - InnerProd(QQ, QQ, musc{j}), 2);
     
         % Compute relative residual
         rel_res(i,j) = norm(XX{i} - QQ * RR, 2) / normXX(i);
         
         % Compute relative residual for Cholesky relation
-        rel_chol_res(i,j) = norm(XX{i}' * XX{i} - RR' * RR, 2) / normXX(i)^2;
+        rel_chol_res(i,j) = norm(InnerProd(XX{i}, XX{i}, musc{j})...
+            - RR' * RR, 2) / normXX(i)^2;
         
         % Clear computed variables before next run
         clear QQ RR
