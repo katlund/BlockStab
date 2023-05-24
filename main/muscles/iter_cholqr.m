@@ -20,7 +20,7 @@ loss_ortho = norm(Q' * Q - I, 'fro');
 if isnan(loss_ortho)
     Q = NaN(m,s);
     R = NaN(s,s);
-    fprintf('%s failed to converge\n', mfilename);
+    fprintf('%s failed to converge.\n', mfilename);
     return
 end
 while (abs(loss_ortho - sqrt(s)*eps) > eps) && (iter < 10)
@@ -39,9 +39,13 @@ while (abs(loss_ortho - sqrt(s)*eps) > eps) && (iter < 10)
         % be less than 1
         Q = NaN(m,s);
         R = NaN(s,s);
-        fprintf('%s failed to converge\n', mfilename);
+        fprintf('%s failed to converge.\n', mfilename);
         return
     end
 end
-fprintf('\t%s converged in %d iterations\n', mfilename, iter);
+if (abs(loss_ortho - sqrt(s)*eps) <= eps)
+    fprintf('\t%s converged in %d iterations.\n', mfilename, iter);
+else
+    fprintf('%s failed to converge in 10 iterations. Solution may not be reliable.\n', mfilename);
+end
 end
