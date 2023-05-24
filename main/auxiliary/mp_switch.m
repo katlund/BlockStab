@@ -21,10 +21,13 @@ end
 if ~isfield(param, 'mp_package')
     param.mp_package = 'none';
 end
+if isempty(param.mp_package)
+    param.mp_package = 'none';
+end
 
 % Switch
 switch param.mp_package
-    case {'advanpix'}
+    case 'advanpix'
         if isfield(param, 'mp_digits')
             mp.Digits(param.mp_digits);
 
@@ -40,7 +43,7 @@ switch param.mp_package
         end
         A = vpa(A);
 
-    case {'none', []}
-        % default to standouble -- do nothing
+    case 'none'
+        % default to standard double -- do nothing
 end
 end
