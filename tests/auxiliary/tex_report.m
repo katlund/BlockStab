@@ -5,7 +5,7 @@ function tex_report(run_data)
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
-%%  
+%%
 % Open new file
 save_str = sprintf('%s/report.tex', run_data.dir_str);
 fID = fopen(save_str,'w');
@@ -40,70 +40,129 @@ fprintf(fID, '\t\\item Dimensions of $X$: $m = %d$, $p = %d$, $s = %d$\n', ...
     run_data.options.num_partitions, ...
     run_data.options.block_size);
 fprintf(fID, '\\end{itemize}\n');
+fprintf(fID, '\n\n');
 
 % Print algorithm configurations
 n_alg = length(run_data.skel);
 fprintf(fID, '\\section*{Algorithm Configurations}\n');
 fprintf(fID, '\\begin{enumerate}[(1)]\n');
 for i = 1:n_alg
+    % Print algorithm
     lgd_str = split(run_data.lgd{i},') ');
     fprintf(fID, '\t\\item %s\n', lgd_str{2});
-    param_flag = false;
-    if ~isempty(run_data.param{i})
-        if isfield(run_data.param{i}, 'chol')
-            if ~isempty(run_data.param{i}.chol)
-                param_flag = true;
-                fprintf(fID, '\t\\begin{itemize}\n');
-                switch run_data.param{i}.chol
-                    case 'chol'
-                        fprintf(fID, '\t\t\\item Cholesky: built-in \\texttt{chol}\n');
-                    case 'chol_nan'
-                        fprintf(fID, '\t\t\\item Cholesky: \\texttt{chol\\_nan}\n');
-                    case 'chol_free'
-                        fprintf(fID, '\t\t\\item Cholesky: \\texttt{chol\\_free}\n');
-                end
+
+    % Extra temporary parameters to simplify logic
+    musc = run_data.musc{i};
+    skel = run_data.skel{i};
+
+    % Set flags
+    if isempty(musc)
+        chol_flag = false;
+    else
+        chol_flag = contains(lower(musc), 'chol');
+    end
+    if isempty(skel)
+        mp_flag = false;
+    else
+        chol_flag = chol_flag || ...
+        strcmpi(skel, 'bcgs_iro_ls') || ...
+        strcmpi(skel, 'bcgs_iro_2s') || ...
+        strcmpi(skel, 'bcgs_iro_1s') || ...
+        contains(lower(skel), 'bcgs_pi') || ...
+        contains(lower(skel), 'cwy');
+        mp_flag = contains(lower(skel), '_mp');
+    end
+
+    % Fill in missing parameters to simplify logic
+    param = run_data.param{i};
+    param = param_init(param);
+    if mp_flag
+        param = mp_param_init(param);
+    end
+
+    if isempty(skel)
+    %% Muscle only
+        % Print INTRAORTHO defaults only for the muscles that take more
+        % than 'verbose' as a parameters.  Note that chol and rpltol are
+        % mutually exclusive.
+
+        % CGS_SRO(R)
+        if strcmpi(musc, 'cgs_sro')
+            fprintf(fID, '\t\\begin{itemize}\n');
+            fprintf(fID, '\t\t\\item Replacement tolerance: %2.2e\n', 0);
+            fprintf(fID, '\t\\end{itemize}\n');
+        end
+        if strcmpi(musc, 'cgs_sror')
+            fprintf(fID, '\t\\begin{itemize}\n');
+            fprintf(fID, '\t\t\\item Replacement tolerance: %2.2e\n', ...
+                param.rpltol);
+            fprintf(fID, '\t\\end{itemize}\n');
+        end
+
+        % Cholesky
+        if chol_flag
+            fprintf(fID, '\t\\begin{itemize}\n');
+            switch param.chol
+                case 'chol'
+                    fprintf(fID, '\t\t\\item Cholesky: built-in \\texttt{chol}\n');
+                case 'chol_nan'
+                    fprintf(fID, '\t\t\\item Cholesky: \\texttt{chol\\_nan}\n');
+                case 'chol_free'
+                    fprintf(fID, '\t\t\\item Cholesky: \\texttt{chol\\_free}\n');
+            end
+            fprintf(fID, '\t\\end{itemize}\n');
+        end
+
+    else
+    %% Skeleton-muscle
+        % BCGSSR+R first (does not take Chol or MP options)
+        if strcmpi(skel, 'bcgs_sror')
+            fprintf(fID, '\t\\begin{itemize}\n');
+            fprintf(fID, '\t\t\\item Replacement tolerance: %2.2e\n',...
+                param.rpltol);
+            fprintf(fID, '\t\\end{itemize}\n');
+            break
+        end
+
+        if mp_flag || chol_flag
+            fprintf(fID, '\t\\begin{itemize}\n');
+        end
+
+        % Cholesky
+        if chol_flag
+            switch param.chol
+                case 'chol'
+                    fprintf(fID, '\t\t\\item Cholesky: built-in \\texttt{chol}\n');
+                case 'chol_nan'
+                    fprintf(fID, '\t\t\\item Cholesky: \\texttt{chol\\_nan}\n');
+                case 'chol_free'
+                    fprintf(fID, '\t\t\\item Cholesky: \\texttt{chol\\_free}\n');
             end
         end
-        if isfield(run_data.param{i}, 'mp_package')
-            if ~isempty(run_data.param{i}.mp_package)
-                if ~param_flag
-                    fprintf(fID, '\t\\begin{itemize}\n');
-                end
-                param_flag = true;
-                switch run_data.param{i}.mp_package
-                    case 'advanpix'
-                        fprintf(fID, '\t\t\\item MP Package: Advanpix\n');
-                    case {'symbolic math', 'symbolic toolbox', 'vpa'}
-                        fprintf(fID, '\t\t\\item MP Package: Symbolic Math\n');
-                end
+
+        % MP
+        if mp_flag
+            switch param.mp_package
+                case 'advanpix'
+                    fprintf(fID, '\t\t\\item MP Package: Advanpix\n');
+                    fprintf(fID, '\t\t\\item MP Digits: %d\n', param.mp_digits);
+
+                case {'symbolic math', 'symbolic toolbox', 'vpa'}
+                    fprintf(fID, '\t\t\\item MP Package: Symbolic Math\n');
+                    fprintf(fID, '\t\t\\item MP Digits: %d\n', param.mp_digits);
+
+                otherwise
+                    % Do nothing
             end
         end
-        if isfield(run_data.param{i}, 'mp_digits')
-            if ~isempty(run_data.param{i}.mp_digits)
-                if ~param_flag
-                    fprintf(fID, '\t\\begin{itemize}\n');
-                end
-                param_flag = true;
-                fprintf(fID, '\t\t\\item MP Digits: %d\n', ...
-                    run_data.param{i}.mp_digits);
-            end
-        end
-        if isfield(run_data.param{i}, 'rpltol')
-            if ~isempty(run_data.param{i}.rpltol)
-                if ~param_flag
-                    fprintf(fID, '\t\\begin{itemize}\n');
-                end
-                param_flag = true;
-                fprintf(fID, '\t\t\\item Replacement tolerance: %2.2e\n', ...
-                    run_data.param{i}.rpltol);
-            end
-        end
-        if param_flag
+
+        if mp_flag || chol_flag
             fprintf(fID, '\t\\end{itemize}\n');
         end
     end
 end
 fprintf(fID, '\\end{enumerate}\n');
+fprintf(fID, '\n\n');
 
 % Kappa Plots
 fprintf(fID, '\\section*{$\\kappa$ Plots}\n');
