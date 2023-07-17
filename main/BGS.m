@@ -145,6 +145,21 @@ switch lower(skel)
         tic;
         [QQ, RR] = bcgs_iro_1(XX, s, musc, param);
         run_time = toc;
+
+    case {'bcgs_iro_3s_1'}
+        tic;
+        [QQ, RR] = bcgs_iro_3s(XX, s, musc, param);
+        run_time = toc;
+
+    case {'bcgs_iro_2s_1'}
+        tic;
+        [QQ, RR] = bcgs_iro_2s(XX, s, musc, param);
+        run_time = toc;
+        
+    case {'bcgs_iro_1s_1'}
+        tic;
+        [QQ, RR] = bcgs_iro_1s(XX, s, musc, param);
+        run_time = toc;
         
 % P-variants --------------------------------------------------------------
     case {'bcgs_pio'}
