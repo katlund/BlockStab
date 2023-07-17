@@ -1,4 +1,12 @@
 {
+  "bcgs": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_nan"
+      }
+    }
+  },
   "bcgs_iro": {
     "houseqr": [],
     "cholqr": {
