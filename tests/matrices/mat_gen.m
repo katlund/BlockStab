@@ -1,5 +1,5 @@
-function [XX, XXstr, XXprops] = MatGen(matstr, XXdim)
-% [XX, XXstr, XXprops] = MATGEN(matstr, XXdim) generates the type of matrix
+function [XX, XXstr, XXprops] = mat_gen(matstr, XXdim)
+% [XX, XXstr, XXprops] = MAT_GEN(matstr, XXdim) generates the type of matrix
 % specified by matstr with dimensions m x ps and block partitions of size s
 % given by XXdim = [m, p, s].  It also saves the output in a .mat file in
 % the format
