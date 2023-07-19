@@ -275,18 +275,25 @@ fprintf('MAT file saved in %s\n', dir_str);
 
 %% Generate plots
 % Lines only generates 7 colors, which can make plots confusing to read; we
-% change the shades as the number of algorithms increases.
+% change the shades as the number of algorithms increases and randomly
+% permute.
 alg_cmap = lines(7);
 if n_alg > 7
     line_it = ceil(n_alg/7)-1;
-    ran = linspace(.2,.8, line_it);
+    ran = linspace(.5,.8, line_it);
     for i = 1:line_it
         alg_cmap = [alg_cmap; alg_cmap*ran(i)];
     end
 end
+rng(4);
+alg_cmap = alg_cmap(randperm(n_alg),:);
+
+% Randomly permute symbols to avoid matching colors for repeated symbols
 symb = {'s-', 'o-', '*-', '^-', 'p-', 'h-', 'd-', ...
     's:', 'o:', '*:', '^:', 'p:', 'h:', 'd:'};
 n_symb = length(symb);
+rng(4);
+symb = symb(randperm(n_symb));
 
 % Initialize figures and axes
 fg = cell(1,3);
