@@ -1,10 +1,6 @@
-function [QQ, RR] = bcgs_iro_1s_1(XX, s, musc, param)
-% [QQ, RR] = BCGS_IRO_1S_1(XX, s, musc, param) performs Block Classical
-% Gram-Schmidt with Inner ReOrthogonalization with 1 sync on the m x n
-% matrix XX with p = n/s block partitions each of size s with
-% intra-orthogonalization procedure determined by musc.  See BCGS_IRO_LS
-% for an alternative formulation based on Algorithm 3 from [Swirydowicz,
-% et. al. 2020] or Algorithm 2 from [Bielich, et al. 2022].
+function [QQ, RR] = bcgs_iro_f_1s(XX, s, musc, param)
+% [QQ, RR] = BCGS_IRO_F_1S(XX, s, musc, param) performs BCGS_IRO_1s with
+% the first (_f) block vector reorthogonalized.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.

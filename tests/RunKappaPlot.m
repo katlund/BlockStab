@@ -274,7 +274,16 @@ save(save_str, 'run_data');
 fprintf('MAT file saved in %s\n', dir_str);
 
 %% Generate plots
+% Lines only generates 7 colors, which can get confusing; we change the
+% shades as the number of algorithms increases
 alg_cmap = lines(n_alg);
+if n_alg > 7
+    line_it = ceil(n_alg/7)-1;
+    ran = linspace(0.2,.8, line_it);
+    for i = 1:line_it
+        alg_cmap = [alg_cmap; alg_cmap*ran(i)];
+    end
+end
 symb = {'s-', 'o-', '*-', '^-', 'p-', 'h-', 'd-', ...
     's:', 'o:', '*:', '^:', 'p:', 'h:', 'd:'};
 n_symb = length(symb);

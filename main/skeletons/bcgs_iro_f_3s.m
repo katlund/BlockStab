@@ -1,9 +1,6 @@
-function [QQ, RR] = bcgs_iro_3s_1(XX, s, musc, param)
-% [QQ, RR] = BCGS_IRO_3S_1(XX, s, musc, param) performs Block Classical
-% Gram-Schmidt with Inner ReOrthonormalization on the m x n matrix XX with
-% p = n/s block partitions each of size s as described in [Barlow &
-% Smoktunowicz 2013] but skips the first normalization step in order to
-% reduce the total sync count per iteration to 3.
+function [QQ, RR] = bcgs_iro_f_3s(XX, s, musc, param)
+% [QQ, RR] = BCGS_IRO_F_3S(XX, s, musc, param) performs BCGS_IRO_3S with
+% the first vector (_f) reorthogonalized.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.

@@ -1,5 +1,5 @@
 {
-  "bcgs_iro_1": {
+  "bcgs": {
     "houseqr": [],
     "cholqr": {
       "param": {
@@ -7,7 +7,7 @@
       }
     }
   },
-  "bcgs_iro_3s_1": {
+  "bcgs_ro": {
     "houseqr": [],
     "cholqr": {
       "param": {
@@ -15,7 +15,7 @@
       }
     }
   },
-  "bcgs_iro_2s_1": {
+  "bcgs_iro": {
     "houseqr": [],
     "cholqr": {
       "param": {
@@ -23,7 +23,7 @@
       }
     }
   },
-  "bcgs_iro_1s_1": {
+  "bcgs_iro_f": {
     "houseqr": [],
     "cholqr": {
       "param": {
@@ -31,7 +31,31 @@
       }
     }
   },
-  "bcgs_iro_ls_1": {
+  "bcgs_iro_f_3s": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_nan"
+      }
+    }
+  },
+  "bcgs_iro_f_2s": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_nan"
+      }
+    }
+  },
+  "bcgs_iro_f_1s": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_nan"
+      }
+    }
+  },
+  "bcgs_iro_ls": {
     "param": {
       "chol": "chol_nan"
     }
