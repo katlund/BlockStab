@@ -1,14 +1,12 @@
 function [QQ, RR] = bcgs_iro_f_2s(XX, s, musc, param)
 % [QQ, RR] = BCGS_IRO_F_2S(XX, s, musc, param) performs BCGS_IRO_2S with
-% the first vector (_f) reorthogonalized.
+% HouseQR fixed for the first vector (_f).
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
-
-%% TODO: Update me with _1 explanation!
 
 %%
 % Default: debugging off
@@ -26,11 +24,9 @@ p = n/s;
 kk = 1:s;
 sk = s;
 
-% Initial step
+% Strong first step
 W = XX(:,kk);
-[W, RR1] = IntraOrtho(W, musc, param);
-[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);   % reorthogonalize first step
-RR(kk,kk) = RR(kk,kk) * RR1;
+[QQ(:,kk), RR(kk,kk)] = qr(W, 0);
 
 if param.verbose
     fprintf('         LOO      |    RelRes\n');
