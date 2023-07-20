@@ -40,7 +40,6 @@
     }
   },
   "bcgs_iro_f_2s": {
-    "houseqr": [],
     "cholqr": {
       "param": {
         "chol": "chol_nan"
@@ -48,7 +47,6 @@
     }
   },
   "bcgs_iro_f_1s": {
-    "houseqr": [],
     "cholqr": {
       "param": {
         "chol": "chol_nan"
