@@ -3,7 +3,7 @@
     "houseqr": [],
     "cholqr": {
       "param": {
-        "chol": "chol_free"
+        "chol": "chol_nan"
       }
     }
   },
@@ -11,7 +11,7 @@
     "houseqr": [],
     "cholqr": {
       "param": {
-        "chol": "chol_free"
+        "chol": "chol_nan"
       }
     }
   },
@@ -19,7 +19,7 @@
     "houseqr": [],
     "cholqr": {
       "param": {
-        "chol": "chol_free"
+        "chol": "chol_nan"
       }
     }
   },
@@ -27,27 +27,27 @@
     "houseqr": [],
     "cholqr": {
       "param": {
-        "chol": "chol_free"
+        "chol": "chol_nan"
       }
     }
   },
   "bcgs_iro_f_2s": {
     "cholqr": {
       "param": {
-        "chol": "chol_free"
+        "chol": "chol_nan"
       }
     }
   },
   "bcgs_iro_f_1s": {
     "cholqr": {
       "param": {
-        "chol": "chol_free"
+        "chol": "chol_nan"
       }
     }
   },
   "bcgs_iro_ls": {
     "param": {
-      "chol": "chol_free"
+      "chol": "chol_nan"
     }
   }
 }
