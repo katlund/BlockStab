@@ -145,9 +145,13 @@ Setting up the JSON configuration file is a bit tricky, but a number of template
 
 If you are unfamiliar with JSON, have a look at [JSON formatter](https://jsonformatter.org/json-parser), which provides a nice GUI for parsing and formatting files.
 
+### New plot customization features
+
+`roadmap_f.m` demonstrates how to use subroutines `gen_plots.m` and `mod_run_data.m` to plot subsets of a previous run, without re-running the tests.  This can be beneficial when running a huge panel of tests that are not easily displayed on the same axis.  (Indeed, choosing colors and symbols for making lines legible is nontrivial.)  We used this feature in [Carson, et al. 2023](TBD) to study a progression of method modifications.
+
 ## Documentation
 
-Each file contains a descriptive header.  See especially the following core files:
+Each file contains a descriptive header.  See especially the following core files:git
 
 * `BGS.m` - switches between skeletons
 * `IntraOrtho.m` - switches between muscles
@@ -159,20 +163,23 @@ Each file contains a descriptive header.  See especially the following core file
 
 Several papers are foundational for our subroutines.  We provide the full citations here and use abbreviated ones (given as [Author YYYY]) throughout the documentation.
 
-* [Barlow 2019](https://doi.org/10.1137/18M1197400): Barlow, J. Block modified Gram-Schmidt algorithms and their analysis. SIAM Journal on Matrix Analysis and Applications. Vol. 40, 4, pp. 1257--1290, 2019.
-* [Barlow & Smoktunowicz 2013](https://doi.org/10.1007/s00211-012-0496-2): Barlow, J. & Smoktunowicz, A. Reorthogonalized block classical Gram-Schmidt. Numerische Mathematik. Vol 123, pp 395--423, 2013.
-* [Bielich, et al. 2022](https://doi.org/10.1016/j.parco.2022.102940): Bielich, D, Langou J., Thomas, S., Świrydowicz, K., Yamazaki, I., and Boman, E.G.  Low-synch Gram–Schmidt with delayed reorthogonalization for Krylov solvers.  Parallel Computing. Vol 112, pp 102940, 2022.
-* [Carson, et al. 2021](https://doi.org/10.1137/21M1394424): Carson, E., Lund, K., and Rozložník, M.  The stability of block variants of classical Gram-Schmidt.  SIAM Journal on Matrix Analysis and Applications. Vol. 42, 3, pp 1365--1380, 2021.
-* [Fukaya, et al. 2020](https://doi.org/10.1137/18M1218212): Fukaya, T., Kannan, R., Nakatsukasa, Y., Yamamoto, Y., & Yanagisawa, Y. Shifted CholeskyQR for computing the QR factorization of ill-conditioned matrices. SIAM Journal on Scientific Computing. Vol. 42, 1, pp A477--A503, 2020.
-* [Fukaya, et al. 2014](https://doi.org/10.1109/ScalA.2014.11): Fukaya, T., Nakatsukasa, Y., Yanagisawa, Y., & Yamamoto, Y. CholeskyQR2: A simple and communication-avoiding algorithm for computing a tall-skinny QR factorization on a large-scale parallel system. 2014 5th Workshop on Latest Advances in Scalable Algorithms for Large-Scale Systems, pp 31--38, 2014.
-* [Smoktunowicz, et al. 2006](https://doi.org/10.1007/s00211-006-0042-1): Smoktunowicz, A., Barlow, J., and Langou, J. A note on the error analysis of classical Gram-Schmidt. Numerische Mathematik. Vol. 105, 2, pp 299-313, 2006.
-* [Stathopoulos & Wu 2002](https://doi.org/10.1137/S1064827500370883): Stathopoulos, A. & Wu, K. A block orthogonalization procedure with constant synchronization requirements. SIAM Journal on Scientific Computing. Vol 23, 6, pp 2165--2182, 2002.
-* [Stewart 2008](https://doi.org/10.1137/070682563): Stewart, G. W. Block Gram-Schmidt orthogonalization. SIAM Journal on Scientific Computing. Vol 31, 1, pp 761--775, 2008.
-* [Swirydowicz, et al. 2020](https://doi.org/10.1016/j.parco.2022.102940): Świrydowicz, K., Langou, J., Ananthan, S., Yang, U., & Thomas, S. Low synchronization Gram-Schmidt and GMRES algorithms. Technical report, 2020.
+* [Barlow 2019](https://doi.org/10.1137/18M1197400): Barlow, J. Block modified Gram-Schmidt algorithms and their analysis. SIAM Journal on Matrix Analysis and Applications. Vol. 40, 4, pp. 1257--1290, 2019. DOI: 10.1137/18M1197400.
+* [Barlow & Smoktunowicz 2013](https://doi.org/10.1007/s00211-012-0496-2): Barlow, J. & Smoktunowicz, A. Reorthogonalized block classical Gram-Schmidt. Numerische Mathematik. Vol 123, pp 395--423, 2013. DOI: 10.1007/s00211-012-0496-2.
+* [Bielich, et al. 2022](https://doi.org/10.1016/j.parco.2022.102940): Bielich, D, Langou J., Thomas, S., Świrydowicz, K., Yamazaki, I., and Boman, E.G.  Low-synch Gram–Schmidt with delayed reorthogonalization for Krylov solvers.  Parallel Computing. Vol 112, pp 102940, 2022. DOI: 10.1016/j.parco.2022.102940.
+* [Carson, et al. 2021](https://doi.org/10.1137/21M1394424): Carson, E., Lund, K., and Rozložník, M.  The stability of block variants of classical Gram-Schmidt.  SIAM Journal on Matrix Analysis and Applications. Vol. 42, 3, pp 1365--1380, 2021. DOI: 10.1137/21M1394424.
+* [Carson, et al. 2023](TBD): Carson, E., Lund, K., and Oktay, E.  Loss of orthogonality in low-synchronization variants of reorthogonalized block Gram-Schmidt.  In preparation, 2023. DOI: TBD.
+* [Fukaya, et al. 2020](https://doi.org/10.1137/18M1218212): Fukaya, T., Kannan, R., Nakatsukasa, Y., Yamamoto, Y., & Yanagisawa, Y. Shifted CholeskyQR for computing the QR factorization of ill-conditioned matrices. SIAM Journal on Scientific Computing. Vol. 42, 1, pp A477--A503, 2020. DOI: 10.1137/18M1218212.
+* [Fukaya, et al. 2014](https://doi.org/10.1109/ScalA.2014.11): Fukaya, T., Nakatsukasa, Y., Yanagisawa, Y., & Yamamoto, Y. CholeskyQR2: A simple and communication-avoiding algorithm for computing a tall-skinny QR factorization on a large-scale parallel system. 2014 5th Workshop on Latest Advances in Scalable Algorithms for Large-Scale Systems, pp 31--38, 2014. DOI: 10.1109/ScalA.2014.11.
+* [Smoktunowicz, et al. 2006](https://doi.org/10.1007/s00211-006-0042-1): Smoktunowicz, A., Barlow, J., and Langou, J. A note on the error analysis of classical Gram-Schmidt. Numerische Mathematik. Vol. 105, 2, pp 299-313, 2006. DOI: 10.1007/s00211-006-0042-1.
+* [Stathopoulos & Wu 2002](https://doi.org/10.1137/S1064827500370883): Stathopoulos, A. & Wu, K. A block orthogonalization procedure with constant synchronization requirements. SIAM Journal on Scientific Computing. Vol 23, 6, pp 2165--2182, 2002. DOI: 10.1137/S1064827500370883.
+* [Stewart 2008](https://doi.org/10.1137/070682563): Stewart, G. W. Block Gram-Schmidt orthogonalization. SIAM Journal on Scientific Computing. Vol 31, 1, pp 761--775, 2008. DOI: 10.1137/070682563.
+* [Swirydowicz, et al. 2021](https://doi.org/10.1002/nla.2343): Świrydowicz, K., Langou, J., Ananthan, S., Yang, U., & Thomas, S. Low synchronization Gram-Schmidt and generalized minimal residual algorithms. Numerical Linear Algebra with Applications, Vol 28(2), pp e2343, 2021. DOI: 10.1002/nla.2343.
 
 ## How to cite us
 
-[Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017) Carson, E., Lund, K, Rozložník, M., and Thomas, S. Block Gram-Schmidt methods and their stability properties. Linear Algebra and its Applications. Vol 638, pp 150--195, 2022.
+Several works are associated with this repository.  The primary one is
+
+[Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017) Carson, E., Lund, K, Rozložník, M., and Thomas, S. Block Gram-Schmidt methods and their stability properties. Linear Algebra and its Applications. Vol 638, pp 150--195, 2022. DOI: 10.1016/j.laa.2021.12.017.
 
 Please also mention which version of the software you are using by referring, e.g., to a tag or specific commit.
 
