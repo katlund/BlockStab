@@ -1,8 +1,6 @@
 function [QQ, RR] = bcgs_iro_f(XX, s, musc, param)
-% [QQ, RR] = BCGS_IRO_F(XX, s, musc, param) performs BCGS_IRO on the m x n
-% matrix XX with p = n/s block partitions each of size s and with
-% intra-orthogonalization procedure determined by musc.  This version also
-% reorthogonalizes the first (hence _f) block vector.
+% [QQ, RR] = BCGS_IRO_F(XX, s, musc, param) performs BCGS_IRO with
+% HouseQR fixed for the first vector (_f).
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
@@ -26,11 +24,9 @@ p = n/s;
 kk = 1:s;
 sk = s;
 
+% Strong first step
 W = XX(:,kk);
-
-[W, RR1] = IntraOrtho(W, musc, param);
-[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);   % reorthogonalize first step
-RR(kk,kk) = RR(kk,kk) * RR1;
+[QQ(:,kk), RR(kk,kk)] = qr(W, 0);
 
 if param.verbose
     fprintf('         LOO      |    RelRes\n');
