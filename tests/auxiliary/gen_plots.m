@@ -1,11 +1,18 @@
-function gen_plots(save_str)
-% Generates plots for RUNKAPPAPLOT
+function gen_plots(run_data, new_dir_str)
+% GEN_PLOTS(run_data, new_dir_str) is a subroutine that generates plots for
+% RUNKAPPAPLOT given a run_data struct; if new_dir_str is not provided,
+% then the one saved in the .mat file specified by save_str is used.
+%
+% Part of the BlockStab package documented in [Carson, et al.
+% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-% Load run data directly into variable space
-load(save_str); %#ok<LOAD>
-n_alg = length(lgd);
-n_symb = length(symb);
+% Load run_data
+n_alg = length(run_data.lgd);
+n_symb = length(run_data.symb);
+if nargin == 2
+    run_data.dir_str = new_dir_str;
+end
 
 % Initialize figures and axes
 fg = cell(1,3);
@@ -20,16 +27,16 @@ end
 % Plot data
 for j = 1:n_alg
     k = mod(j,n_symb) + 1;
-    plot(ax{1}, condXX, loss_ortho(:,j),...
-        symb{k}, 'Color', alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
-    plot(ax{2}, condXX, rel_res(:,j),... 
-        symb{k}, 'Color', alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
-    plot(ax{3}, condXX, rel_chol_res(:,j),...
-        symb{k}, 'Color', alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
+    plot(ax{1}, run_data.condXX, run_data.loss_ortho(:,j),...
+        run_data.symb{k}, 'Color', run_data.alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
+    plot(ax{2}, run_data.condXX, run_data.rel_res(:,j),... 
+        run_data.symb{k}, 'Color', run_data.alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
+    plot(ax{3}, run_data.condXX, run_data.rel_chol_res(:,j),...
+        run_data.symb{k}, 'Color', run_data.alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
 end
 % Plot comparison lines
-plot(ax{1}, condXX, eps*condXX, 'k--', condXX, eps*(condXX.^2), 'k-')
-plot(ax{3}, condXX, eps*condXX, 'k--', condXX, eps*(condXX.^2), 'k-')
+plot(ax{1}, run_data.condXX, eps*run_data.condXX, 'k--', run_data.condXX, eps*(run_data.condXX.^2), 'k-')
+plot(ax{3}, run_data.condXX, eps*run_data.condXX, 'k--', run_data.condXX, eps*(run_data.condXX.^2), 'k-')
 
 % Make plots pretty and save them
 plot_str = {'loss_ortho', 'rel_res', 'rel_chol_res'};
@@ -94,7 +101,7 @@ for k = 1:3
     end
 
     % Save figures
-    save_str = sprintf('%s/%s', dir_str, plot_str{k});
+    save_str = sprintf('%s/%s', run_data.dir_str, plot_str{k});
     if options.save_eps
         saveas(fg{k}, save_str, 'epsc');
     end

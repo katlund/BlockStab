@@ -22,7 +22,7 @@ fprintf(fID, '\\geometry{a4paper}\n');
 fprintf(fID, '\n');
 fprintf(fID, '\\title{Report}\n');
 fprintf(fID, '\\author{}\n');
-fprintf(fID, '\\date{%s}\n',char(run_data.datetime,'dd-MMM-yyyy HH:mm:ss'));
+fprintf(fID, '\\date{%s}\n',char(run_data.dtnow,'dd-MMM-yyyy HH:mm:ss'));
 fprintf(fID, '\n');
 
 % Begin document
