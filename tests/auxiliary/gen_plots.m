@@ -1,7 +1,8 @@
-function gen_plots(run_data, new_dir_str)
-% GEN_PLOTS(run_data, new_dir_str) is a subroutine that generates plots for
-% RUNKAPPAPLOT given a run_data struct; if new_dir_str is not provided,
-% then the one saved in the .mat file specified by save_str is used.
+function gen_plots(run_data, options, new_dir_str)
+% GEN_PLOTS(run_data, options, new_dir_str) is a subroutine that generates
+% plots for RUNKAPPAPLOT given a run_data struct; if new_dir_str is not
+% provided, then the one saved in the .mat file specified by save_str is
+% used.
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
@@ -10,7 +11,7 @@ function gen_plots(run_data, new_dir_str)
 % Load run_data
 n_alg = length(run_data.lgd);
 n_symb = length(run_data.symb);
-if nargin == 2
+if nargin == 3
     run_data.dir_str = new_dir_str;
 end
 
@@ -54,7 +55,7 @@ for k = 1:3
     
     % Legends and titles
     if k == 1
-        lgd_loo = lgd;
+        lgd_loo = run_data.lgd;
         lgd_loo{end+1} = '$O(\varepsilon) \kappa(\mathcal{X})$'; %#ok<*AGROW> 
         lgd_loo{end+1} = '$O(\varepsilon) \kappa^2(\mathcal{X})$';
         legend(ax{k}, lgd_loo, 'Location', 'BestOutside', ...
@@ -69,7 +70,7 @@ for k = 1:3
             'FontSize', 10);
         movegui(fg{1},'northwest')
     elseif k == 2
-        legend(ax{k}, lgd, 'Location', 'BestOutside', ...
+        legend(ax{k}, run_data.lgd, 'Location', 'BestOutside', ...
             'Interpreter', 'Latex', ...
             'FontSize', 10, ...
             'EdgeColor', 'none', ...
@@ -82,7 +83,7 @@ for k = 1:3
             'FontSize', 10);
         movegui(fg{2},'northeast')
     elseif k == 3
-        lgd_chol = lgd;
+        lgd_chol = run_data.lgd;
         lgd_chol{end+1} = '$O(\varepsilon) \kappa(\mathcal{X})$'; %#ok<*AGROW> 
         lgd_chol{end+1} = '$O(\varepsilon) \kappa^2(\mathcal{X})$';
         legend(ax{k}, lgd_chol, 'Location', 'BestOutside', ...
@@ -109,4 +110,14 @@ for k = 1:3
     if options.save_fig
         savefig(fg{k}, save_str, 'compact');
     end
+end
+
+% Print where figures are saved
+if options.save_eps
+    fprintf('EPS files saved in %s\n', run_data.dir_str);
+end
+if options.save_fig
+    fprintf('FIG files saved in %s\n', run_data.dir_str);
+end
+
 end

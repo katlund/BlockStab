@@ -242,7 +242,7 @@ for i = 1:n_mat
     fprintf('\n')
 end
 
-%% Save data
+%% Save run data and plot color and symbol order
 % Create directory
 dir_str = sprintf('results/%s/%s_m%d_p%d_s%d', ...
     config_file(1:end-5), mat_type, m, p, s);
@@ -292,15 +292,7 @@ save(save_str, 'run_data');
 fprintf('MAT file saved in %s\n', dir_str);
 
 %% Generate plots
-gen_plots(run_data);
-
-% Print where figures are saved
-if options.save_eps
-    fprintf('EPS files saved in %s\n', dir_str);
-end
-if options.save_fig
-    fprintf('FIG files saved in %s\n', dir_str);
-end
+gen_plots(run_data, options);
 
 %% Generate TeX report
 if options.tex_report && options.save_eps
