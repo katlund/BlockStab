@@ -98,13 +98,21 @@ elseif nargin == 2
     if isempty(mat_type)
         mat_type = 'default';
     end
-    options = options_init(mat_type, options);
+    if isempty(options)
+        options = options_init(mat_type);
+    else
+        options = options_init(mat_type, options);
+    end
     config_file = 'demo.json';
 elseif nargin == 3
     if isempty(mat_type)
         mat_type = 'default';
     end
-    options = options_init(mat_type, options);
+    if isempty(options)
+        options = options_init(mat_type);
+    else
+        options = options_init(mat_type, options);
+    end
     if isempty(config_file)
         config_file = 'demo.json';
     end

@@ -34,3 +34,8 @@ new_dir_str = sprintf('%s/4_f3s_to_f1s', run_data.dir_str);
 mkdir(new_dir_str);
 ind = 8:10;
 gen_plots(mod_run_data(run_data, ind), options, new_dir_str);
+
+%% Better behaved example
+mat_type = 'default';
+config_file = 'roadmap_f.json';
+run_data = RunKappaPlot(mat_type, [], config_file);
