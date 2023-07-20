@@ -11,7 +11,7 @@ Follow the download options from the Git repository main page.  Then navigate to
 * [x] [Mixed precision implementations](#mixed-precision)
 * [x] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties; in particular, `_f` versions that run an O(eps)-stable `IntraOrtho` on the first block vector for extra stability.
 * [x] A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
-* [x] `RunKappaPlot`(#new-test-driver): a unified, streamlined test engine that avoids redundant runs of skeleton-muscle combinations, simplifies syntax via an options struct, improves display of figure outputs, allows for toggling how and whether figures are saved, and allows for automatic TeX report generation.
+* [x] [`RunKappaPlot`](#new-test-driver): a unified, streamlined test engine that avoids redundant runs of skeleton-muscle combinations, simplifies syntax via an options struct, improves display of figure outputs, allows for toggling how and whether figures are saved, and allows for automatic TeX report generation.
 
 To reproduce results from [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017), please use release [v1.2022](https://github.com/katlund/BlockStab/releases/tag/v1.2022).
 
