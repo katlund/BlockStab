@@ -1,14 +1,14 @@
-function [QQ, RR] = bcgs_iro_1(XX, s, musc, param)
-% [QQ, RR] = BCGS_IRO_1(XX, s, musc, param) performs BCGS_IRO on the m x n
-% matrix XX with p = n/s block partitions each of size s and with
-% intra-orthogonalization procedure determined by musc.  This version also
-% reorthogonalizes the first block vector.
+function [QQ, RR] = bcgs_iro_f_3s(XX, s, musc, param)
+% [QQ, RR] = BCGS_IRO_F_3S(XX, s, musc, param) performs BCGS_IRO_3S with
+% the first vector (_f) reorthogonalized.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
+
+%% TODO: Update me with _1 explanation!
 
 %%
 % Default: debugging off
@@ -26,8 +26,8 @@ p = n/s;
 kk = 1:s;
 sk = s;
 
+% Initial step
 W = XX(:,kk);
-
 [W, RR1] = IntraOrtho(W, musc, param);
 [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);   % reorthogonalize first step
 RR(kk,kk) = RR(kk,kk) * RR1;
@@ -45,22 +45,18 @@ end
 for k = 1:p-1
     % Update block indices
     kk = kk + s;
-
-    W = XX(:,kk);
     
-    % First BCGS step
-    RR1 = InnerProd(QQ(:,1:sk), W, musc);
-    W = W - QQ(:,1:sk) * RR1;
-    [W, R1] = IntraOrtho(W, musc, param);
+    % First BCGS step w/o normalization
+    S_col = InnerProd(QQ(:,1:sk), XX(:,kk), musc);
+    W = XX(:,kk) - QQ(:,1:sk) * S_col;
     
     % Second BCGS step
-    RR(1:sk,kk) = InnerProd(QQ(:,1:sk), W, musc);
-    W = W - QQ(:,1:sk) * RR(1:sk,kk);
-    [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
+    Y_col = InnerProd(QQ(:,1:sk), W, musc);
+    [QQ(:,kk), Y_diag] = IntraOrtho(W - QQ(:,1:sk) * Y_col, musc, param);
     
     % Combine both steps
-    RR(1:sk,kk) = RR1 + RR(1:sk,kk) * R1;
-    RR(kk,kk) = RR(kk,kk) * R1;
+    RR(1:sk,kk) = S_col + Y_col;
+    RR(kk,kk) = Y_diag;
     
     sk = sk + s;
     if param.verbose

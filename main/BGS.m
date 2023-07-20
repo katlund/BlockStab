@@ -140,10 +140,25 @@ switch lower(skel)
         [QQ, RR, TT] = bmgs_t(XX, s, musc, param);
         run_time = toc;
         
-% Reorthogonalize first step ----------------------------------------------
-    case {'bcgs_iro_1'}
+% Reorthogonalize first step (_f) -----------------------------------------
+    case {'bcgs_iro_f'}
         tic;
-        [QQ, RR] = bcgs_iro_1(XX, s, musc, param);
+        [QQ, RR] = bcgs_iro_f(XX, s, musc, param);
+        run_time = toc;
+
+    case {'bcgs_iro_f_3s'}
+        tic;
+        [QQ, RR] = bcgs_iro_f_3s(XX, s, musc, param);
+        run_time = toc;
+
+    case {'bcgs_iro_f_2s'}
+        tic;
+        [QQ, RR] = bcgs_iro_f_2s(XX, s, musc, param);
+        run_time = toc;
+        
+    case {'bcgs_iro_f_1s'}
+        tic;
+        [QQ, RR] = bcgs_iro_f_1s(XX, s, musc, param);
         run_time = toc;
         
 % P-variants --------------------------------------------------------------

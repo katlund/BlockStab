@@ -274,10 +274,21 @@ save(save_str, 'run_data');
 fprintf('MAT file saved in %s\n', dir_str);
 
 %% Generate plots
-alg_cmap = lines(n_alg);
+% Line colors play a big role in whether the plots are legible
+if n_alg <= 7
+    % Start with built-in lines
+    alg_cmap = lines(n_alg);
+else
+    % Use LINSPECER for beautiful, distinguishable colors
+    alg_cmap = [lines(7); linspecer(n_alg-7, 'qualitative')];
+end
+
+% Randomly permute symbols to avoid matching colors for repeated symbols
 symb = {'s-', 'o-', '*-', '^-', 'p-', 'h-', 'd-', ...
     's:', 'o:', '*:', '^:', 'p:', 'h:', 'd:'};
 n_symb = length(symb);
+rng(4);
+symb = symb(randperm(n_symb));
 
 % Initialize figures and axes
 fg = cell(1,3);
@@ -301,8 +312,7 @@ for j = 1:n_alg
 end
 % Plot comparison lines
 plot(ax{1}, condXX, eps*condXX, 'k--', condXX, eps*(condXX.^2), 'k-')
-invsigminXX = condXX./normXX;
-plot(ax{3}, condXX, eps*invsigminXX, 'k--', condXX, eps*(invsigminXX.^2), 'k-')
+plot(ax{3}, condXX, eps*condXX, 'k--', condXX, eps*(condXX.^2), 'k-')
 
 % Make plots pretty and save them
 plot_str = {'loss_ortho', 'rel_res', 'rel_chol_res'};
@@ -349,8 +359,8 @@ for k = 1:3
         movegui(fg{2},'northeast')
     elseif k == 3
         lgd_chol = lgd;
-        lgd_chol{end+1} = '$O(\varepsilon) \sigma_{\min}^{-1}(\mathcal{X})$'; %#ok<*AGROW> 
-        lgd_chol{end+1} = '$O(\varepsilon) \sigma_{\min}^{-2}(\mathcal{X})$';
+        lgd_chol{end+1} = '$O(\varepsilon) \kappa(\mathcal{X})$'; %#ok<*AGROW> 
+        lgd_chol{end+1} = '$O(\varepsilon) \kappa^2(\mathcal{X})$';
         legend(ax{k}, lgd_chol, 'Location', 'BestOutside', ...
             'Interpreter', 'Latex', ...
             'FontSize', 10, ...
