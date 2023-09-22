@@ -321,4 +321,4 @@ for i = 1:4
 end
 
 %% Basic MakeHeatmap test
-MakeHeatmap([100 10 2], 'stewart', {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1)
+MakeHeatmap([100 10 2], 'stewart', {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR', 'CGS_SROR'}, 1, 1)

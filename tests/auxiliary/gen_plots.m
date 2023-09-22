@@ -10,7 +10,6 @@ function gen_plots(run_data, options, new_dir_str)
 %%
 % Load run_data
 n_alg = length(run_data.lgd);
-n_symb = length(run_data.symb);
 if nargin == 3
     run_data.dir_str = new_dir_str;
 end
@@ -27,13 +26,12 @@ end
 
 % Plot data
 for j = 1:n_alg
-    k = mod(j,n_symb) + 1;
     plot(ax{1}, run_data.condXX, run_data.loss_ortho(:,j),...
-        run_data.symb{k}, 'Color', run_data.alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
+        run_data.symb{j}, 'Color', run_data.alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
     plot(ax{2}, run_data.condXX, run_data.rel_res(:,j),... 
-        run_data.symb{k}, 'Color', run_data.alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
+        run_data.symb{j}, 'Color', run_data.alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
     plot(ax{3}, run_data.condXX, run_data.rel_chol_res(:,j),...
-        run_data.symb{k}, 'Color', run_data.alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
+        run_data.symb{j}, 'Color', run_data.alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
 end
 % Plot comparison lines
 plot(ax{1}, run_data.condXX, eps*run_data.condXX, 'k--', run_data.condXX, eps*(run_data.condXX.^2), 'k-')

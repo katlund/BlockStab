@@ -1,4 +1,12 @@
 {
+  "bcgs": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_nan"
+      }
+    }
+  },
   "bcgs_iro": {
     "houseqr": [],
     "cholqr": {
@@ -7,7 +15,7 @@
       }
     }
   },
-  "bcgs_iro_3s": {
+  "bcgs_iro_a": {
     "houseqr": [],
     "cholqr": {
       "param": {
@@ -15,7 +23,7 @@
       }
     }
   },
-  "bcgs_iro_2s": {
+  "bcgs_iro_a_3s": {
     "houseqr": [],
     "cholqr": {
       "param": {
@@ -23,8 +31,14 @@
       }
     }
   },
-  "bcgs_iro_1s": {
-    "houseqr": [],
+  "bcgs_iro_a_2s": {
+    "cholqr": {
+      "param": {
+        "chol": "chol_nan"
+      }
+    }
+  },
+  "bcgs_iro_a_1s": {
     "cholqr": {
       "param": {
         "chol": "chol_nan"

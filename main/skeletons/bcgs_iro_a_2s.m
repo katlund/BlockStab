@@ -1,5 +1,5 @@
-function [QQ, RR] = bcgs_iro_f(XX, s, musc, param)
-% [QQ, RR] = BCGS_IRO_F(XX, s, musc, param) performs BCGS_IRO with
+function [QQ, RR] = bcgs_iro_a_2s(XX, s, musc, param)
+% [QQ, RR] = BCGS_IRO_A_2S(XX, s, musc, param) performs BCGS_IRO_2S with
 % HouseQR fixed for the first vector (_f).
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
@@ -38,29 +38,27 @@ if param.verbose
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
 
-for k = 1:p-1
+for k = 2:p
     % Update block indices
     kk = kk + s;
-
-    W = XX(:,kk);
-    
-    % First BCGS step
-    RR1 = InnerProd(QQ(:,1:sk), W, musc);
-    W = W - QQ(:,1:sk) * RR1;
-    [W, R1] = IntraOrtho(W, musc, param);
-    
-    % Second BCGS step
-    RR(1:sk,kk) = InnerProd(QQ(:,1:sk), W, musc);
-    W = W - QQ(:,1:sk) * RR(1:sk,kk);
-    [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
-    
-    % Combine both steps
-    RR(1:sk,kk) = RR1 + RR(1:sk,kk) * R1;
-    RR(kk,kk) = RR(kk,kk) * R1;
-    
     sk = sk + s;
+
+    % k.1
+    S_col = InnerProd(QQ(:,1:sk-s), XX(:,kk), musc);
+    W = XX(:,kk) - QQ(:,1:sk-s) * S_col;
+
+    % k.2
+    tmp = InnerProd([QQ(:,1:sk-s) W], W, musc);
+    Y_col = tmp(1:sk-s,:);
+    Y_diag = chol_switch(tmp(kk,:) - Y_col' * Y_col, param);
+    QQ(:,kk) = (W - QQ(:,1:sk-s) * Y_col ) / Y_diag;
+    
+    % k.3
+    RR(1:sk-s,kk) = S_col + Y_col;
+    RR(kk,kk) = Y_diag;
+    
     if param.verbose
-        fprintf('%3.0d:', k+1);
+        fprintf('%3.0d:', k);
         fprintf('  %2.4e  |',...
             norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...

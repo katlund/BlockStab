@@ -268,12 +268,23 @@ else
     alg_cmap = [lines(7); linspecer(n_alg-7, 'qualitative')];
 end
 
-% Randomly permute symbols to avoid matching colors for repeated symbols
+% Randomly permute symbols to avoid matching colors for repeated symbols;
+% save fixed symbol order for gen_plots (necessary for selective plotting
+% as in ROADMAP)
 symb = {'s-', 'o-', '*-', '^-', 'p-', 'h-', 'd-', ...
     's:', 'o:', '*:', '^:', 'p:', 'h:', 'd:'};
 n_symb = length(symb);
 rng(4);
-symb = symb(randperm(n_symb));
+if n_alg <= n_symb
+    symb = symb(randperm(n_alg));
+else
+    n_loops = floor(n_alg / n_symb);
+    symb = symb(randperm(n_symb));
+    for i = 1:n_loops-1
+        symb = [symb symb(randperm(n_symb))]; %#ok<AGROW> 
+    end
+    symb = [symb symb(randperm(rem(n_alg, n_symb)))];
+end
 
 % Build struct
 run_data = struct( ...

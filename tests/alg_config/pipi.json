@@ -1,25 +1,4 @@
 {
-  "bcgs": {
-    "param": {
-      "chol": "chol_free"
-    },
-    "houseqr": [],
-    "cholqr": []
-  },
-  "bcgs_ro": {
-    "param": {
-      "chol": "chol_free"
-    },
-    "houseqr": [],
-    "cholqr": []
-  },
-  "bcgs_iro": {
-    "param": {
-      "chol": "chol_free"
-    },
-    "houseqr": [],
-    "cholqr": []
-  },
   "bcgs_pip": {
     "param": {
       "chol": "chol_free"
@@ -41,7 +20,7 @@
     "houseqr": [],
     "cholqr": []
   },
-  "bcgs_iro_f": {
+  "bcgs_iro_a": {
     "param": {
       "chol": "chol_free"
     },
