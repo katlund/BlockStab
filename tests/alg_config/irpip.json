@@ -1,0 +1,17 @@
+{
+    "bcgs_iro": {
+        "houseqr": [],
+        "cgs": [],
+        "cholqr": []
+    },
+    "bcgs_pip_iro": {
+        "houseqr": [],
+        "cgs": [],
+        "cholqr": []
+    },
+    "bcgs_irpip": {
+        "houseqr": [],
+        "cgs": [],
+        "cholqr": []
+    }
+}

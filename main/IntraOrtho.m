@@ -48,6 +48,9 @@ switch lower(musc)
         
     case {'cgs_iro'}
         [Q, R] = cgs_iro(X, param.verbose);
+
+    case {'cgs_irp'}
+        [Q, R] = cgs_irp(X, param.verbose);
         
     case {'cgs_sro'}
         [Q, R] = cgs_sror(X, 0, param.verbose);    % rpltol = 0 ensures no replacement

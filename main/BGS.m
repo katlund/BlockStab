@@ -73,6 +73,31 @@ switch lower(skel)
         [QQ, RR] = bcgs_iro(XX, s, musc, param);
         run_time = toc;
 
+    case {'bcgs_irpip'}
+        tic;
+        [QQ, RR] = bcgs_irpip(XX, s, musc, param);
+        run_time = toc;
+
+    case {'bcgs_irpio'}
+        tic;
+        [QQ, RR] = bcgs_irpio(XX, s, musc, param);
+        run_time = toc;
+
+    case {'bcgs_irp'}
+        tic;
+        [QQ, RR] = bcgs_irp(XX, s, musc, param);
+        run_time = toc;
+
+    case {'bcgs_irpq'}
+        tic;
+        [QQ, RR] = bcgs_irpq(XX, s, musc, param);
+        run_time = toc;
+
+    case {'bcgs_irp2'}
+        tic;
+        [QQ, RR] = bcgs_irp2(XX, s, musc, param);
+        run_time = toc;
+
 % [Stewart 2008] variant --------------------------------------------------
     case {'bcgs_sror'}
         tic;

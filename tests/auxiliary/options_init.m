@@ -30,12 +30,15 @@ elseif nargin >= 1
     if ~isfield(options, 'scale')
         switch mat_type
             case 'default'
-                options.scale = -(1:16);
+                % options.scale = -(1:16);
+                options.scale = -(1:20);
             case 'glued'
-                options.scale = 1:8;
+                % options.scale = 1:8;
+                options.scale = 1:16;
             case 'laeuchli'
-                options.scale = logspace(-1, -16, 16);
-            case 'monomial'
+                % options.scale = logspace(-1, -16, 16);
+                options.scale = logspace(-1, -20, 20);
+            case 'monomial'                
                 options.scale = 2:2:12;
         end
     end
