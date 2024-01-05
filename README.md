@@ -9,7 +9,7 @@ Follow the download options from the Git repository main page.  Then navigate to
 ## What is new in this version
 
 * [x] [Mixed precision implementations](#mixed-precision)
-* [x] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties; in particular, `_f` versions that run an O(eps)-stable `IntraOrtho` on the first block vector for extra stability.
+* [x] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties; in particular, `_a` versions that run an O(eps)-stable `IntraOrtho` on the first block vector for extra stability.
 * [x] A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
 * [x] [`RunKappaPlot`](#new-test-driver): a unified, streamlined test engine that avoids redundant runs of skeleton-muscle combinations, simplifies syntax via an options struct, improves display of figure outputs, allows for toggling how and whether figures are saved, and allows for automatic TeX report generation.
 
@@ -50,7 +50,7 @@ The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block ve
 * `skel` - char specifying BGS skeleton
 * `musc` - char specifying intra-orthogonalization muscle
 * `param`: a struct with the following optional fields:
-  * `.chol`: char specifying what type of Cholesky subroutine to call for skeletons that hard-code Cholesky via a block Pythagorean trick (e.g., `bcgs_pip`, `bcgs_pio`, `bcgs_iro_ls`, `bmgs_cwy`, `bmgs_icwy`, and their reorthogonalized and multi-precision versions); default for non-MP versions is `'chol_nan'`, and `'chol_free'` for MP
+  * `.chol`: char specifying what type of Cholesky subroutine to call for skeletons that hard-code Cholesky via a block Pythagorean trick (e.g., `bcgs_pip`, `bcgs_pio`, `bcgs_iro_ls`, `bmgs_cwy`, `bmgs_icwy`, and their reorthogonalized and multi-precision versions); default for non-MP versions is `'chol_nan'`, and `'chol_aree'` for MP
   * `.mp_package`: char specifying either `'advanpix'` or `'symbolic toolbox'` as the mixed precision package; default: `'advanpix'`
   * `.mp_digits`: int specifiying number of precision digits, e.g., 34 for quadruple precision (in Advanpix) or 32 for quadruple precision in Symbolic Math Toolbox; default: 34
   * `.rpltol`: scalar argument for `cgs_sror` that determines the replacement tolerance; default: 1
@@ -134,13 +134,13 @@ A major difference compared to the previous version is that all $\kappa$ plots a
 
 * `mat_type`: `'default'`, `'glued'`, `'laeuchli'`, and `'monomial'`
 * `options`: a struct with fields pertaining to the size and scale of trial matrices, as well as flags for saving figures and generating a TeX report
-* `config_file`: a JSON file processed by the subroutine [`alg_config`](https://github.com/katlund/BlockStab/blob/master/tests/auxiliary/alg_config.m)
+* `config_aile`: a JSON file processed by the subroutine [`alg_config`](https://github.com/katlund/BlockStab/blob/master/tests/auxiliary/alg_config.m)
 
 Setting up the JSON configuration file is a bit tricky, but a number of templates are included.  [`demo.json`](https://github.com/katlund/BlockStab/blob/master/tests/alg_config/demo.json) in particular demonstrates all possible quirks.  There are multiple upsides to the more abstract configuration file:
 
 * Redundancies in skeleton-muscle combinations are avoided, in particular, for skeletons like `bcgs_sror` and `bcgs_iro_ls`, which take only one muscle or none, respectively.
 * Direct comparisons between muscles and skeleton-muscle algorithms can be made.  For example, we can plot `cholqr` and `bmgs`$\circ$`houseqr` on the same $\kappa$ plot.
-* Direct comparisons between different implementations of the same algorithm are possible.  For example, Cholesky-based routines can be implemented with `chol_nan` or `chol_free`.  `demo.json` encodes both configurations for several algorithms.
+* Direct comparisons between different implementations of the same algorithm are possible.  For example, Cholesky-based routines can be implemented with `chol_nan` or `chol_aree`.  `demo.json` encodes both configurations for several algorithms.
 * Direct comparisons between multi-precision and standard double precision implementations of algorithms are also possible.  Again, see `demo.json` for examples.
 
 If you are unfamiliar with JSON, have a look at [JSON formatter](https://jsonformatter.org/json-parser), which provides a nice GUI for parsing and formatting files.
