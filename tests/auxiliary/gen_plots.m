@@ -111,7 +111,7 @@ for k = 1:3
     end
 
     if options.save_pdf
-        saveas(fg{k}, save_str, 'pdf');
+        exportgraphics(fg{k}, [save_str '.pdf'],'BackgroundColor','none')
     end
 
     if options.save_fig

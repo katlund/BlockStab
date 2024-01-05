@@ -185,5 +185,9 @@ end
 % End document
 fprintf(fID, '\\end{document}\n');
 
+% Add system specs to comments
+[~, result] = system('systeminfo');
+fprintf(fID, '%s\n', result);
+
 fclose(fID);
 end
