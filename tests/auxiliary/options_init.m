@@ -71,6 +71,10 @@ elseif nargin >= 1
         options.save_eps = true;
     end
 
+    if ~isfield(options, 'save_pdf')
+        options.save_pdf = true;
+    end
+
     if ~isfield(options, 'save_fig')
         options.save_fig = true;
     end

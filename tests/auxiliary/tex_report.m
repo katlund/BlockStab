@@ -15,7 +15,9 @@ fprintf(fID, '\\documentclass[10pt]{article}\n');
 fprintf(fID, '\\usepackage{booktabs, makecell} %% for column headers\n');
 fprintf(fID, '\\usepackage{datetime2}\n');
 fprintf(fID, '\\usepackage{enumerate}\n');
-fprintf(fID, '\\usepackage{epsfig, epstopdf}\n');
+if run_data.options.save_eps
+    fprintf(fID, '\\usepackage{epsfig, epstopdf}\n');
+end
 fprintf(fID, '\\usepackage{float}\n');
 fprintf(fID, '\\usepackage{geometry, graphicx}\n');
 fprintf(fID, '\\geometry{a4paper}\n');
@@ -170,7 +172,11 @@ plot_str = {'loss_ortho', 'rel_res', 'rel_chol_res'};
 for i = 1:3
     fprintf(fID, '\\begin{figure}[H]\n');
     fprintf(fID, '\t\\begin{center}\n');
-    fprintf(fID, '\t\t\\resizebox{.95\\textwidth}{!}{\\includegraphics{%s.eps}}\n', plot_str{i});
+    if run_data.options.save_pdf
+        fprintf(fID, '\t\t\\resizebox{.95\\textwidth}{!}{\\includegraphics{%s.pdf}}\n', plot_str{i});
+    elseif run_data.options.save_eps
+        fprintf(fID, '\t\t\\resizebox{.95\\textwidth}{!}{\\includegraphics{%s.eps}}\n', plot_str{i});
+    end
     fprintf(fID, '\t\\end{center}\n');
     fprintf(fID, '\\end{figure}\n');
     fprintf(fID, '\n');
