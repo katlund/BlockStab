@@ -1,0 +1,24 @@
+{
+  "bcgs_pip_ro": {
+    "param": {
+      "chol": "chol_free"
+    },
+    "houseqr": [],
+    "cholqr": []
+  },
+  "bcgs_pip_iro": {
+    "param": {
+      "chol": "chol_free"
+    },
+    "houseqr": [],
+    "cholqr": []
+  },
+  "bcgs_pip_ro_mp": {
+    "houseqr": [],
+    "cholqr": []
+  },
+  "bcgs_pip_iro_mp": {
+    "houseqr": [],
+    "cholqr": []
+  }
+}
