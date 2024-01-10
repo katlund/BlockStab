@@ -16,8 +16,9 @@ if ischar(alg)
         alg = strrep(alg, 'ro_', '+');
         alg = strrep(alg, '_ro', '+');
         alg = strrep(alg, 'ro', '+');
-        alg = strrep(alg, '_mp', '$^{\rm{MP}}$');
-        alg = strrep(alg, 'mp', '$^{\rm{MP}}$');
+        alg = upper(alg);
+        alg = strrep(alg, '_MP', '$^{\rm{MP}}$');
+        alg = strrep(alg, 'MP', '$^{\rm{MP}}$');
         alg = strrep(alg, '_', '-');
 
     else
@@ -38,8 +39,6 @@ if ischar(alg)
                 alg = 'GlobalQR';
         end
     end
-
-    alg = upper(alg);
 else
     for i = 1:length(alg)
         alg{i} = lower(alg{i});
@@ -51,8 +50,9 @@ else
             alg{i} = strrep(alg{i}, 'ro_', '+');
             alg{i} = strrep(alg{i}, '_ro', '+');
             alg{i} = strrep(alg{i}, 'ro', '+');
-            alg{i} = strrep(alg{i}, '_mp', '$^{\rm{MP}}$');
-            alg{i} = strrep(alg{i}, 'mp', '$^{\rm{MP}}$');
+            alg{i} = upper(alg{i});
+            alg{i} = strrep(alg{i}, '_MP', '$^{\rm{MP}}$');
+            alg{i} = strrep(alg{i}, 'MP', '$^{\rm{MP}}$');
             alg{i} = strrep(alg{i}, '_', '-');
     
         else
@@ -73,8 +73,6 @@ else
                     alg{i} = 'GlobalQR';
             end
         end
-
-        alg{i} = upper(alg{i});
     end
 end
 end
