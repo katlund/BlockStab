@@ -1,14 +1,41 @@
 {
   "bcgs_pip_mp": {
+    "param": {
+      "chol": "chol_free"
+    },
     "houseqr": [],
-    "cholqr": []
+    "cholqr": {
+      "param": [
+        {
+          "chol": "chol_free"
+        }
+      ]
+    }
   },
   "bcgs_pip_ro_mp": {
+    "param": {
+      "chol": "chol_free"
+    },
     "houseqr": [],
-    "cholqr": []
+    "cholqr": {
+      "param": [
+        {
+          "chol": "chol_free"
+        }
+      ]
+    }
   },
   "bcgs_pip_iro_mp": {
+    "param": {
+      "chol": "chol_free"
+    },
     "houseqr": [],
-    "cholqr": []
+    "cholqr": {
+      "param": [
+        {
+          "chol": "chol_free"
+        }
+      ]
+    }
   }
 }
