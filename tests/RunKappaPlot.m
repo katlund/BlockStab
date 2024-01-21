@@ -311,7 +311,7 @@ save(save_str, 'run_data');
 fprintf('MAT file saved in %s\n', dir_str);
 
 %% Generate plots
-gen_plots(run_data, options);
+gen_plots(run_data);
 
 %% Generate TeX report
 if options.tex_report && (options.save_pdf || options.save_eps)

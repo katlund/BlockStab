@@ -12,7 +12,7 @@ function gen_plots(run_data, new_dir_str)
 %%
 % Load run_data
 n_alg = length(run_data.lgd);
-if nargin == 3
+if nargin == 2
     run_data.dir_str = new_dir_str;
 end
 
