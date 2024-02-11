@@ -7,7 +7,7 @@ function [QQ, RR] = bcgs_iro_ls_mp(XX, s, musc, param)
 % muscle is explicitly required, because CholQR is hard-coded for all
 % intra-orthogonalizations; it can, however, be passed to InnerProd.
 %
-% This mixed precision version computes the inputs to Cholesky and the
+% This multiprecision version computes the inputs to Cholesky and the
 % Cholesky factorization itself in simulated quadruple (or other,
 % user-specified precision) precision.  See MP_SWITCH for details on the
 % param struct.

@@ -5,7 +5,7 @@ function [QQ, RR] = bcgs_pio_ro_mp(XX, s, musc, param)
 % each of size s and with intra-orthogonalization procedure determined by
 % musc.
 %
-% This mixed precision version computes the inputs to Cholesky and the
+% This multiprecision version computes the inputs to Cholesky and the
 % Cholesky factorization itself in simulated quadruple (or other,
 % user-specified precision) precision.  See MP_SWITCH for details on the
 % param struct.

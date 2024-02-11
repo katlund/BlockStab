@@ -160,7 +160,7 @@ for i = 1:length(musc_list)
     end
 end
 
-% Mixed precision
+% Multiprecision
 musc_list(end-1:end) = []; % remove global and global-no-scale
 param = [];
 param.verbose = 1;
@@ -242,8 +242,8 @@ for j = 1:length(skel_list)
     end
 end
 
-% Look at Cartesian product between all skeletons and muscles (mixed
-% precision)
+% Look at Cartesian product between all skeletons and muscles
+% multiprecision)
 param = [];
 param.verbose = 1;
 if advanpix

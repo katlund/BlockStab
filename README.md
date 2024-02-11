@@ -6,7 +6,7 @@ The main purpose of this package is to study, verify, and conjecture the stabili
 
 MATLAB 2020b or higher is required for saving PDFs of plots with minimal whitespace; see [this link](https://de.mathworks.com/help/matlab/creating_plots/save-figure-with-minimal-white-space.html).  For older versions of MATLAB, be sure to set `run_data.options.save_pdf = 0`, or modify `gen_plots.m` directly to save PDFs via a preferred format.
 
-See [Mixed Precision](#mixed-precision) for additional package requirements.
+See [Multiprecision](#multiprecision) for additional package requirements.
 
 Otherwise, the main code base is likely to work with minimal modifications in GNU Octave, but we have not tested this directly.
 
@@ -16,23 +16,23 @@ Follow the download options from the Git repository main page.  Then navigate to
 
 ## What is new in this version
 
-* [x] [Mixed precision implementations](#mixed-precision)
+* [x] [Multiprecision implementations](#multiprecision)
 * [x] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties; in particular, `_a` versions that run an O(eps)-stable `IntraOrtho` on the first block vector for extra stability.
 * [x] A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
 * [x] [`RunKappaPlot`](#new-test-driver): a unified, streamlined test engine that avoids redundant runs of skeleton-muscle combinations, simplifies syntax via an options struct, improves display of figure outputs, allows for toggling how and whether figures are saved, and allows for automatic TeX report generation.
 
 To reproduce results from [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017), please use release [v1.2022](https://github.com/katlund/BlockStab/releases/tag/v1.2022).
 
-### Mixed precision
+## Multiprecision
 
-Mixed precision routines (i.e., those ending with `_mp`) require one of the additional toolboxes:
+Multiprecision routines (i.e., those ending with `_mp`) require one of the additional toolboxes:
 
 * [Advanpix Multiprecision Computing Toolbox](https://www.advanpix.com/), which requires a paid license.  The `mp` subroutine is used.
 * [Symbolic Math Toolbox](https://www.mathworks.com/products/symbolic.html), which may also require a paid license.  The subroutine [`vpa`](https://mathworks.com/help/symbolic/vpa.html) is used.
 
 The subroutine `mp_switch` manages which toolbox is called and at what precision via the `param` struct (see below).
 
-The principles behind our implementation of mixed-precision are as follows:
+We generally aim to simulate mixed-precision with these multiprecision toolboxes, keeping the following in mind:
 
 * We switch to quad (or the user-specified) precision for quantities that feed into Cholesky, and we perform Cholesky in quad.  We aim to study the circumstances under which we can lift condition number bounds on $X$ for routines that use the block Pythagorean theorem.
 * To simulate performance-optimized implementations, we only store vectors in double and recast them to quad whenever they are needed for computations feeding into Cholesky.
@@ -59,7 +59,7 @@ The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block ve
 * `musc` - char specifying intra-orthogonalization muscle
 * `param`: a struct with the following optional fields:
   * `.chol`: char specifying what type of Cholesky subroutine to call for skeletons that hard-code Cholesky via a block Pythagorean trick (e.g., `bcgs_pip`, `bcgs_pio`, `bcgs_iro_ls`, `bmgs_cwy`, `bmgs_icwy`, and their reorthogonalized and multi-precision versions); default for non-MP versions is `'chol_nan'`, and `'chol_aree'` for MP
-  * `.mp_package`: char specifying either `'advanpix'` or `'symbolic toolbox'` as the mixed precision package; default: `'advanpix'`
+  * `.mp_package`: char specifying either `'advanpix'` or `'symbolic toolbox'` as the multiprecision package; default: `'advanpix'`
   * `.mp_digits`: int specifiying number of precision digits, e.g., 34 for quadruple precision (in Advanpix) or 32 for quadruple precision in Symbolic Math Toolbox; default: 34
   * `.rpltol`: scalar argument for `cgs_sror` that determines the replacement tolerance; default: 1
   * `.verbose`: boolean for whether to print intermediate loss of orthogonality (LOO) or relative residual (RelRes) per iteration; default: 0

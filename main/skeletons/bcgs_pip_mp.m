@@ -6,7 +6,7 @@ function [QQ, RR] = bcgs_pip_mp(XX, s, musc, param)
 % generalization of CGS-P/Algorithm 2 from [Smoktunowicz et. al. 2006]
 % derived in [Carson et al. 2021].
 %
-% This mixed precision version computes the inputs to Cholesky and the
+% This multiprecision version computes the inputs to Cholesky and the
 % Cholesky factorization itself in simulated quadruple (or other,
 % user-specified precision) precision.  See MP_SWITCH for details on the
 % param struct.

@@ -1,5 +1,5 @@
 function param = mp_param_init(param)
-% Initialize missing parameters for mixed precision skeletons
+% Initialize missing parameters for multiprecision skeletons
 
 %%
 if nargin == 0

@@ -2,7 +2,7 @@ function [Q, R] = cholqr_ro(X, param)
 % [Q, R] = CHOLQR_RO(X, param) computes Cholesky QR factorization with
 % (outer) ReOrthogonalization of the m x s matrix X.  The default Cholesky
 % subroutine is CHOL_NAN; the other option is CHOL_FREE, which can be
-% further forced to operate in mixed precision with the following fields
+% further forced to operate in multiprecision with the following fields
 % specified in the param struct:
 % - .chol = 'chol_nan' or 'chol_free'
 % - .mp_package = 'advanpix' or 'symbolic toolbox'

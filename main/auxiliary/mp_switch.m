@@ -1,6 +1,6 @@
 function A = mp_switch(A, param)
 % A = MP_SWITCH(A, param) is a subroutine for switching between
-% mixed-precision packages for casting A to a desired precision.  Quadruple
+% multiprecision packages for casting A to a desired precision.  Quadruple
 % precision is the default, but other precisions can be specified in the
 % struct param.
 %

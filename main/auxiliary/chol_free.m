@@ -8,7 +8,7 @@ function R = chol_free(A, param)
 % When no param struct is provided, or when it is provided as an empty set,
 % CHOL_FREE is run in standard double precision.
 %
-% To specify a mixed precision implementation, param with the following
+% To specify a multiprecision implementation, param with the following
 % fields must be provided:
 % - .mp_package: 'advanpix', 'symbolic math', or 'none'
 % - .mp_digits: the desired number of digits, according to the chosen

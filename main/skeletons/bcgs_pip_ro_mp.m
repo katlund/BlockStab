@@ -4,7 +4,7 @@ function [QQ, RR] = bcgs_pip_ro_mp(XX, s, musc, param)
 % ReOrthogonalization on the m x n matrix XX with p = n/s block partitions
 % each of size s with intra-orthogonalization procedure determined by musc.
 %
-% This mixed precision version computes the inputs to Cholesky and the
+% This multiprecision version computes the inputs to Cholesky and the
 % Cholesky factorization itself in simulated quadruple (or other,
 % user-specified precision) precision.  See MP_SWITCH for details on the
 % param struct.

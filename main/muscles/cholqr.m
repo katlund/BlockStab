@@ -2,7 +2,7 @@ function [Q, R] = cholqr(X, param)
 % [Q, R] = CHOLQR(X, param) computes Cholesky QR factorization of the m x s
 % matrix X as described in [Stathopoulos & Wu 2002].  The default Cholesky
 % subroutine is CHOL_NAN; the other option is CHOL_FREE, which can be
-% further forced to operate in mixed precision with the following fields
+% further forced to operate in multiprecision with the following fields
 % specified in the param struct:
 % - .chol = 'chol_nan' or 'chol_free'
 % - .mp_package = 'advanpix' or 'symbolic toolbox'

@@ -19,7 +19,7 @@ function [QQ, RR, TT, run_time] = BGS(XX, s, skel, musc, param)
 %      their reorthogonalized and multi-precision versions)
 %      default: 'chol_nan'
 %   - .mp_package: char specifying either 'advanpix' or 'symbolic toolbox'
-%      as the mixed precision package for routines with *_MP
+%      as the multiprecision package for routines with *_MP
 %      default: []
 %   - .mp_digits: int specifiying number of precision digits, e.g., 34 for
 %      quadruple precision (in Advanpix) or 32 for quadruple precision in
