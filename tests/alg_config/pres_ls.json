@@ -1,0 +1,18 @@
+{
+    "bcgs": {
+        "cholqr": []
+    },
+    "bmgs": {
+        "cholqr": []
+    },
+    "bmgs_svl": {
+        "cholqr": []
+    },
+    "bmgs_cwy": {
+        "cholqr": []
+    },
+    "bcgs_iro_a": {
+        "cholqr": []
+    },
+    "bcgs_iro_ls": {}
+}
