@@ -61,30 +61,33 @@ for k = 2:p
     W = XX(:,kk);
     
     %% First sync point
-    % Compute temporary quantities (inner product) in qp.  Note that
-    % standard operations are overloaded.
-    tmp = InnerProd(qp([QQ(:,1:sk-s) W]), qp(W), musc); % returned in qp
-    RR1 = tmp(1:sk-s,:); % returned in qp
+    % Compute only W^T * W in qp.  Note that standard operations are
+    % overloaded.  Note also that although we split InnerProd across two
+    % steps to handle different precisions, we still regard these steps as
+    % a single sync point.
+    RR1 = InnerProd(QQ(:,1:sk-s), W);
+    tmp = InnerProd(qp(W), qp(W), musc); % returned in qp
 
     % Compute Cholesky in qp
-    R1 = chol_switch( tmp(kk,:) - RR1' * RR1, param ); % returned in qp
+    R1 = chol_switch(tmp - qp(RR1)' * qp(RR1), param ); % returned in qp
 
     % Compute intermediate basis vector and cast to double
     W = double(qp(W - QQ(:,1:sk-s) * RR1) / R1);
     
     %% Second sync point
-    % Again compute inner product in qp
-    tmp = InnerProd(qp([QQ(:,1:sk-s) W]), qp(W), musc); % returned in qp
+    % Again compute only W^T * W in qp
+    RR2 = InnerProd(QQ(:,1:sk-s), W);
+    tmp = InnerProd(qp(W), qp(W), musc); % returned in qp
 
     % Compute Cholesky in qp
-    R2 = chol_switch( tmp(kk,:) - tmp(1:sk-s,:)' * tmp(1:sk-s,:), param); % returned in qp
+    R2 = chol_switch(tmp - qp(RR2)' * qp(RR2), param); % returned in qp
     
     % Compute next basis vector and cast to double
-    QQ(:,kk) = double(qp(W - QQ(:,1:sk-s) * tmp(1:sk-s,:)) / R2);
+    QQ(:,kk) = double(qp(W - QQ(:,1:sk-s) * RR2) / R2);
     
     % Assign RR in double and combine both steps
-    RR(1:sk-s,kk) = double(RR1) + double(tmp(1:sk-s,:)) * double(R1);
-    RR(kk,kk) = double(R2) * double(R1);
+    RR(1:sk-s,kk) = RR1 + RR2 * double(R1);
+    RR(kk,kk) = double(R2 * R1);
     
     if param.verbose
         fprintf('%3.0d:', k-1);
