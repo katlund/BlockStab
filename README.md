@@ -58,7 +58,7 @@ The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block ve
 * `param`: a struct with the following optional fields:
   * `.chol`: char specifying what type of Cholesky subroutine to call for skeletons that hard-code Cholesky via a block Pythagorean trick (e.g., `bcgs_pip`, `bcgs_pio`, `bcgs_iro_ls`, `bmgs_cwy`, `bmgs_icwy`, and their reorthogonalized and multi-precision versions); default for non-MP versions is `'chol_nan'`, and `'chol_aree'` for MP
   * `.mp_package`: char specifying either `'advanpix'` or `'symbolic toolbox'` as the multiprecision package; default: `'advanpix'`
-  * `.mp_digits`: int specifiying number of precision digits, e.g., 34 for quadruple precision (in Advanpix) or 32 for quadruple precision in Symbolic Math Toolbox; default: 34
+  * `.mp_pair`: a cell specifying the precision pair; the first entry refers to the primary precision, and the second to the (usually) higher precision; when `mp_package` is specified as one of the MP toolboxes, then `{'double', 'quad'}` is the default; otherwise `{'single', 'double'}` (which don't rely on external toolboxes)
   * `.rpltol`: scalar argument for `cgs_sror` that determines the replacement tolerance; default: 1
   * `.verbose`: boolean for whether to print intermediate loss of orthogonality (LOO) or relative residual (RelRes) per iteration; default: 0
 

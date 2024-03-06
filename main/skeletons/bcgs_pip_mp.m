@@ -25,13 +25,14 @@ elseif nargin == 4
     param = mp_param_init(param);
 end
 
-% Set up quad-precision subroutine
-qp = @(x) mp_switch(x, param);
+% Set up primary and secondary precision routines (p1 & p2, respectively)
+p1 = @(x) mp_switch(x, param.mp_package, param.mp_pair{1});
+p2 = @(x) mp_switch(x, param.mp_package, param.mp_pair{2});
 
 % Pre-allocate memory for QQ and RR
 [m, n] = size(XX);
-RR = zeros(n,n);
-QQ = zeros(m,n);
+RR = p1(zeros(n,n));
+QQ = p1(zeros(m,n));
 p = n/s;
 
 % Set up block indices
@@ -39,7 +40,7 @@ kk = 1:s;
 sk = s;
 
 % Pull out block vector (keeps MATLAB from copying full X repeatedly)
-W = XX(:,kk);
+W = p1(XX(:,kk)); % cast in case p1 is single
 
 % First step
 [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
@@ -60,24 +61,24 @@ for k = 2:p
     sk = sk + s;
     
     % Pull out block vector (keeps MATLAB from copying full X repeatedly)
-    W = XX(:,kk);
+    W = p1(XX(:,kk));  % cast in case p1 is single
     
-    % Compute only W^T * W in qp.  Note that standard operations are
+    % Compute only W^T * W in p2.  Note that standard operations are
     % overloaded.  Note also that although we split InnerProd across two
     % steps to handle different precisions, we still regard these steps as
     % a single sync point.
     RRk = InnerProd(QQ(:,1:sk-s), W);
-    tmp = InnerProd(qp(W), qp(W), musc); % returned in qp
+    tmp = InnerProd(p2(W), p2(W), musc); % returned in p2
 
-    % Compute Cholesky in qp
-    R_diag = chol_switch(tmp - qp(RRk)' * qp(RRk), param); % returned in qp
+    % Compute Cholesky in p2
+    R_diag = chol_switch(tmp - p2(RRk)' * p2(RRk), param); % returned in p2
     
-    % Assign RR in double
+    % Assign RR in p1
     RR(1:sk-s,kk) = RRk;
-    RR(kk,kk) = double(R_diag); 
+    RR(kk,kk) = p1(R_diag); 
 
-    % Compute next basis vector in qp and cast to double
-    QQ(:,kk) = double(qp(W - QQ(:,1:sk-s) * RRk) / R_diag);
+    % Compute next basis vector in p2 and cast to p1
+    QQ(:,kk) = p1(p2(W - QQ(:,1:sk-s) * RRk) / R_diag);
     
     if param.verbose
         fprintf('%3.0d:', k-1);

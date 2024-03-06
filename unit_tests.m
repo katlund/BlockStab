@@ -38,8 +38,7 @@ x = 1e-16;
 % Advanpix
 if advanpix
     param.mp_package = 'advanpix';
-    param.mp_digits = 34;
-    qpa = @(x) mp_switch(x, param);
+    qpa = @(x) mp_switch(x, param.mp_package, 'quad');
     fprintf(fID, 'MP_SWITCH, ADVANPIX: %d\n', double(1+qpa(x) > 1));
 end
 
@@ -47,17 +46,9 @@ end
 if symmath
     param = [];
     param.mp_package = 'symbolic math';
-    param.mp_digits = 32;
-    qps = @(x) mp_switch(x, param);
+    qps = @(x) mp_switch(x, param.mp_package, 'quad');
     fprintf(fID, 'MP_SWITCH, SYMBOLIC MATH: %d\n', double(1+qps(x) > 1));
 end
-
-% None
-param = [];
-param.mp_package = 'none';
-qpn = @(x) mp_switch(x, param);
-fprintf(fID, 'MP_SWITCH, NONE: %d\n', 1+qpn(x) == 1);
-fprintf(fID, '\n');
 
 %% CHOL_SWITCH
 % Check that CHOL_NAN returns NAN where expected, CHOL_FREE not, and
@@ -95,7 +86,7 @@ if advanpix
     Y = qpa(X);
     param = [];
     param.mp_package = 'advanpix';
-    param.mp_digits = 34;
+    param.mp_pair = {'double', 'quad'};
     fprintf(fID, 'CHOL_FREE(+) = SQRT, ADVANPIX: %d\n',...
         norm(chol_free(Y,param) - sqrt(Y)) == 0);
     fprintf(fID, 'CHOL_FREE(-) = SQRT, ADVANPIX: %d\n',...
@@ -107,7 +98,7 @@ if symmath
     Y = qps(X);
     param = [];
     param.mp_package = 'symbolic math';
-    param.mp_digits = 32;
+    param.mp_pair = {'double', 'quad'};
     fprintf(fID, 'CHOL_FREE(+) = SQRT, SYMBOLIC MATH: %d\n',...
         norm(chol_free(Y,param) - sqrt(Y)) == 0);
     fprintf(fID, 'CHOL_FREE(-) = SQRT, SYMBOLIC MATH: %d\n',...
@@ -169,7 +160,7 @@ if advanpix
     param = [];
     param.verbose = 1;
     param.mp_package = 'advanpix';
-    param.mp_digits = 34;
+    param.mp_pair = {'double', 'quad'};
     for i = 1:length(musc_list)
         musc = musc_list{i}(1:end-2);
         fprintf(fID, 'INTRAORTHO, %s, ADVANPIX\n', upper(musc));
@@ -187,7 +178,7 @@ if symmath
     param = [];
     param.verbose = 1;
     param.mp_package = 'symbolic math';
-    param.mp_digits = 32;
+    param.mp_pair = {'double', 'quad'};
     for i = 1:length(musc_list)
         musc = musc_list{i}(1:end-2);
         fprintf(fID, 'INTRAORTHO, %s, SYMBOLIC MATH\n', upper(musc));
@@ -248,7 +239,7 @@ param = [];
 param.verbose = 1;
 if advanpix
     param.mp_package = 'advanpix';
-    param.mp_digits = 34;
+    param.mp_pair = {'double', 'quad'};
     for j = 1:length(skel_list)
         skel = skel_list{j}(1:end-2);
         if strcmp(skel, 'bcgs_sror')
@@ -279,7 +270,7 @@ end
 
 if symmath
     param.mp_package = 'symbolic math';
-    param.mp_digits = 32;
+    param.mp_pair = {'double', 'quad'};
     for j = 1:length(skel_list)
         skel = skel_list{j}(1:end-2);
         if strcmp(skel, 'bcgs_sror')
