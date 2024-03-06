@@ -2,28 +2,24 @@
   "bcgs_pip_mp": {
     "param": {
       "chol": "chol_free",
-      "mp_package": "symbolic toolbox",
       "mp_pair": ["single", "double"]
     }
   },
   "bcgs_pip_ro_mp": {
     "param": {
       "chol": "chol_free",
-      "mp_package": "symbolic toolbox",
       "mp_pair": ["single", "double"]
     }
   },
   "bcgs_pip_iro_mp": {
     "param": {
       "chol": "chol_free",
-      "mp_package": "symbolic toolbox",
       "mp_pair": ["single", "double"]
     }
   },
   "bcgs_iro_ls_mp": {
     "param": {
       "chol": "chol_free",
-      "mp_package": "symbolic toolbox",
       "mp_pair": ["single", "double"]
     }
   }
