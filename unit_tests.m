@@ -30,16 +30,23 @@ else
 end
 
 %% MP_SWITCH
-% Checks to make sure that qp is set up correctly.  MP versions should put
-% qp(x) in higher precision and thus make 1 + qp(x) > 1.  Regular version
-% should include higher rounding error, thus making 1 + qp(x) = 1.
-x = 1e-16;
+% Checks to make sure that precisions are set up correctly.
+x = 1;
 
+% Check single
+sp = @(x) mp_switch(x, [], 'single');
+fprintf(fID, 'MP_SWITCH, SINGLE: %d\n', isa(sp(x), 'single'));
+
+% Check double
+dp = @(x) mp_switch(x, [], 'double');
+fprintf(fID, 'MP_SWITCH, DOUBLE: %d\n', isa(dp(x), 'double'));
+
+% Check quad
 % Advanpix
 if advanpix
     param.mp_package = 'advanpix';
     qpa = @(x) mp_switch(x, param.mp_package, 'quad');
-    fprintf(fID, 'MP_SWITCH, ADVANPIX: %d\n', double(1+qpa(x) > 1));
+    fprintf(fID, 'MP_SWITCH, ADVANPIX, QUAD: %d\n', isa(qpa(x), 'mp'));
 end
 
 % Symbolic Math Toolbox
@@ -47,7 +54,7 @@ if symmath
     param = [];
     param.mp_package = 'symbolic math';
     qps = @(x) mp_switch(x, param.mp_package, 'quad');
-    fprintf(fID, 'MP_SWITCH, SYMBOLIC MATH: %d\n', double(1+qps(x) > 1));
+    fprintf(fID, 'MP_SWITCH, SYMBOLIC MATH, QUAD: %d\n', isa(qps(x), 'sym'));
 end
 
 %% CHOL_SWITCH
@@ -313,3 +320,5 @@ end
 
 %% Basic MakeHeatmap test
 MakeHeatmap([100 10 2], 'stewart', {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR', 'CGS_SROR'}, 1, 1)
+
+cd ..
