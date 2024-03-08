@@ -3,7 +3,7 @@ function run_data = RunKappaPlot(mat_type, options, config_file)
 % for all KappaPlot tests.
 %
 % INPUTS:
-% - mat_type: 'default', 'glued', 'laeuchli', and 'monomial';
+% - mat_type: 'default', 'glued', 'laeuchli', 'monomial', 'piled';
 %   trial matrices are stored in the cell XX throughout this routine
 %   default: 'default'
 % - options struct with the following fields:
@@ -182,6 +182,12 @@ switch lower(mat_type)
             end
             XX{i} = Z;
         end
+
+    case 'piled'
+        for i = 1:n_mat
+            XX{i} = create_piled_matrix(m, p, s, options.scale(i));
+        end
+
 end
 
 %% Loop through alg_list and compute loo, rel_res, rel_chol_res

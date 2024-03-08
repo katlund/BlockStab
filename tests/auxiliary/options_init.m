@@ -37,6 +37,8 @@ elseif nargin >= 1
                 options.scale = logspace(-1, -16, 16);
             case 'monomial'
                 options.scale = 2:2:12;
+            case 'piled'
+                options.scale = 1:12;
         end
     end
 

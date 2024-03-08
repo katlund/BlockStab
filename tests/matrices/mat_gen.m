@@ -14,7 +14,7 @@ function [XX, XXstr, XXprops] = mat_gen(matstr, XXdim)
 %   'rand_normal' - random entries drawn from normal distribution
 %   'rank_def' - like rand_uniform but with a block vector set to 100 times
 %       another, in order to force rank deficiency
-%   'laeuchli' - the classic Läuchli matrix
+%   'laeuchli' - the classic Lï¿½uchli matrix
 %   'monomial' - each block vector spans a Krylov subspace of size s
 %   'stewart' - a matrix with a geometric sequence of singular values,
 %       ranging from 1 to 10^-t, t = 20; 1st column set to 25 column, and
@@ -135,6 +135,7 @@ switch matstr
         end
         XX = XX(:,1:p*s);
         XXstr = sprintf('Newton matrix');
+
 end
 XXprops.cond = cond(XX);
 XXprops.sv = svd(XX);

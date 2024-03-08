@@ -1,8 +1,9 @@
 function A = create_glued_matrix(m, p, s, r, t)
-% Example 2 matrix from [Smoktunowicz et. al., 2006]. Generates a glued
-% matrix of size m x ps, with parameters r and t specifying the powers of
-% the largest condition number of the first stage and second stages of the
-% matrix, respectively:
+% A = CREATE_GLUED_MATRIX(m, p, s, r, t) generates matrices according to
+% Example 2 from [Smoktunowicz et. al., 2006]. The resutling matrix is of
+% size m x ps, with parameters r and t specifying the powers of the largest
+% condition number of the first stage and second stages of the matrix,
+% respectively:
 %
 % Stage 1: A = U * Sigma * V'
 %
