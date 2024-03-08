@@ -7,3 +7,4 @@ options.num_partitions = 10;
 options.block_size = 10;
 config_file = 'roadmap.json';
 run_data = RunKappaPlot(mat_type, options, config_file);
+close all;
