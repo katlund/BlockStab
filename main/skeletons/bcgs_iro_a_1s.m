@@ -1,6 +1,6 @@
 function [QQ, RR] = bcgs_iro_a_1s(XX, s, musc, param)
 % [QQ, RR] = BCGS_IRO_A_1S(XX, s, musc, param) performs BCGS_IRO_1s with
-% HouseQR fixed for the first vector (_a).
+% HouseQR fixed for the first vector (_f).
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.

@@ -6,8 +6,7 @@ function [Q, R] = cholqr_ro(X, param)
 % specified in the param struct:
 % - .chol = 'chol_nan' or 'chol_free'
 % - .mp_package = 'advanpix' or 'symbolic toolbox'
-% - .mp_pair: a cell pair of precisions, with the second being the higher
-%    precision
+% - .mp_digits = desired number of digits (toolbox-dependent)
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
