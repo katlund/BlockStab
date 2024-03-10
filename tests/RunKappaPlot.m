@@ -163,7 +163,7 @@ switch lower(mat_type)
         A = spdiags(linspace(.1,1,m)',0,m,m);
         for i = 1:n_mat
             mat_s = options.scale(i); mat_p = n/mat_s;
-            rng(4); Y = rand(m,mat_p*mat_s);
+            rng(4); Y = rand(m, mat_p*mat_s);
             pp = 1:mat_p;
             Y(:,pp) = Y(:,pp) / norm(Y(:,pp));
             for k = 2:mat_s

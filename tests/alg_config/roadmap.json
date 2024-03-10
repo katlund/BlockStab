@@ -7,6 +7,14 @@
       }
     }
   },
+  "bcgs_a": {
+    "houseqr": [],
+    "cholqr": {
+      "param": {
+        "chol": "chol_free"
+      }
+    }
+  },
   "bcgs_iro": {
     "houseqr": [],
     "cholqr": {
