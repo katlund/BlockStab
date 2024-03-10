@@ -1,4 +1,35 @@
 {
+  "bcgs_a": {
+    "fake": [],
+    "hhqr": {
+      "io_a": {
+        "houseqr": []
+        },
+      "io_1": {
+        "houseqr": []
+      }
+    },
+    "hchqr": {
+      "io_a": {
+        "houseqr": []
+        },
+      "io_1": {
+        "cholqr": {
+          "param": {
+            "chol": "chol_free"
+          }
+        }
+      }
+    },
+    "param": [
+      {
+        "chol": "chol_nan"
+      },
+      {
+        "chol": "chol_free"
+      }
+    ]
+  },
   "bcgs_iro": {
     "cholqr": {
       "param": [
