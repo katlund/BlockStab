@@ -1,6 +1,7 @@
 function [QQ, RR] = bcgs_iro_a_2s(XX, s, musc, param)
-% [QQ, RR] = BCGS_IRO_A_2S(XX, s, musc, param) performs BCGS_IRO_2S with
-% HouseQR fixed for the first vector (_a).
+% [QQ, RR] = BCGS_IRO_A_2S(XX, s, musc, param) performs a reformulated
+% version of BCGS_IRO_A with 2 sync points.  Despite being a _a algorithm,
+% only one muscle is allowed, namely IO_A in the very first step.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
@@ -24,9 +25,11 @@ p = n/s;
 kk = 1:s;
 sk = s;
 
-% Strong first step
+% Extract W
 W = XX(:,kk);
-[QQ(:,kk), RR(kk,kk)] = qr(W, 0);
+
+% IO_A
+[QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
 
 if param.verbose
     fprintf('         LOO      |    RelRes\n');
