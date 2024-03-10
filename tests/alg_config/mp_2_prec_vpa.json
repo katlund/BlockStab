@@ -1,0 +1,30 @@
+{
+  "bcgs_pip_mp": {
+    "param": {
+      "chol": "chol_free",
+      "mp_package": "symbolic toolbox",
+      "mp_pair": ["double", "quad"]
+    }
+  },
+  "bcgs_pip_ro_mp": {
+    "param": {
+      "chol": "chol_free",
+      "mp_package": "symbolic toolbox",
+      "mp_pair": ["double", "quad"]
+    }
+  },
+  "bcgs_pip_iro_mp": {
+    "param": {
+      "chol": "chol_free",
+      "mp_package": "symbolic toolbox",
+      "mp_pair": ["double", "quad"]
+    }
+  },
+  "bcgs_iro_ls_mp": {
+    "param": {
+      "chol": "chol_free",
+      "mp_package": "symbolic toolbox",
+      "mp_pair": ["double", "quad"]
+    }
+  }
+}

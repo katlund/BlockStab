@@ -16,14 +16,15 @@ if nargin == 0
         'save_fig', true, ...
         'tex_report', true);
 elseif nargin >= 1
-    if isempty(mat_type) || nargin == 1
+    if isempty(mat_type)
+        mat_type = 'default';
+    end
+
+    if nargin == 1
         options = struct( ...
-            'scale', -(1:16), ...
-            'num_rows', 100, ...
-            'num_partitions', 10, ...
-            'block_size', 2, ...
             'save_eps', true, ...
             'save_fig', true, ...
+            'save_pdf', true, ...
             'tex_report', true);
     end
 
@@ -37,13 +38,15 @@ elseif nargin >= 1
                 options.scale = logspace(-1, -16, 16);
             case 'monomial'
                 options.scale = 2:2:12;
+            case 'piled'
+                options.scale = 1:12;
         end
     end
 
     if ~isfield(options, 'num_rows')
         switch mat_type
             case 'monomial'
-                options.num_rows = 120;
+                options.num_rows = 200;
             otherwise
                 options.num_rows = 100;
         end

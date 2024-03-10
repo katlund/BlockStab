@@ -11,9 +11,9 @@ function R = chol_free(A, param)
 % To specify a multiprecision implementation, param with the following
 % fields must be provided:
 % - .mp_package: 'advanpix', 'symbolic math', or 'none'
-% - .mp_digits: the desired number of digits, according to the chosen
-%   package specifications.  The default for 'advanpix' is 34 (quad) and
-%   for 'symbolic math' is 32 (quad).
+% - .mp_pair: a cell pair of precisions, with the second being the higher
+% precision (and what this routine will use to compute Cholesky)
+%
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
@@ -21,19 +21,21 @@ function R = chol_free(A, param)
 %%
 % Defaults
 if nargin == 1
-    qp = @(x) x;
+    p2 = @(x) x;
 elseif nargin == 2
     if isempty(param)
-        qp = @(x) x;
+        p2 = @(x) x;
+    elseif ~isfield(param, 'mp_package')
+        p2 = @(x) x;
     else
-        qp = @(x) mp_switch(x, param);
+        p2 = @(x) mp_switch(x, param.mp_package, param.mp_pair{2});
     end
 end
 
 % Allocate space for R
-A = qp(A);
+A = p2(A);
 s = size(A,1);
-R = qp(zeros(s,s));
+R = p2(zeros(s,s));
 
 for j = 1:s
     for i = 1:j-1

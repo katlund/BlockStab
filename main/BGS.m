@@ -21,10 +21,9 @@ function [QQ, RR, TT, run_time] = BGS(XX, s, skel, musc, param)
 %   - .mp_package: char specifying either 'advanpix' or 'symbolic toolbox'
 %      as the multiprecision package for routines with *_MP
 %      default: []
-%   - .mp_digits: int specifiying number of precision digits, e.g., 34 for
-%      quadruple precision (in Advanpix) or 32 for quadruple precision in
-%      Symbolic Toolbox
-%      default: []
+%   - .mp_pair: a cell pair of precisions, with the second being the higher
+%      precision
+%      default: see MP_PARAM_INIT
 %   - .rpltol: scalar argument for BCGS_SROR that determines the
 %      replacement tolerance
 %      default: 1
@@ -140,7 +139,11 @@ switch lower(skel)
         [QQ, RR, TT] = bmgs_t(XX, s, musc, param);
         run_time = toc;
         
-% Reorthogonalize first step (_f) -----------------------------------------
+% Reorthogonalize first step (_a) -----------------------------------------
+    case {'bcgs_a'}
+        tic;
+        [QQ, RR] = bcgs_a(XX, s, musc, param);
+        run_time = toc;
     case {'bcgs_iro_a'}
         tic;
         [QQ, RR] = bcgs_iro_a(XX, s, musc, param);

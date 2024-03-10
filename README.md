@@ -28,7 +28,7 @@ Multiprecision routines (i.e., those ending with `_mp`) require one of the addit
 * [Advanpix Multiprecision Computing Toolbox](https://www.advanpix.com/), which requires a paid license.  The `mp` subroutine is used.
 * [Symbolic Math Toolbox](https://www.mathworks.com/products/symbolic.html), which may also require a paid license.  The subroutine [`vpa`](https://mathworks.com/help/symbolic/vpa.html) is used.
 
-The subroutine `mp_switch` manages which toolbox is called and at what precision via the `param` struct (see below).
+The subroutine `mp_switch` manages which toolbox is called and at what precision (see below).
 
 We generally aim to simulate mixed-precision with these multiprecision toolboxes, keeping the following in mind:
 
@@ -58,7 +58,7 @@ The variable `XX` denotes a block-partitioned matrix with `m` rows, `p` block ve
 * `param`: a struct with the following optional fields:
   * `.chol`: char specifying what type of Cholesky subroutine to call for skeletons that hard-code Cholesky via a block Pythagorean trick (e.g., `bcgs_pip`, `bcgs_pio`, `bcgs_iro_ls`, `bmgs_cwy`, `bmgs_icwy`, and their reorthogonalized and multi-precision versions); default for non-MP versions is `'chol_nan'`, and `'chol_aree'` for MP
   * `.mp_package`: char specifying either `'advanpix'` or `'symbolic toolbox'` as the multiprecision package; default: `'advanpix'`
-  * `.mp_digits`: int specifiying number of precision digits, e.g., 34 for quadruple precision (in Advanpix) or 32 for quadruple precision in Symbolic Math Toolbox; default: 34
+  * `.mp_pair`: a cell specifying the precision pair; the first entry refers to the primary precision, and the second to the (usually) higher secondary precision; when `mp_package` is specified as one of the MP toolboxes, then `{'double', 'quad'}` is the default; otherwise `{'single', 'double'}` is the default (which don't rely on external toolboxes)
   * `.rpltol`: scalar argument for `cgs_sror` that determines the replacement tolerance; default: 1
   * `.verbose`: boolean for whether to print intermediate loss of orthogonality (LOO) or relative residual (RelRes) per iteration; default: 0
 
@@ -153,11 +153,11 @@ If you are unfamiliar with JSON, have a look at [JSON formatter](https://jsonfor
 
 ### New plot customization features
 
-`roadmap.m` demonstrates how to use subroutines `gen_plots.m` and `mod_run_data.m` to plot subsets of a previous run, without re-running the tests.  This can be beneficial when running a huge panel of tests that are not easily displayed on the same axis.  (Indeed, choosing colors and symbols for making lines legible is nontrivial.)  We used this feature in [Carson, et al. 2024](TBD) to study a progression of method modifications.
+`roadmap.m` demonstrates how to use subroutines `gen_plots.m` and `mod_run_data.m` to plot subsets of a previous run, without re-running the tests.  This can be beneficial when running a huge panel of tests that are not easily displayed on the same axis.  (Indeed, choosing colors and symbols for making lines legible is nontrivial.)  We used this feature in [Carson, et al. 2024 B](TBD) to study a progression of method modifications.
 
 ## Documentation
 
-Each file contains a descriptive header.  See especially the following core files:git
+Each file contains a descriptive header.  See especially the following core files:
 
 * `BGS.m` - switches between skeletons
 * `IntraOrtho.m` - switches between muscles
@@ -165,11 +165,34 @@ Each file contains a descriptive header.  See especially the following core file
 * `MakeHeatmap.m` - generates heatmaps for skeleton-muscle combinations; verbose = `true` prints tables to screen
 * `RunKappaPlot.m` - generates kappa plots for muscles and skeleton-muscle combinations
 
-## Reproducing results from related papers
+## How to cite us
+
+Several works are associated with this repository:
+
+* [Carson, et al. 2021](https://doi.org/10.1137/21M1394424): Carson, E., Lund, K., and Rozložník, M.  The stability of block variants of classical Gram-Schmidt.  SIAM Journal on Matrix Analysis and Applications. Vol. 42, 3, pp 1365--1380, 2021. DOI: 10.1137/21M1394424.
+* [ ] [Carson, et al. 2024 A](TBD): Carson, E., Lund, K., Ma, Y., and Oktay, E.  Reorthogonalized Pythagorean variants of block classical Gram-Schmidt.  In preparation, 2024. DOI: TBD.
+* [ ] [Carson, et al. 2024 B](TBD): Carson, E., Lund, K., Ma, Y., and Oktay, E.  On the loss of orthogonality of low-synchronization variants of reorthogonalized block Gram-Schmidt.  In preparation, 2024. DOI: TBD.
+* [ ] [Oktay, 2024](TBD): Ph.D. thesis. Faculty of Mathematics and Physics, Charles University, Prague, 2024.
+* [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060): Okay, E. and Carson, E.  Using mixed precision in low-synchronization reorthogonalized block classical Gram-Schmidt. PAMM. Vol 23, 1, pp e202200060, 2023.  DOI: 10.1002/pamm.202200060
+
+If you are using results from a specific paper, please cite the paper and the version of this software you are using by referring, e.g., to a tag or specific commit.
 
 * [v1.2022](https://github.com/katlund/BlockStab/releases/tag/v1.2022): [Carson, et al. 2021](https://doi.org/10.1137/21M1394424) and [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017)
 * [v1.2022.mp](https://github.com/katlund/BlockStab/releases/tag/v1.2022.mp): [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060).
-* [ ] [v2.2024](TBD): [Carson, et al. 2024](TBD)
+* [v2.2024-beta](https://github.com/katlund/BlockStab/releases/tag/v2.2024-beta): [Oktay 2024](TBD)
+* [ ] [v2.2024](TBD): [Carson, et al. 2024 A](TBD)
+* [ ] [v3](TBD): [Carson, et al. 2024 B](TBD)
+
+To cite this package in general, please use the following format or something comparable:
+
+```tex
+@misc{LunOCetal24,
+  title = {{BlockStab}},
+  author = {Lund, Kathryn and Oktay, Eda and Carson, Erin C. and Ma, Yuxin},
+  year = {2024},
+  url = {https://github.com/katlund/BlockStab}
+}
+```
 
 ## How we cite things
 
@@ -178,23 +201,12 @@ Several papers are foundational for our subroutines.  We provide the full citati
 * [Barlow 2019](https://doi.org/10.1137/18M1197400): Barlow, J. Block modified Gram-Schmidt algorithms and their analysis. SIAM Journal on Matrix Analysis and Applications. Vol. 40, 4, pp. 1257--1290, 2019. DOI: 10.1137/18M1197400.
 * [Barlow & Smoktunowicz 2013](https://doi.org/10.1007/s00211-012-0496-2): Barlow, J. & Smoktunowicz, A. Reorthogonalized block classical Gram-Schmidt. Numerische Mathematik. Vol 123, pp 395--423, 2013. DOI: 10.1007/s00211-012-0496-2.
 * [Bielich, et al. 2022](https://doi.org/10.1016/j.parco.2022.102940): Bielich, D, Langou J., Thomas, S., Świrydowicz, K., Yamazaki, I., and Boman, E.G.  Low-synch Gram–Schmidt with delayed reorthogonalization for Krylov solvers.  Parallel Computing. Vol 112, pp 102940, 2022. DOI: 10.1016/j.parco.2022.102940.
-* [Carson, et al. 2021](https://doi.org/10.1137/21M1394424): Carson, E., Lund, K., and Rozložník, M.  The stability of block variants of classical Gram-Schmidt.  SIAM Journal on Matrix Analysis and Applications. Vol. 42, 3, pp 1365--1380, 2021. DOI: 10.1137/21M1394424.
-* [ ] [Carson, et al. 2024](TBD): Carson, E., Lund, K., Ma, Y., and Oktay, E.  Reorthogonalized Pythagorean variants of block classical Gram Schmidt.  In preparation, 2024. DOI: TBD.
 * [Fukaya, et al. 2020](https://doi.org/10.1137/18M1218212): Fukaya, T., Kannan, R., Nakatsukasa, Y., Yamamoto, Y., & Yanagisawa, Y. Shifted CholeskyQR for computing the QR factorization of ill-conditioned matrices. SIAM Journal on Scientific Computing. Vol. 42, 1, pp A477--A503, 2020. DOI: 10.1137/18M1218212.
 * [Fukaya, et al. 2014](https://doi.org/10.1109/ScalA.2014.11): Fukaya, T., Nakatsukasa, Y., Yanagisawa, Y., & Yamamoto, Y. CholeskyQR2: A simple and communication-avoiding algorithm for computing a tall-skinny QR factorization on a large-scale parallel system. 2014 5th Workshop on Latest Advances in Scalable Algorithms for Large-Scale Systems, pp 31--38, 2014. DOI: 10.1109/ScalA.2014.11.
-* [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060): Okay, E. and Carson, E.  Using mixed precision in low-synchronization reorthogonalized block classical Gram-Schmidt. PAMM. Vol 23, 1, pp e202200060, 2023.  DOI: 10.1002/pamm.202200060
 * [Smoktunowicz, et al. 2006](https://doi.org/10.1007/s00211-006-0042-1): Smoktunowicz, A., Barlow, J., and Langou, J. A note on the error analysis of classical Gram-Schmidt. Numerische Mathematik. Vol. 105, 2, pp 299-313, 2006. DOI: 10.1007/s00211-006-0042-1.
 * [Stathopoulos & Wu 2002](https://doi.org/10.1137/S1064827500370883): Stathopoulos, A. & Wu, K. A block orthogonalization procedure with constant synchronization requirements. SIAM Journal on Scientific Computing. Vol 23, 6, pp 2165--2182, 2002. DOI: 10.1137/S1064827500370883.
 * [Stewart 2008](https://doi.org/10.1137/070682563): Stewart, G. W. Block Gram-Schmidt orthogonalization. SIAM Journal on Scientific Computing. Vol 31, 1, pp 761--775, 2008. DOI: 10.1137/070682563.
 * [Swirydowicz, et al. 2021](https://doi.org/10.1002/nla.2343): Świrydowicz, K., Langou, J., Ananthan, S., Yang, U., & Thomas, S. Low synchronization Gram-Schmidt and generalized minimal residual algorithms. Numerical Linear Algebra with Applications, Vol 28(2), pp e2343, 2021. DOI: 10.1002/nla.2343.
-
-## How to cite us
-
-Several works are associated with this repository.  The primary one is
-
-[Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017) Carson, E., Lund, K, Rozložník, M., and Thomas, S. Block Gram-Schmidt methods and their stability properties. Linear Algebra and its Applications. Vol 638, pp 150--195, 2022. DOI: 10.1016/j.laa.2021.12.017.
-
-Please also mention which version of the software you are using by referring, e.g., to a tag or specific commit.
 
 ## Contributing
 

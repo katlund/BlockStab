@@ -147,15 +147,12 @@ for i = 1:n_alg
             switch param.mp_package
                 case 'advanpix'
                     fprintf(fID, '\t\t\\item MP Package: Advanpix\n');
-                    fprintf(fID, '\t\t\\item MP Digits: %d\n', param.mp_digits);
-
                 case {'symbolic math', 'symbolic toolbox', 'vpa'}
-                    fprintf(fID, '\t\t\\item MP Package: Symbolic Math\n');
-                    fprintf(fID, '\t\t\\item MP Digits: %d\n', param.mp_digits);
-
+                    fprintf(fID, '\t\t\\item MP Package: Symbolic Math Toolbox\n');
                 otherwise
-                    % Do nothing
+                    % do nothing
             end
+            fprintf(fID, '\t\t\\item MP Pair: $[\\texttt{%s}, \\texttt{%s}]$\n', param.mp_pair{1}, param.mp_pair{2});
         end
 
         if mp_flag || chol_flag
