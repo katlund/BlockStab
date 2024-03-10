@@ -1,37 +1,49 @@
-function A = mp_switch(A, mp_package, mp_spec)
-% A = MP_SWITCH(A, mp_package, mp_spec) is a subroutine for switching between
-% multiprecision packages for casting A to a desired precision.
-% - mp_package: 'advanpix', 'symbolic math', or 'none'
-% - mp_spec: 'single', 'double', or 'quad'; note that mp_package will be
-%   ignored except whem mp_spec = 'quad'
+function A = mp_switch(A, param)
+% A = MP_SWITCH(A, param) is a subroutine for switching between
+% multiprecision packages for casting A to a desired precision.  Quadruple
+% precision is the default, but other precisions can be specified in the
+% struct param.
+%
+% param should specify the following fields:
+% - .mp_package: 'advanpix', 'symbolic math', or 'none'
+% - .mp_digits: the desired number of digits, according to the chosen
+%   package specifications.  The default for 'advanpix' is 34 (quad) and
+%   for 'symbolic math' is 32 (quad). 
 %
 % Part of the BlockStab package documented in [Carson, et al.
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
-    
+
 %%
-% Switch -- first level based on mp_spec
-switch mp_spec
-    case 'single'
-        A = single(A);
-
-    case 'double'
-        A = double(A);
-
-    case 'quad'
-        % Defaults for both are quad precision
-        switch mp_package
-            case 'advanpix'
-                A = mp(A);
-
-            case {'symbolic math', 'symbolic toolbox', 'vpa'}
-                A = vpa(A);
-
-            otherwise
-                error('Not a valid toolbox name')
-        end
-
-    otherwise
-        error('Only single, double, and quad precisions are configured.')
+% Default
+if isempty(param)
+    param.mp_package = 'none';
+end
+if ~isfield(param, 'mp_package')
+    param.mp_package = 'none';
+end
+if isempty(param.mp_package)
+    param.mp_package = 'none';
 end
 
+% Switch
+switch param.mp_package
+    case 'advanpix'
+        if isfield(param, 'mp_digits')
+            mp.Digits(param.mp_digits);
+
+            % otherwise do nothing-- default is 34 (quad)
+        end
+        A =  mp(A);
+
+    case {'symbolic math', 'symbolic toolbox', 'vpa'}
+        if isfield(param, 'mp_digits')
+            digits(param.mp_digits);
+
+            % otherwise do nothing-- default is 32 (quad)
+        end
+        A = vpa(A);
+
+    case 'none'
+        % default to standard double -- do nothing
+end
 end

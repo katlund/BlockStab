@@ -23,9 +23,8 @@ elseif nargin == 4
     param = mp_param_init(param);
 end
 
-% Set up primary and secondary precision routines (p1 & p2, respectively)
-p1 = @(x) mp_switch(x, param.mp_package, param.mp_pair{1});
-p2 = @(x) mp_switch(x, param.mp_package, param.mp_pair{2});
+% Set up quad-precision subroutine
+qp = @(x) mp_switch(x, param);
 
 % Pre-allocate memory for QQ and RR
 [m, n] = size(XX);
@@ -38,7 +37,7 @@ kk = 1:s;
 sk = s;
 
 % Pull out block vector (keeps MATLAB from copying full X repeatedly)
-W = p1(XX(:,kk)); % cast in case p1 is single
+W = XX(:,kk);
 
 % First step
 [QQ(:,kk), RR(kk,kk)] = IntraOrtho(W, musc, param);
@@ -59,36 +58,36 @@ for k = 2:p
     sk = sk + s;
     
     % Pull out block vector (keeps MATLAB from copying full X repeatedly)
-    W = p1(XX(:,kk));  % cast in case p1 is single
+    W = XX(:,kk);
     
     %% First sync point
-    % Compute only W^T * W in p2.  Note that standard operations are
+    % Compute only W^T * W in qp.  Note that standard operations are
     % overloaded.  Note also that although we split InnerProd across two
     % steps to handle different precisions, we still regard these steps as
     % a single sync point.
     RR1 = InnerProd(QQ(:,1:sk-s), W);
-    tmp = InnerProd(p2(W), p2(W), musc); % returned in p2
+    tmp = InnerProd(qp(W), qp(W), musc); % returned in qp
 
-    % Compute Cholesky in p2
-    R1 = chol_switch(tmp - p2(RR1)' * p2(RR1), param ); % returned in p2
+    % Compute Cholesky in qp
+    R1 = chol_switch(tmp - qp(RR1)' * qp(RR1), param ); % returned in qp
 
-    % Compute intermediate basis vector and cast to p1
-    W = p1(p2(W - QQ(:,1:sk-s) * RR1) / R1);
+    % Compute intermediate basis vector and cast to double
+    W = double(qp(W - QQ(:,1:sk-s) * RR1) / R1);
     
     %% Second sync point
-    % Again compute only W^T * W in p2
+    % Again compute only W^T * W in qp
     RR2 = InnerProd(QQ(:,1:sk-s), W);
-    tmp = InnerProd(p2(W), p2(W), musc); % returned in p2
+    tmp = InnerProd(qp(W), qp(W), musc); % returned in qp
 
-    % Compute Cholesky in p2
-    R2 = chol_switch(tmp - p2(RR2)' * p2(RR2), param); % returned in p2
+    % Compute Cholesky in qp
+    R2 = chol_switch(tmp - qp(RR2)' * qp(RR2), param); % returned in qp
     
-    % Compute next basis vector and cast to p1
-    QQ(:,kk) = p1(p2(W - QQ(:,1:sk-s) * RR2) / R2);
+    % Compute next basis vector and cast to double
+    QQ(:,kk) = double(qp(W - QQ(:,1:sk-s) * RR2) / R2);
     
-    % Assign RR in p1 and combine both steps
-    RR(1:sk-s,kk) = RR1 + RR2 * p1(R1);
-    RR(kk,kk) = p1(R2 * R1);
+    % Assign RR in double and combine both steps
+    RR(1:sk-s,kk) = RR1 + RR2 * double(R1);
+    RR(kk,kk) = double(R2 * R1);
     
     if param.verbose
         fprintf('%3.0d:', k-1);
