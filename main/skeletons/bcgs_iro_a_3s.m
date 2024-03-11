@@ -64,7 +64,7 @@ if param.verbose
     fprintf('-----------------------------------\n');
     fprintf('%3.0d:', 1);
     fprintf('  %2.4e  |',...
-        norm( eye(s) - InnerProd(QQ(:, 1:s), QQ(:, 1:s), musc{1}) ) );
+        norm( eye(s) - InnerProd(QQ(:, 1:s), QQ(:, 1:s), musc) ) );
     fprintf('  %2.4e\n',...
         norm( XX(:,1:s) - QQ(:,1:s) * RR(1:s,1:s) ) / norm(XX(:,1:s)) );
 end
@@ -74,7 +74,7 @@ for k = 1:p-1
     kk = kk + s;
     
     % First BCGS step w/o normalization
-    S_col = InnerProd(QQ(:,1:sk), XX(:,kk), musc{2});
+    S_col = InnerProd(QQ(:,1:sk), XX(:,kk), musc);
     W = XX(:,kk) - QQ(:,1:sk) * S_col;
     
     % Second BCGS step
@@ -89,7 +89,7 @@ for k = 1:p-1
     if param.verbose
         fprintf('%3.0d:', k+1);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc{3}) ) );
+            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc) ) );
         fprintf('  %2.4e\n',...
             norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end
