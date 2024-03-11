@@ -16,15 +16,6 @@ Follow the download options from the Git repository main page.  Then navigate to
 
 ## What is new in this version
 
-<<<<<<< HEAD
-* [x] `bcgs_a`, `bcgs_iro_a`, and `bcgs_iro_a_3s` accept a [`multiIO`](#multiio) struct for the `musc` argument
-
-
-## `multiIO`
-
-TODO
-
-=======
 * [x] `bcgs_a`, `bcgs_iro_a`, and `bcgs_iro_a_3s` can now accept a [`multiIO`](#multiio) struct for the `musc` argument.  Note that `bcgs_iro_a_2s` and `bcgs_iro_a_1s` already only accept one `musc`.
 
 ## `multiIO`
@@ -81,7 +72,6 @@ bcgs_iro_a(XX, s, `cholqr`, struct('chol', 'chol_free'))
 ```
 
 For examples, see the `alg_config` directory, in particular, in `demo.json` and the `multi_io_*.json` files.
->>>>>>> a8be3c9856f61438360d2526677de1eaf1d2f56b
 
 ## Multiprecision
 

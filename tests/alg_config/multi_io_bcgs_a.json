@@ -1,39 +1,17 @@
 {
   "bcgs_a": {
-<<<<<<< HEAD
-    "hhqr": {
-      "io_a": {
-        "houseqr": []
-<<<<<<< HEAD
-        },
-=======
     "hqr2": {
       "io_a": {
         "houseqr": []
       },
->>>>>>> a8be3c9856f61438360d2526677de1eaf1d2f56b
-=======
-      },
->>>>>>> 21c440b (Fix little kinks with handling musc vs. musc_id)
       "io_1": {
         "houseqr": []
       }
     },
-<<<<<<< HEAD
-    "hchqr": {
-      "io_a": {
-        "houseqr": []
-<<<<<<< HEAD
-        },
-=======
     "hqrchqr": {
       "io_a": {
         "houseqr": []
       },
->>>>>>> a8be3c9856f61438360d2526677de1eaf1d2f56b
-=======
-      },
->>>>>>> 21c440b (Fix little kinks with handling musc vs. musc_id)
       "io_1": {
         "cholqr": {
           "param": {
