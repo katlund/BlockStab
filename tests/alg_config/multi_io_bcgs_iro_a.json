@@ -4,10 +4,14 @@
       "io_a": {
         "houseqr": []
 <<<<<<< HEAD
+<<<<<<< HEAD
         },
 =======
       },
 >>>>>>> a8be3c9856f61438360d2526677de1eaf1d2f56b
+=======
+      },
+>>>>>>> 21c440b (Fix little kinks with handling musc vs. musc_id)
       "io_1": {
         "houseqr": []
       },
