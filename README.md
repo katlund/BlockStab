@@ -38,13 +38,13 @@ A `multiIO` struct should have the follow form (which can be mapped from JSON to
 }
 ```
 
-where `musc_*` denotes a built-in muscle option and `id` is a user-provided keyword that will be used as a label in plots and reports.  Minimally `io_a` is required as well as either `io_1` or `io_2`; when only `io_1` or `io_2` is given, they will be set equal to each other.
+where `musc_*` denotes a built-in muscle option and `id` is a user-provided keyword (preferably without `_` or `-`) that will be used as a label in plots and reports.  Minimally `io_a` is required as well as either `io_1` or `io_2`; when only `io_1` or `io_2` is given, they will be set equal to each other.
 
 For example, to prescribe `houseqr` for `io_a`, and `chol_qr` with `chol_free` for both `io_1` and `io_2`:
 
 ```json
 {
-  "houseqr-cholqr": {
+  "hchqr": {
     "io_a": {
       "houseqr": []
       },
@@ -59,7 +59,7 @@ For example, to prescribe `houseqr` for `io_a`, and `chol_qr` with `chol_free` f
 }
 ```
 
-For the purposes of backward compatibility, `bcgs_a`, `bcgs_iro_a`, and `bcgs_iro_a_3s` can still accept regular `char`s for the `musc` argument.  In this case, it is assumed that `io_a` is fixed as `houseqr`, and then both `io_1` and `io_2` are set to provided argument.  As an example, supposed `multi_io` is set to the struct denoted by `'houseqr-cholqr'` above.  Then
+For the purposes of backward compatibility, `bcgs_a`, `bcgs_iro_a`, and `bcgs_iro_a_3s` can still accept regular `char`s for the `musc` argument.  In this case, it is assumed that `io_a` is fixed as `houseqr`, and then both `io_1` and `io_2` are set to provided argument.  As an example, supposed `multi_io` is set to the struct denoted by `'hchqr'` above.  Then
 
 ```matlab
 bcgs_iro_a(XX, s, multi_io)
