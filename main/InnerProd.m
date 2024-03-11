@@ -17,9 +17,27 @@ elseif nargin == 3
     end
 end
 
+% Handle raw multiIO struct
+if isstruct(musc)
+    musc = unpack_multi_io(musc);
+end
+
+% Handle multiIO processed by UNPACK_MULTI_IO
+if iscell(musc)
+    if any(strcmp(musc, 'global'))
+        musc_id = 'global';
+    else
+        musc_id = '';
+    end
+end
+
+% Handle regular char musc
+if ischar(musc)
+    musc_id = lower(musc);
+end
+
 % Switch
-musc = lower(musc);
-switch musc
+switch musc_id
     case {'global'}
         s = size(X,2);
         XY = (trace(X'*Y)/s) * eye(s);

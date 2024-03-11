@@ -209,12 +209,18 @@ for i = 1:n_mat
     normXX(i) = norm(XX{i}, 2);
 
     for j = 1:n_alg
+        % Extra musc_id from multiIOs
+        if isstruct(musc{j})
+            musc_id = musc{j}.id;
+        else
+            musc_id = musc{j};
+        end
         if isempty(skel{j})
             % Call IntraOrtho muscle
             [QQ, RR] = IntraOrtho(XX{i}, musc{j}, param{j});
 
             % Display algorithm configuration
-            fprintf('(%d) musc: %s\n', j, musc{j});
+            fprintf('(%d) musc: %s\n', j, musc_id);
             if ~isempty(param{j})
                 disp(param{j})
             else
@@ -230,7 +236,7 @@ for i = 1:n_mat
             if isempty(musc{j})
                 fprintf('musc: default\n');
             else
-                fprintf('musc: %s\n', musc{j});
+                fprintf('musc: %s\n', musc_id);
             end
                 
             if ~isempty(param{j})

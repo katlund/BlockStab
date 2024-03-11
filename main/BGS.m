@@ -139,7 +139,7 @@ switch lower(skel)
         [QQ, RR, TT] = bmgs_t(XX, s, musc, param);
         run_time = toc;
         
-% Reorthogonalize first step (_a) -----------------------------------------
+% Strong first step (_a) -----------------------------------------
     case {'bcgs_a'}
         tic;
         [QQ, RR] = bcgs_a(XX, s, musc, param);
