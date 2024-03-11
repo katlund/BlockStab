@@ -272,7 +272,7 @@ dir_str = sprintf('results/%s/%s_m%d_p%d_s%d', ...
 mkdir(dir_str)
 
 % Build legend
-lgd = alg_string(skel, musc_id);
+lgd = alg_string(skel, musc);
 
 % Line colors play a big role in whether the plots are legible
 if n_alg <= 7
