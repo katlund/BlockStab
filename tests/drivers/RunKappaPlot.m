@@ -148,6 +148,9 @@ I = eye(n);
 %% Build algorithm configurations
 [skel, musc, param] = alg_config(config_file);
 
+% Set up storage for musc IDs
+musc_id = cell(size(musc));
+
 %% Set up matrices
 n_mat = length(options.scale);
 XX = cell(n_mat,1);
@@ -231,16 +234,16 @@ for i = 1:n_mat
     for j = 1:n_alg
         % Extra musc_id from multiIOs
         if isstruct(musc{j})
-            musc_id = musc{j}.id;
+            musc_id{j} = musc{j}.id;
         else
-            musc_id = musc{j};
+            musc_id{j} = musc{j};
         end
         if isempty(skel{j})
             % Call IntraOrtho muscle
             [QQ, RR] = IntraOrtho(XX{i}, musc{j}, param{j});
 
             % Display algorithm configuration
-            fprintf('(%d) musc: %s\n', j, musc_id);
+            fprintf('(%d) musc: %s\n', j, musc_id{j});
             if ~isempty(param{j})
                 disp(param{j})
             else
@@ -256,7 +259,7 @@ for i = 1:n_mat
             if isempty(musc{j})
                 fprintf('musc: default\n');
             else
-                fprintf('musc: %s\n', musc_id);
+                fprintf('musc: %s\n', musc_id{j});
             end
                 
             if ~isempty(param{j})
@@ -289,7 +292,7 @@ dir_str = sprintf('results/%s/%s_m%d_p%d_s%d', ...
 mkdir(dir_str)
 
 % Build legend
-lgd = alg_string(skel, musc);
+lgd = alg_string(skel, musc_id);
 
 % Line colors play a big role in whether the plots are legible
 if n_alg <= 7
@@ -328,6 +331,7 @@ run_data = struct( ...
     'loss_ortho', {loss_ortho}, ...
     'mat_type', mat_type, ...
     'musc', {musc}, ...
+    'musc_id', {musc_id}, ...
     'normXX', {normXX}, ...
     'options', options, ...
     'param', {param}, ...

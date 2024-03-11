@@ -41,7 +41,7 @@ if ischar(musc)
     % Defaults
     IO_A = @(W) qr(W,0);
     IO_1 = @(W) IntraOrtho(W, musc, param);
-    IO_2 = @(W);
+    IO_2 = @(W) IO_1(W);
 elseif isstruct(musc)
     [musc, musc_param] = unpack_multi_io(musc, param);
     IO_A = @(W) IntraOrtho(W, musc{1}, musc_param{1});
@@ -118,7 +118,7 @@ for k = 1:p-1
     if param.verbose
         fprintf('%3.0d:', k+1);
         fprintf('  %2.4e  |',...
-            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc ) );
+            norm( eye(sk) - InnerProd(QQ(:, 1:sk), QQ(:, 1:sk), musc ) ) );
         fprintf('  %2.4e\n',...
             norm( XX(:,1:sk) - QQ(:,1:sk) * RR(1:sk,1:sk) ) / norm(XX(:,1:sk)) );
     end
