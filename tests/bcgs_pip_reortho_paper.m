@@ -13,13 +13,13 @@ config_file = 'reorth.json';
 RunKappaPlot(mat_type, options, config_file);
 
 mat_type = 'default';
-config_file = 'reorth_vs_mp.json';
+config_file = 'reorth_vs_mp_2_prec.json';
 RunKappaPlot(mat_type, [], config_file);
 
 mat_type = 'glued';
-config_file = 'reorth_vs_mp.json';
+config_file = 'reorth_vs_mp_2_prec.json';
 RunKappaPlot(mat_type, [], config_file);
-%%
+
 mat_type = 'piled';
 options.num_rows = 1000;
 options.num_partitions = 10;
