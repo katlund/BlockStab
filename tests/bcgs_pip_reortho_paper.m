@@ -50,52 +50,52 @@ close all;
 mat_type = 'monomial';
 options_monomial.num_rows = 2000;
 options_monomial.num_partitions = 120;
-options_monomial.block_size = 8;
+options_monomial.block_size = 10;
 run_data_monomial = RunKappaPlot(mat_type, options_monomial, config_file);
 run_data_monomial.options = options;
 close all;
 
 % Piled kappa plot
 mat_type = 'piled';
-options_piled.num_rows = 1000;
+options_piled.num_rows = 100;
 options_piled.num_partitions = 10;
-options_piled.block_size = 10;
+options_piled.block_size = 5;
 run_data_piled = RunKappaPlot(mat_type, options_piled, config_file);
 run_data_piled.options = options;
 close all;
 
 %% GEN_PLOTS
 % Figure 1 (glued)
-new_dir_str = sprintf('pip_vs_reorth/%s', run_data.dir_str);
+new_dir_str = sprintf('%s/pip_vs_ro', run_data_glued.dir_str);
 mkdir(new_dir_str);
 ind = 1:6;
 gen_plots(mod_run_data(run_data_glued, ind), new_dir_str);
 close all;
 
 % Figure 2 (monomial)
-new_dir_str = sprintf('reorth/%s', run_data.dir_str);
+new_dir_str = sprintf('%s/ro_only', run_data_monomial.dir_str);
 mkdir(new_dir_str);
 ind = 3:6;
 gen_plots(mod_run_data(run_data_monomial, ind), new_dir_str);
 close all;
 
 % Figure 3 (default)
-new_dir_str = sprintf('reorth_vs_mp/%s', run_data.dir_str);
+new_dir_str = sprintf('%s/ro_vs_mp', run_data_default.dir_str);
 mkdir(new_dir_str);
 ind = [3:6 9:12];
 gen_plots(mod_run_data(run_data_default, ind), new_dir_str);
 close all;
 
 % Figure 4 (glued)
-new_dir_str = sprintf('reorth_vs_mp/%s', run_data.dir_str);
+new_dir_str = sprintf('%s/ro_vs_mp', run_data_glued.dir_str);
 mkdir(new_dir_str);
 ind = [3:6 9:12];
 gen_plots(mod_run_data(run_data_glued, ind), new_dir_str);
 close all;
 
 % Figure 5 (piled)
-new_dir_str = sprintf('reorth_vs_mp/%s', run_data.dir_str);
+new_dir_str = sprintf('%s/mp_only/%s', run_data_piled.dir_str);
 mkdir(new_dir_str);
-ind = [3:6 9:12];
+ind = 9:12;
 gen_plots(mod_run_data(run_data_piled, ind), new_dir_str);
 close all;
