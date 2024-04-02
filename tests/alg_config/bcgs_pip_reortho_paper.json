@@ -1,29 +1,57 @@
 {
-  "bcgs_pip_ro": {
+  "bcgs_pip": {
     "param": {
       "chol": "chol_free"
     },
-    "houseqr": [],
     "cholqr": {
       "param": [
         {
           "chol": "chol_free"
         }
       ]
-    }
+    },
+    "houseqr": []
+  },
+  "bcgs_pip_ro": {
+    "param": {
+      "chol": "chol_free"
+    },
+    "cholqr": {
+      "param": [
+        {
+          "chol": "chol_free"
+        }
+      ]
+    },
+    "houseqr": []
   },
   "bcgs_pip_iro": {
     "param": {
       "chol": "chol_free"
     },
-    "houseqr": [],
     "cholqr": {
       "param": [
         {
           "chol": "chol_free"
         }
       ]
-    }
+    },
+    "houseqr": []
+  },
+  "bcgs_pip_mp": {
+    "param": {
+      "chol": "chol_free",
+      "mp_package": "advanpix",
+      "mp_pair": ["double", "quad"]
+    },
+    "cholqr": {
+      "param": [
+        {
+          "chol": "chol_free"
+        }
+      ]
+    },
+    "houseqr": []
   },
   "bcgs_pip_ro_mp": {
     "param": {
@@ -31,14 +59,14 @@
       "mp_package": "advanpix",
       "mp_pair": ["double", "quad"]
     },
-    "houseqr": [],
     "cholqr": {
       "param": [
         {
           "chol": "chol_free"
         }
       ]
-    }
+    },
+    "houseqr": []
   },
   "bcgs_pip_iro_mp": {
     "param": {
@@ -46,13 +74,13 @@
       "mp_package": "advanpix",
       "mp_pair": ["double", "quad"]
     },
-    "houseqr": [],
     "cholqr": {
       "param": [
         {
           "chol": "chol_free"
         }
       ]
-    }
+    },
+    "houseqr": []
   }
 }
