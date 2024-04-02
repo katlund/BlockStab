@@ -16,6 +16,7 @@ Follow the download options from the Git repository main page.  Then navigate to
 
 ## What is new in this version
 
+<<<<<<< HEAD
 * [x] `bcgs_a`, `bcgs_iro_a`, and `bcgs_iro_a_3s` accept a [`multiIO`](#multiio) struct for the `musc` argument
 
 
@@ -23,6 +24,64 @@ Follow the download options from the Git repository main page.  Then navigate to
 
 TODO
 
+=======
+* [x] `bcgs_a`, `bcgs_iro_a`, and `bcgs_iro_a_3s` can now accept a [`multiIO`](#multiio) struct for the `musc` argument.  Note that `bcgs_iro_a_2s` and `bcgs_iro_a_1s` already only accept one `musc`.
+
+## `multiIO`
+
+A `multiIO` struct should have the follow form (which can be mapped from JSON to a struct via the `jsonencode` command):
+
+```json
+{
+  "id": {
+    "io_a": {
+      "musc_1": []
+    },
+    "io_1": {
+      "musc_2": []
+    },
+    "io_2": {
+      "musc_3": []
+    }
+  }
+}
+```
+
+where `musc_*` denotes a built-in muscle option and `id` is a user-provided keyword (preferably without `_` or `-`) that will be used as a label in plots and reports.  Minimally `io_a` is required as well as either `io_1` or `io_2`; when only `io_1` or `io_2` is given, they will be set equal to each other.
+
+For example, to prescribe `houseqr` for `io_a`, and `chol_qr` with `chol_free` for both `io_1` and `io_2`:
+
+```json
+{
+  "hchqr": {
+    "io_a": {
+      "houseqr": []
+      },
+    "io_1": {
+      "cholqr": {
+        "param": {
+          "chol": "chol_free"
+        }
+      }
+    }
+  }
+}
+```
+
+For the purposes of backward compatibility, `bcgs_a`, `bcgs_iro_a`, and `bcgs_iro_a_3s` can still accept regular `char`s for the `musc` argument.  In this case, it is assumed that `io_a` is fixed as `houseqr`, and then both `io_1` and `io_2` are set to provided argument.  As an example, supposed `multi_io` is set to the struct denoted by `'hchqr'` above.  Then
+
+```matlab
+bcgs_iro_a(XX, s, multi_io)
+```
+
+would be equivalent to
+
+```matlab
+bcgs_iro_a(XX, s, `cholqr`, struct('chol', 'chol_free'))
+```
+
+For examples, see the `alg_config` directory, in particular, in `demo.json` and the `multi_io_*.json` files.
+>>>>>>> a8be3c9856f61438360d2526677de1eaf1d2f56b
 
 ## Multiprecision
 

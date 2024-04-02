@@ -1,16 +1,23 @@
 {
   "bcgs_iro_a_3s": {
+<<<<<<< HEAD
     "hhqr": {
       "io_a": {
         "houseqr": []
         },
       "io_1": {
         "houseqr": []
+=======
+    "blergh": {
+      "io_a": {
+        "houseqr": []
+>>>>>>> a8be3c9856f61438360d2526677de1eaf1d2f56b
       },
       "io_2": {
         "houseqr": []
       }
     },
+<<<<<<< HEAD
     "hchqr": {
       "io_a": {
         "houseqr": []
@@ -21,6 +28,11 @@
             "chol": "chol_free"
           }
         }
+=======
+    "alg2": {
+      "io_a": {
+        "houseqr": []
+>>>>>>> a8be3c9856f61438360d2526677de1eaf1d2f56b
       },
       "io_2": {
         "cholqr": {

@@ -54,7 +54,7 @@ for i = 1:n_alg
     fprintf(fID, '\t\\item %s\n', lgd_str{2});
 
     % Extra temporary parameters to simplify logic
-    musc = run_data.musc{i};
+    musc = run_data.musc_id{i};
     skel = run_data.skel{i};
 
     % Set flags

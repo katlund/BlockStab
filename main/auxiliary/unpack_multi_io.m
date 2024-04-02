@@ -32,7 +32,7 @@ f = fieldnames(multi_io.io_a);
 musc{1} = f{1};
 
 if ~isempty(multi_io.io_a.(musc{1})) && nargin == 2
-    musc_param{1} = catstruct(multi_io.io_a.(musc), param);
+    musc_param{1} = catstruct(multi_io.io_a.(musc{1}).param, param);
 else
     musc_param{1} = param;
 end
@@ -43,7 +43,7 @@ if isfield(multi_io, 'io_1')
     musc{2} = f{1};
     
     if ~isempty(multi_io.io_1.(musc{2})) && nargin == 2
-        musc_param{2} = catstruct(multi_io.io_1.(musc), param);
+        musc_param{2} = catstruct(multi_io.io_1.(musc{2}).param, param);
     else
         musc_param{2} = param;
     end
@@ -58,7 +58,7 @@ if isfield(multi_io, 'io_2')
     musc{3} = f{1};
     
     if ~isempty(multi_io.io_2.(musc{3})) && nargin == 2
-        musc_param{3} = catstruct(multi_io.io_2.(musc), param);
+        musc_param{3} = catstruct(multi_io.io_2.(musc{3}).param, param);
     else
         musc_param{3} = param;
     end

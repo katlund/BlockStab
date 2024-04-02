@@ -6,41 +6,14 @@ function alg = basic_strrep(alg)
 % 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
-if ischar(alg)
-    alg = lower(alg);
-    if ~contains(alg, 'qr')
-        alg = strrep(alg, '_iro_', 'i+');
-        alg = strrep(alg, '_iro', 'i+');
-        alg = strrep(alg, '_sro', 's+');
-        alg = strrep(alg, '_ro_', '+');
-        alg = strrep(alg, 'ro_', '+');
-        alg = strrep(alg, '_ro', '+');
-        alg = strrep(alg, 'ro', '+');
-        alg = upper(alg);
-        alg = strrep(alg, '_MP', '$^{\rm{MP}}$');
-        alg = strrep(alg, '+MP', '+$^{\rm{MP}}$');
-        alg = strrep(alg, '_', '-');
-
+if ischar(alg) || isstruct(alg)
+    alg = {alg};
+end
+for i = 1:length(alg)
+    if isstruct(alg{i})
+        % Avoid formatting user-provided strings-- too many options
+        alg{i} = lower(alg{i}.id);
     else
-        switch alg
-            case 'cholqr'
-                alg = 'CholQR';
-            case 'iter_cholqr'
-                alg = 'IterCholQR';
-            case 'sh_cholqr_roro'
-                alg = 'ShCholQR++';
-            case 'cholqr_ro'
-                alg = 'CholQR+';
-            case 'houseqr'
-                alg = 'HouseQR';
-            case 'cholqr_pinv'
-                alg = 'CholQR-pinv';
-            case 'globalqr'
-                alg = 'GlobalQR';
-        end
-    end
-else
-    for i = 1:length(alg)
         alg{i} = lower(alg{i});
         if ~contains(alg{i}, 'qr')
             alg{i} = strrep(alg{i}, '_iro_', 'i+');
@@ -74,5 +47,9 @@ else
             end
         end
     end
+end
+if length(alg) == 1
+    % Extract string for single entries
+    alg = alg{1};
 end
 end
