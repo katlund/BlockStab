@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 % Script to reproduce plots in paper.  Note that more tests are generated
 % than are presented in the paper.  The subroutine GEN_PLOTS extracts a
 % subset of results to display.
@@ -100,33 +99,3 @@ mkdir(new_dir_str);
 ind = 9:12;
 gen_plots(mod_run_data(run_data_piled, ind), new_dir_str);
 close all;
-=======
-clc
-close all
-
-mat_type = 'glued';
-config_file = 'pip_mp_only.json';
-RunKappaPlot(mat_type, [], config_file);
-
-mat_type = 'glued';
-config_file = 'pip_vs_reorth.json';
-RunKappaPlot(mat_type, [], config_file);
-
-mat_type = 'default';
-config_file = 'reorth_vs_mp.json';
-RunKappaPlot(mat_type, [], config_file);
-
-mat_type = 'monomial';
-options.num_rows = 2000;
-options.num_partitions = 120;
-options.block_size = 10;
-config_file = 'reorth.json';
-RunKappaPlot(mat_type, options, config_file);
-
-mat_type = 'laeuchli';
-options.num_rows = 1000;
-options.num_partitions = 120;
-options.block_size = 8;
-config_file = 'reorth_vs_mp_house.json';
-RunKappaPlot(mat_type, options, config_file);
->>>>>>> a8be3c9856f61438360d2526677de1eaf1d2f56b
