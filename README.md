@@ -23,6 +23,13 @@ Follow the download options from the Git repository main page.  Then navigate to
 * A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
 * [`RunKappaPlot`](#new-test-driver): a unified, streamlined test engine that avoids redundant runs of skeleton-muscle combinations, simplifies syntax via an options struct, improves display of figure outputs, allows for toggling how and whether figures are saved (.eps, .pdf, and .fig formats allowed), and auto-generates a timestamped TeX report, which can be easily compiled and shared with collaborators.
 * A new class of test matrices called `piled` matrices: they are similar to `glued`, but can more easily highlight edge-case behavior for some methods.
+* [x] `bcgs_a`, `bcgs_iro_a`, and `bcgs_iro_a_3s` accept a [`multiIO`](#multiio) struct for the `musc` argument
+
+
+## `multiIO`
+
+TODO
+
 
 ## Multiprecision
 
