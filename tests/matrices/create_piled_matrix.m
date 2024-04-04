@@ -16,7 +16,7 @@ end
 
 rng(1); U = orth(randn(m, s));
 rng(100); V = qr(randn(s, s));
-D = diag(logspace(0, 2, s));
+D = diag(logspace(0, 4, s));
 
 n = p*s;
 A = zeros(m, n);

@@ -39,7 +39,7 @@ elseif nargin >= 1
             case 'monomial'
                 options.scale = 2:2:12;
             case 'piled'
-                options.scale = 1:12;
+                options.scale = 2:13;
         end
     end
 
