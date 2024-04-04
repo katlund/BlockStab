@@ -94,8 +94,8 @@ gen_plots(mod_run_data(run_data_glued, ind), new_dir_str);
 close all;
 
 % Figure 5 (piled)
-new_dir_str = sprintf('%s/mp_only/%s', run_data_piled.dir_str);
+new_dir_str = sprintf('%s/ro_vs_mp/%s', run_data_piled.dir_str);
 mkdir(new_dir_str);
-ind = 9:12;
+ind = [3:6 9:12];
 gen_plots(mod_run_data(run_data_piled, ind), new_dir_str);
 close all;
