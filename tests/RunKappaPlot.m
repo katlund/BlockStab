@@ -24,7 +24,7 @@ function run_data = RunKappaPlot(mat_type, options, config_file)
 %   - .save_fig: boolean for whether to save figures as .fig files
 %      default: false
 %   - .tex_report: boolean for whether to generate a TeX report
-%      default: false
+%      default: true
 %
 % - config_file: string specifying a .json file encoding algorithm
 %   configurations; tips to keep in mind:
