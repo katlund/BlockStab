@@ -26,7 +26,7 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 %   'rand_normal' - random entries drawn from normal distribution
 %   'rank_def' - like rand_uniform but with a block vector set to 100 times
 %       another, in order to force rank deficiency
-%   'laeuchli' - the classic Läuchli matrix
+%   'laeuchli' - the classic Lï¿½uchli matrix
 %   'monomial' - a matrix resembling a sequence of block vectors
 %       encountered in s-step Arnoldi with a monomial
 %   'stewart' - a matrix with a geometric sequence of singular values,
@@ -107,9 +107,8 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 % will generate a heatmap for the monomial matrix and the four specified
 % skeleton-muscle combinations.
 %
-%
-% Part of the BlockStab package documented in [Carson, et al.
-% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines

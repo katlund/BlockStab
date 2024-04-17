@@ -17,6 +17,9 @@ function [R, nan_flag] = chol_switch(A, param)
 % precision, then the Cholesky factor will be returned in that same
 % precision.  CHOL_FREE, however, will only operate in double unless param
 % is provided.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Defaults

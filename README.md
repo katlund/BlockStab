@@ -8,6 +8,8 @@ MATLAB 2020b or higher is required for saving PDFs of plots with minimal whitesp
 
 See [Multiprecision](#multiprecision) for additional package requirements.
 
+We rely on [`linspecer`](https://www.mathworks.com/matlabcentral/fileexchange/42673-beautiful-and-distinguishable-line-colors-colormap) and [`catstruct`](https://www.mathworks.com/matlabcentral/fileexchange/7842-catstruct), which are both included and do not need to be downloaded separately.
+
 Otherwise, the main code base is likely to work with minimal modifications in GNU Octave, but we have not tested this directly.
 
 ## Installation
@@ -16,10 +18,11 @@ Follow the download options from the Git repository main page.  Then navigate to
 
 ## What is new in this version
 
-* [x] [Multiprecision implementations](#multiprecision)
-* [x] Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties; in particular, `_a` versions that run an O(eps)-stable `IntraOrtho` on the first block vector for extra stability.
-* [x] A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
-* [x] [`RunKappaPlot`](#new-test-driver): a unified, streamlined test engine that avoids redundant runs of skeleton-muscle combinations, simplifies syntax via an options struct, improves display of figure outputs, allows for toggling how and whether figures are saved, and allows for automatic TeX report generation.
+* [Multiprecision implementations](#multiprecision)
+* Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties; in particular, `_a` versions that run an O(eps)-stable `IntraOrtho` on the first block vector for extra stability.
+* A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
+* [`RunKappaPlot`](#new-test-driver): a unified, streamlined test engine that avoids redundant runs of skeleton-muscle combinations, simplifies syntax via an options struct, improves display of figure outputs, allows for toggling how and whether figures are saved (.eps, .pdf, and .fig formats allowed), and auto-generates a timestamped TeX report, which can be easily compiled and shared with collaborators.
+* A new class of test matrices called `piled` matrices: they are similar to `glued`, but can more easily highlight edge-case behavior for some methods.
 
 ## Multiprecision
 
@@ -170,20 +173,20 @@ Each file contains a descriptive header.  See especially the following core file
 Several works are associated with this repository:
 
 * [Carson, et al. 2021](https://doi.org/10.1137/21M1394424): Carson, E., Lund, K., and Rozložník, M.  The stability of block variants of classical Gram-Schmidt.  SIAM Journal on Matrix Analysis and Applications. Vol. 42, 3, pp 1365--1380, 2021. DOI: 10.1137/21M1394424.
-* [ ] [Carson, et al. 2024 A](TBD): Carson, E., Lund, K., Ma, Y., and Oktay, E.  Reorthogonalized Pythagorean variants of block classical Gram-Schmidt.  In preparation, 2024. DOI: TBD.
-* [ ] [Carson, et al. 2024 B](TBD): Carson, E., Lund, K., Ma, Y., and Oktay, E.  On the loss of orthogonality of low-synchronization variants of reorthogonalized block Gram-Schmidt.  In preparation, 2024. DOI: TBD.
-* [ ] [Oktay, 2024](TBD): Ph.D. thesis. Faculty of Mathematics and Physics, Charles University, Prague, 2024.
+* [Carson, et al. 2024 A]: Carson, E., Lund, K., Ma, Y., and Oktay, E.  Reorthogonalized Pythagorean variants of block classical Gram-Schmidt.  In preparation, 2024. DOI: TBD.
+* [Carson, et al. 2024 B]: Carson, E., Lund, K., Ma, Y., and Oktay, E.  On the loss of orthogonality of low-synchronization variants of reorthogonalized block Gram-Schmidt.  In preparation, 2024. DOI: TBD.
+* [Oktay 2024]: Ph.D. thesis. Faculty of Mathematics and Physics, Charles University, Prague, 2024.
 * [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060): Okay, E. and Carson, E.  Using mixed precision in low-synchronization reorthogonalized block classical Gram-Schmidt. PAMM. Vol 23, 1, pp e202200060, 2023.  DOI: 10.1002/pamm.202200060
 
 If you are using results from a specific paper, please cite the paper and the version of this software you are using by referring, e.g., to a tag or specific commit.
 
 * [v1.2022](https://github.com/katlund/BlockStab/releases/tag/v1.2022): [Carson, et al. 2021](https://doi.org/10.1137/21M1394424) and [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017)
 * [v1.2022.mp](https://github.com/katlund/BlockStab/releases/tag/v1.2022.mp): [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060).
-* [v2.2024-beta](https://github.com/katlund/BlockStab/releases/tag/v2.2024-beta): [Oktay 2024](TBD)
-* [ ] [v2.2024](TBD): [Carson, et al. 2024 A](TBD)
-* [ ] [v3](TBD): [Carson, et al. 2024 B](TBD)
+* [v2.2024-beta](https://github.com/katlund/BlockStab/releases/tag/v2.2024-beta): [Oktay 2024]
+* [v2.2024](https://github.com/katlund/BlockStab/releases/tag/v2.2024): [Carson, et al. 2024 A]
+* [v3.2024](https://github.com/katlund/BlockStab/releases/tag/v3.2024): [Carson, et al. 2024 B]
 
-To cite this package in general, please use the following format or something comparable:
+To cite this package in general, please use the following format:
 
 ```tex
 @misc{LunOCetal24,
@@ -216,4 +219,4 @@ If you are interested in helping develop an open-source version of this package 
 
 ## Related projects
 
-See [LowSyncBlockArnoldi](https://gitlab.mpi-magdeburg.mpg.de/lund/low-sync-block-arnoldi) for block Arnoldi versions of these routines and a simple algorithm comparison workflow.
+See [LowSyncBlockArnoldi](https://gitlab.mpi-magdeburg.mpg.de/lund/low-sync-block-arnoldi) for block Arnoldi and GMRES versions of these routines and a simple algorithm comparison workflow.

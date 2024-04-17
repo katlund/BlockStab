@@ -8,6 +8,9 @@ function A = create_glued_matrix(m, p, s, r, t)
 % Stage 1: A = U * Sigma * V'
 %
 % Stage 2: A = A * kron(I, Sigma_block) * kron(I, V_block)
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 n = p * s;

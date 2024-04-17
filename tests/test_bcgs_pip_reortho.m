@@ -1,6 +1,6 @@
-% Script to reproduce plots in paper.  Note that more tests are generated
-% than are presented in the paper.  The subroutine GEN_PLOTS extracts a
-% subset of results to display.
+% Script to reproduce plots in bcgs_pip_reortho paper.  Note that more
+% tests are generated than are presented in the paper.  The subroutine
+% GEN_PLOTS extracts a subset of results to display.
 %
 % Algorithm configurations should be indexed as follows:
 % (1) BCGS-PIP(CholQR)
@@ -15,6 +15,9 @@
 % (10) BCGS-PIP+^{MP}(HouseQR)
 % (11) BCGS-PIPI+^{MP}(CholQR)
 % (12) BCGS-PIPI+^{MP}(HouseQR)
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %% SET UP
 % Specify algorithm configuration file

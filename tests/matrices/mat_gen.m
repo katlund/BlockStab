@@ -26,6 +26,9 @@ function [XX, XXstr, XXprops] = mat_gen(matstr, XXdim)
 %      HILB(m,p*s)
 %   's-step' - a matrix with columns spanning a Krylov subspace of size sp
 %   'newton' - like 's-step', but better conditioned
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Extract dimensions

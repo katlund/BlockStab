@@ -5,8 +5,8 @@ function [Q, R] = cgs_p_iro(X, verbose)
 %
 % See INTRAORTHO for more details about the parameters.
 %
-% Part of the BlockStab package documented in [Carson, et al.
-% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Default: debugging off
