@@ -22,6 +22,7 @@ Follow the download options from the Git repository main page.  Then navigate to
 * Additional low-sync versions of BCGSI+, which help demonstrate finer-grained stability properties; in particular, `_a` versions that run an O(eps)-stable `IntraOrtho` on the first block vector for extra stability.
 * A Cholesky switch, allowing for users to specify which Cholesky subroutine to use
 * [`RunKappaPlot`](#new-test-driver): a unified, streamlined test engine that avoids redundant runs of skeleton-muscle combinations, simplifies syntax via an options struct, improves display of figure outputs, allows for toggling how and whether figures are saved, and allows for automatic TeX report generation.
+* A new class of test matrices called `piled` matrices: they are similar to `glued`, but can more easily highlight edge-case behavior for some methods.
 
 ## Multiprecision
 
