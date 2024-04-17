@@ -1,4 +1,8 @@
-% All muscles
+% Test for comparing all muscles in BlockStab
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
+
 config_file = 'all_muscles.json';
 
 mat_type = {'glued', 'laeuchli', 'default'};

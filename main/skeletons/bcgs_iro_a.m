@@ -4,6 +4,9 @@ function [QQ, RR] = bcgs_iro_a(XX, s, musc, param)
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Default: debugging off

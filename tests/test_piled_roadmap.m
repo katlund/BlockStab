@@ -1,6 +1,9 @@
-%% ROADMAP
-% Reproduce plot from "roadmap" discussion, focusing on methods with O(eps)
-% first vector
+% Test for reproducing "roadmap" plots from bcgs_iro_ls paper, but with
+% piled matrices.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
+
 mat_type = 'piled';
 options.num_rows = 1000;
 options.num_partitions = 10;

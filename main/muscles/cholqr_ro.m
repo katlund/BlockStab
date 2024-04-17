@@ -8,6 +8,9 @@ function [Q, R] = cholqr_ro(X, param)
 % - .mp_package = 'advanpix' or 'symbolic toolbox'
 % - .mp_pair: a cell pair of precisions, with the second being the higher
 %    precision
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Default

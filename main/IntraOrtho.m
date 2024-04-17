@@ -25,6 +25,9 @@ function [Q, R, T] = IntraOrtho(X, musc, param)
 % - T: s x s triangular matrix returned by routines such as MGS_SVL and
 %   MGS_LTS; regardless of T, it should hold that
 %                      X = Q * R.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Defaults

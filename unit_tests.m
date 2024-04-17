@@ -1,4 +1,7 @@
 %% Unit tests
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %% Set-up
 install_blockstab;

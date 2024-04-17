@@ -11,6 +11,9 @@ function [QQ, RR] = bcgs_pip_iro_mp(XX, s, musc, param)
 %
 % See BGS and MP_SWITCH for more details about the parameters, and
 % INTRAORTHO for musc options.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Defaults

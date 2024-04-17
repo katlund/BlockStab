@@ -4,6 +4,10 @@ function [Q, R, T] = mgs_svl(X, verbose)
 % equivalent to MGS2 as described in [Barlow 2019].
 %
 % See INTRAORTHO for more details about the parameters.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
+
 
 %%
 % Default: debugging off

@@ -1,6 +1,9 @@
 function options = options_init(mat_type, options)
 % options = OPTIONS_INIT(mat_type, options) initializes options for
 % RUNKAPPAPLOT.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 if nargin == 0

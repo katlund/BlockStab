@@ -1,4 +1,8 @@
-% All one-sync methods in comparison with BMGS and HouseQR
+% Test for all one-sync methods in comparison with BMGS and HouseQR
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
+
 config_file = 'one_sync.json';
 
 mat_type = {'glued', 'laeuchli', 'default'};

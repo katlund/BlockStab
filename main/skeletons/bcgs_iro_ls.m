@@ -11,6 +11,9 @@ function [QQ, RR] = bcgs_iro_ls(XX, s, musc, param)
 % 1-sync variation derived from different principles, see BCGS_IRO_1S.
 %
 % See BGS for more details about the parameters.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Default: debugging off

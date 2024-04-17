@@ -3,6 +3,9 @@ function gen_plots(run_data, new_dir_str)
 % plots for RUNKAPPAPLOT given a run_data struct; if new_dir_str is not
 % provided, then the one saved in the .mat file specified by save_str is
 % used.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Load run_data

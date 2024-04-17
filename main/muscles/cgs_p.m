@@ -4,6 +4,9 @@ function [Q, R] = cgs_p(X, verbose)
 % matrix X.
 %
 % See INTRAORTHO for more details about the parameters.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Default: debugging off

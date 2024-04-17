@@ -1,5 +1,8 @@
 function param = mp_param_init(param)
 % Initialize missing parameters for multiprecision skeletons.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 if nargin == 0

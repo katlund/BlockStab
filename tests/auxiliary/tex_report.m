@@ -1,6 +1,9 @@
 function tex_report(run_data)
 % TEX_REPORT(run_data) generates a LaTeX report from RUNKAPPAPLOT requiring
 % only basic packages.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Open new file

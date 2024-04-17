@@ -14,6 +14,8 @@ function R = chol_free(A, param)
 % - .mp_pair: a cell pair of precisions, with the second being the higher
 % precision (and what this routine will use to compute Cholesky)
 %
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Defaults

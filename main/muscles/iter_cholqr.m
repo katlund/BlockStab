@@ -4,6 +4,9 @@ function [Q, R] = iter_cholqr(X)
 % [Fukaya, et. al. 2018].
 %
 % The number of iterations is limited to 10.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 [m, s] = size(X);

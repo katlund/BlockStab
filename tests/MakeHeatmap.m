@@ -106,6 +106,9 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 % MAKEHEATMAP([], 'monomial', {'BCGS', 'BCGS_IRO'}, {'HouseQR', 'CGS_RO'})
 % will generate a heatmap for the monomial matrix and the four specified
 % skeleton-muscle combinations.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 addpath(genpath('../main/'))                                                % path to main routines

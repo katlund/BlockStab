@@ -1,6 +1,9 @@
 function XY = InnerProd(X, Y, musc)
 % S = InnerProd(X, Y, musc) is a wrapper function for switching between
 % different inner product paradigms, determined by the char musc.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Defaults
