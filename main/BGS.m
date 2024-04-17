@@ -39,9 +39,6 @@ function [QQ, RR, TT, run_time] = BGS(XX, s, skel, musc, param)
 %                      XX = QQ * RR.
 % - run_time: total time elapsed measured by tic and toc; does not exclude
 %   screen outputs from verbose
-%
-% Part of the BlockStab package documented in [Carson, et al.
-% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 % Defaults

@@ -4,9 +4,6 @@ function A = mp_switch(A, mp_package, mp_spec)
 % - mp_package: 'advanpix', 'symbolic math', or 'none'
 % - mp_spec: 'single', 'double', or 'quad'; note that mp_package will be
 %   ignored except whem mp_spec = 'quad'
-%
-% Part of the BlockStab package documented in [Carson, et al.
-% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
     
 %%
 % Switch -- first level based on mp_spec

@@ -14,9 +14,6 @@ function [QQ, RR] = bcgs_iro_ls_mp(XX, s, musc, param)
 %
 % See BGS and MP_SWITCH for more details about the parameters, and
 % INTRAORTHO for musc options.
-%
-% Part of the BlockStab package documented in [Carson, et al.
-% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 % Defaults

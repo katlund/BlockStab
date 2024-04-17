@@ -8,7 +8,7 @@ MATLAB 2020b or higher is required for saving PDFs of plots with minimal whitesp
 
 See [Multiprecision](#multiprecision) for additional package requirements.
 
-We rely on [`linspecer`](https://github.com/davidkun/linspecer) for formatting plots, and it is included already in the package and does not need to be installed separately.
+We rely on [`linspecer`](https://www.mathworks.com/matlabcentral/fileexchange/42673-beautiful-and-distinguishable-line-colors-colormap) and [`catstruct`](https://www.mathworks.com/matlabcentral/fileexchange/7842-catstruct), which are both included and do not need to be downloaded separately.
 
 Otherwise, the main code base is likely to work with minimal modifications in GNU Octave, but we have not tested this directly.
 

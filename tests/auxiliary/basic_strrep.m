@@ -1,9 +1,6 @@
 function alg = basic_strrep(alg)
 % alg = BASIC_STRREP(alg) performs a basic string replacement for
 % algorithm names in str.  See ALG_STRING.
-%
-% Part of the BlockStab package documented in [Carson, et al.
-% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
 
 %%
 if ischar(alg)
