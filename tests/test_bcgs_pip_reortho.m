@@ -21,7 +21,7 @@
 
 %% SET UP
 % Specify algorithm configuration file
-config_file = [mfilename '.json'];
+config_file = 'bcgs_pip_reortho.json';
 
 % Set up options struct to be reused by GEN_PLOTS
 options = [];
