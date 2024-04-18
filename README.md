@@ -220,3 +220,7 @@ If you are interested in helping develop an open-source version of this package 
 ## Related projects
 
 See [LowSyncBlockArnoldi](https://gitlab.mpi-magdeburg.mpg.de/lund/low-sync-block-arnoldi) for block Arnoldi and GMRES versions of these routines and a simple algorithm comparison workflow.
+
+## Acknowledgements
+
+Many thanks to [Xiaobo Liu](https://github.com/Xiaobo-Liu) for a code review.
