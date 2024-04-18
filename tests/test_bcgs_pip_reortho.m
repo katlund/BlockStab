@@ -1,6 +1,26 @@
-% Script to reproduce plots in bcgs_pip_reortho paper.  Note that more
-% tests are generated than are presented in the paper.  The subroutine
-% GEN_PLOTS extracts a subset of results to display.
+% This is a script to reproduce plots in bcgs_pip_reortho paper.  Note
+% that more tests are run than are presented in the paper.  The
+% subroutine GEN_PLOTS extracts a subset of results to format for the
+% paper.
+%
+% If you have the Symbolic Math Toolbox but not Advanpix, you can still
+% run these tests, but you will need to edit configs/bcgs_pip_reortho.json
+% and replace "advanpix" everywhere by "vpa".  If you have neither, then
+% you could qualitatively reproduce the multiprecision (MP) tests with
+% "mp_pair": ["single", "double"] instead of "mp_pair": ["double", "quad"],
+% which will force MP routines to use the built-in SINGLE function.
+%
+% This script may take a while to run on a personal laptop, even if
+% Advanpix is used.  Using the Symbolic Math Toolbox instead will take
+% even more time. The slowest tests are the 'monomial' matrices.  You can
+% comment out any matrix class you are not interested in running.
+%
+% If you are running this file to compare with or reproduce results from
+% the associated paper, note that a TeX report is auto-generated for each
+% matrix class.  You can either compile the report, or look directly at the
+% .pdf or .fig plots that are saved from each test.  The compiled report
+% will have a timestamp and a summary of the all the algorithm
+% configurations, which can be useful if you want to share results.
 %
 % Algorithm configurations should be indexed as follows:
 % (1) BCGS-PIP(CholQR)
