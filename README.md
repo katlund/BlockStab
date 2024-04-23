@@ -4,7 +4,7 @@ The main purpose of this package is to study, verify, and conjecture the stabili
 
 ## Requirements
 
-MATLAB 2020b or higher is required for saving PDFs of plots with minimal whitespace; see [this link](https://de.mathworks.com/help/matlab/creating_plots/save-figure-with-minimal-white-space.html).  For older versions of MATLAB, be sure to set `options.save_pdf = 0` in the test scripts, or modify `gen_plots.m` directly to save PDFs via a preferred format.
+MATLAB 2020a or higher is required for saving PDFs of plots with minimal whitespace; see [this link](https://de.mathworks.com/help/matlab/creating_plots/save-figure-with-minimal-white-space.html).  For older versions of MATLAB, be sure to set `run_data.options.save_pdf = 0` in the test scripts, or modify `gen_plots.m` directly to save PDFs via a preferred format.
 
 See [Multiprecision](#multiprecision) for additional package requirements.
 
@@ -223,4 +223,4 @@ See [LowSyncBlockArnoldi](https://gitlab.mpi-magdeburg.mpg.de/lund/low-sync-bloc
 
 ## Acknowledgements
 
-Many thanks to [Xiaobo Liu](https://github.com/Xiaobo-Liu) for a code review.
+Many thanks to [Xiaobo Liu](https://github.com/Xiaobo-Liu) and [Pavan Veluvali](https://vpavan1920.github.io/) for code reviews.
