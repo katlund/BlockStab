@@ -137,6 +137,8 @@ There are two main test drivers, [`MakeHeatmap`](https://github.com/katlund/Bloc
 * `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1);`
 * `RunKappaPlot('laeuchli', [], 'demo.json');`
 
+As an aside: do not close figures until after the tests are finished running, as there are some post-processing scripts that need them active in order to make changes and save them.  Most `test_*` scripts close them automatically.
+
 ### New test driver
 
 A major difference compared to the previous version is that all $\kappa$ plots are now managed by a single driver, `RunKappaPlot`, which takes three arguments:
