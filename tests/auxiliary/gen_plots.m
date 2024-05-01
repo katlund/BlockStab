@@ -1,5 +1,5 @@
-function gen_plots(run_data, new_dir_str)
-% GEN_PLOTS(run_data, new_dir_str) is a subroutine that generates
+function gen_plots(run_data, new_dir_str, var_eps)
+% GEN_PLOTS(run_data, new_dir_str, var_eps) is a subroutine that generates
 % plots for RUNKAPPAPLOT given a run_data struct; if new_dir_str is not
 % provided, then the one saved in the .mat file specified by save_str is
 % used.
@@ -10,8 +10,11 @@ function gen_plots(run_data, new_dir_str)
 %%
 % Load run_data
 n_alg = length(run_data.lgd);
-if nargin == 2
+if nargin == 1
+    var_eps = eps;
+elseif nargin == 2
     run_data.dir_str = new_dir_str;
+    var_eps = eps;
 end
 
 % Pull out options
@@ -30,15 +33,20 @@ end
 % Plot data
 for j = 1:n_alg
     plot(ax{1}, run_data.condXX, run_data.loss_ortho(:,j),...
-        run_data.symb{j}, 'Color', run_data.alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
+        run_data.symb{j}, 'Color', run_data.alg_cmap(j,:), ...
+        'MarkerSize', 10, 'LineWidth', 1);
     plot(ax{2}, run_data.condXX, run_data.rel_res(:,j),... 
-        run_data.symb{j}, 'Color', run_data.alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
+        run_data.symb{j}, 'Color', run_data.alg_cmap(j,:), ...
+        'MarkerSize', 10, 'LineWidth', 1);
     plot(ax{3}, run_data.condXX, run_data.rel_chol_res(:,j),...
-        run_data.symb{j}, 'Color', run_data.alg_cmap(j,:), 'MarkerSize', 10, 'LineWidth', 1);
+        run_data.symb{j}, 'Color', run_data.alg_cmap(j,:), ...
+        'MarkerSize', 10, 'LineWidth', 1);
 end
 % Plot comparison lines
-plot(ax{1}, run_data.condXX, eps*run_data.condXX, 'k--', run_data.condXX, eps*(run_data.condXX.^2), 'k-')
-plot(ax{3}, run_data.condXX, eps*run_data.condXX, 'k--', run_data.condXX, eps*(run_data.condXX.^2), 'k-')
+plot(ax{1}, run_data.condXX, var_eps*run_data.condXX, 'k--', ...
+    run_data.condXX, var_eps*(run_data.condXX.^2), 'k-')
+plot(ax{3}, run_data.condXX, var_eps*run_data.condXX, 'k--', ...
+    run_data.condXX, var_eps*(run_data.condXX.^2), 'k-')
 
 % Make plots pretty and save them
 plot_str = {'loss_ortho', 'rel_res', 'rel_chol_res'};
