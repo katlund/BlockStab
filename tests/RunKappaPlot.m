@@ -1,11 +1,12 @@
-function run_data = RunKappaPlot(mat_type, options, config_file)
-% run_data = RUNKAPPAPLOT(mat_type, options, config_file) is a test manager
-% for all KappaPlot tests.
+function run_data = RunKappaPlot(mat_type, options, config_file, var_eps)
+% run_data = RUNKAPPAPLOT(mat_type, options, config_file, var_eps) is a
+% test manager for all KappaPlot tests.
 %
 % INPUTS:
 % - mat_type: 'default', 'glued', 'laeuchli', 'monomial', 'piled';
 %   trial matrices are stored in the cell XX throughout this routine
 %   default: 'default'
+%
 % - options struct with the following fields:
 %   - .scale: vector determining how condition numbers of specified
 %      mat_type vary
@@ -47,6 +48,10 @@ function run_data = RunKappaPlot(mat_type, options, config_file)
 %           a cell array; a Cartesian product of all parmeters will be run
 %   default: see demo.json
 %
+% - var_eps: float specifying the desired machine precision; determines
+%   how comparison lines are plotted for O(eps)kappa(X);
+%   default: eps (2^(-52))
+%
 % Note on problem dimensions: trial matrices are constructed with dimension
 % m x ps.  A non-block problem can be constructed from either p = 1 or s =
 % 1.
@@ -79,21 +84,22 @@ function run_data = RunKappaPlot(mat_type, options, config_file)
 % Set time and date
 dtnow = datetime('now');
 
-% Turn off warnings for coherent screen print-outs (primarily avoids
-% "Matrix is singular...")
-warning('off')
+% Turn off specific warnings
+warning('off','MATLAB:nearlySingularMatrix')
 
 % Defaults
 if nargin == 0
     mat_type = 'default';
     options = options_init(mat_type);
     config_file = 'demo.json';
+    var_eps = eps;
 elseif nargin == 1
     if isempty(mat_type)
         mat_type = 'default';
     end
     options = options_init(mat_type);
     config_file = 'demo.json';
+    var_eps = eps;
 elseif nargin == 2
     if isempty(mat_type)
         mat_type = 'default';
@@ -104,7 +110,21 @@ elseif nargin == 2
         options = options_init(mat_type, options);
     end
     config_file = 'demo.json';
+    var_eps = eps;
 elseif nargin == 3
+    if isempty(mat_type)
+        mat_type = 'default';
+    end
+    if isempty(options)
+        options = options_init(mat_type);
+    else
+        options = options_init(mat_type, options);
+    end
+    if isempty(config_file)
+        config_file = 'demo.json';
+    end
+    var_eps = eps;
+elseif nargin == 4
     if isempty(mat_type)
         mat_type = 'default';
     end
@@ -317,7 +337,7 @@ save(save_str, 'run_data');
 fprintf('MAT file saved in %s\n', dir_str);
 
 %% Generate plots
-gen_plots(run_data);
+gen_plots(run_data, [], var_eps);
 
 %% Generate TeX report
 if options.tex_report && (options.save_pdf || options.save_eps)

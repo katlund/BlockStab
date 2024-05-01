@@ -211,6 +211,10 @@ for i = 1:n_alg_opts
     else
         warning('%s is not a known muscle or skeleton.', alg_opts{i})
     end
+
+    % Initialize param so that any corrections are included in the report
+    param{end} = param_init(param{end});
+    param{end} = mp_param_init(param{end});
 end
 
 %% Verify configurations for debugging

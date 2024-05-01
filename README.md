@@ -26,7 +26,7 @@ Follow the download options from the Git repository main page.  Then navigate to
 
 ## Multiprecision
 
-Multiprecision routines (i.e., those ending with `_mp`) require one of the additional toolboxes:
+Multiprecision routines (i.e., those ending with `_mp`) require a recent version of one of the additional toolboxes:
 
 * [Advanpix Multiprecision Computing Toolbox](https://www.advanpix.com/), which requires a paid license.  The `mp` subroutine is used.
 * [Symbolic Math Toolbox](https://www.mathworks.com/products/symbolic.html), which may also require a paid license.  The subroutine [`vpa`](https://mathworks.com/help/symbolic/vpa.html) is used.
