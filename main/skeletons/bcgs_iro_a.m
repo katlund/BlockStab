@@ -11,18 +11,6 @@ function [QQ, RR] = bcgs_iro_a(XX, s, musc, param)
 %
 % Note that a multiIO struct may have parameters for the musc encoded in
 % the struct as a subfield param.
-% [QQ, RR] = BCGS_IRO_A(XX, s, musc, param) performs BCGS_IRO with the
-% option of musc being a multiIO.
-%
-% _A methods can accept a multiIO struct for musc.  When musc is provided
-% as a single string, then IO_A is HouseQR and IO_1 (i.e., the IntraOrtho
-% within the loop) is musc.  Otherwise, musc must be a struct with .io_a
-% and .io_1 fields.  In particular,
-%       struct('io_a', 'houseqr', 'io_1', 'cholqr')
-% reproduces the default for musc = 'cholqr'.
-%
-% Note that a multiIO struct may have parameters for the musc encoded in
-% the struct as a subfield param.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
@@ -49,19 +37,6 @@ elseif isstruct(musc)
     IO_2 = @(W) IntraOrtho(W, musc{3}, musc_param{3});
 end
 
-% Set up IO_A, IO_1, and IO_2
-if ischar(musc)
-    % Defaults
-    IO_A = @(W) qr(W,0);
-    IO_1 = @(W) IntraOrtho(W, musc, param);
-    IO_2 = @(W);
-elseif isstruct(musc)
-    [musc, musc_param] = unpack_multi_io(musc, param);
-    IO_A = @(W) IntraOrtho(W, musc{1}, musc_param{1});
-    IO_1 = @(W) IntraOrtho(W, musc{2}, musc_param{2});
-    IO_2 = @(W) IntraOrtho(W, musc{3}, musc_param{3});
-end
-
 % Pre-allocate memory for QQ and RR
 [m, n] = size(XX);
 RR = zeros(n,n);
@@ -73,11 +48,7 @@ kk = 1:s;
 sk = s;
 
 % Extract W
-% Extract W
 W = XX(:,kk);
-
-% IO_A
-[QQ(:,kk), RR(kk,kk)] = IO_A(W);
 
 % IO_A
 [QQ(:,kk), RR(kk,kk)] = IO_A(W);
@@ -102,12 +73,10 @@ for k = 1:p-1
     RR1 = InnerProd(QQ(:,1:sk), W, musc);
     W = W - QQ(:,1:sk) * RR1;
     [W, R1] = IO_1(W);
-    [W, R1] = IO_1(W);
     
     % Second BCGS step
     RR(1:sk,kk) = InnerProd(QQ(:,1:sk), W, musc);
     W = W - QQ(:,1:sk) * RR(1:sk,kk);
-    [QQ(:,kk), RR(kk,kk)] = IO_2(W);
     [QQ(:,kk), RR(kk,kk)] = IO_2(W);
     
     % Combine both steps
