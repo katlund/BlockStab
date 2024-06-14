@@ -212,7 +212,6 @@ for i = 1:n_alg_opts
 
     % Initialize param so that any corrections are included in the report
     param{end} = param_init(param{end});
-    param{end} = mp_param_init(param{end});
 end
 
 % Remove entries when skel, musc, and param are simultaneously empty
