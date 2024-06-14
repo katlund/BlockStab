@@ -6,12 +6,6 @@ function [skel, musc, param] = alg_config(config_file)
 % for how to properly cite and reuse this file.
 
 %%
-% Default for debugging
-if nargin == 0
-    config_file = 'demo.json';
-    disp(config_file)
-end
-
 % Convert .json to struct
 alg_struct = jsondecode(fileread(config_file));
 
@@ -179,11 +173,19 @@ for i = 1:n_alg_opts
                         
                                             % Prescribe appended parameters
                                             if isempty(param_opts)
-                                                param{end+1} = [];
+                                                if isempty(musc_param_opts(ll))
+                                                    param{end+1} = [];
+                                                else
+                                                    param{end+1} = musc_param_opts(ll);
+                                                end
                                             else
-                                                param{end+1} = catstruct(...
-                                                param_opts(j),...
-                                                musc_param_opts(ll));
+                                                if isempty(musc_param_opts(ll))
+                                                    param{end+1} = param_opts(j);
+                                                else
+                                                    param{end+1} = catstruct(...
+                                                    param_opts(j),...
+                                                    musc_param_opts(ll));
+                                                end
                                             end
                                         end
                                     end
