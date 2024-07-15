@@ -46,8 +46,11 @@ close all;
 
 %% Again but for piled matrices
 mat_type = 'piled';
+options.num_rows = 1000;
+options.num_partitions = 10;
+options.block_size = 10;
 config_file = 'roadmap.json';
-run_data = RunKappaPlot(mat_type, [], config_file);
+run_data = RunKappaPlot(mat_type, options, config_file);
 close all;
 
 % Stepwise plots for paper
@@ -87,4 +90,26 @@ close all;
 mat_type = 'default';
 config_file = 'roadmap.json';
 run_data = RunKappaPlot(mat_type, [], config_file);
+close all;
+
+%% Column version on piled matrices
+mat_type = 'piled';
+options.num_rows = 1000;
+options.num_partitions = 100;
+options.block_size = 1;
+config_file = 'roadmap.json';
+run_data = RunKappaPlot(mat_type, options, config_file);
+close all;
+
+% Stepwise plots for paper
+run_data.options.save_eps = true;
+run_data.options.save_pdf = true;
+run_data.options.save_fig = false;
+
+% Extract only methods with CholQR and remove redundancies (e.g., BCGS =
+% BCGS-A, etc)
+new_dir_str = sprintf('%s/unique', run_data.dir_str);
+mkdir(new_dir_str);
+ind = [4 8 10 11:13];
+gen_plots(mod_run_data(run_data, ind), new_dir_str);
 close all;
