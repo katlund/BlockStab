@@ -46,6 +46,7 @@ close all;
 
 %% Again but for piled matrices
 mat_type = 'piled';
+options.scale = 4:13; % default scale leads to redundant condition numbers
 options.num_rows = 1000;
 options.num_partitions = 10;
 options.block_size = 10;
@@ -94,6 +95,7 @@ close all;
 
 %% Column version on piled matrices
 mat_type = 'piled';
+options.scale = 4:13; % default scale leads to redundant condition numbers
 options.num_rows = 1000;
 options.num_partitions = 100;
 options.block_size = 1;

@@ -207,8 +207,18 @@ switch lower(mat_type)
         end
 
     case 'piled'
+        % Find mat_p and mat_s to be independent of partitioning; we can
+        % see worse behavior for s large
+        f = factor(p*s); % returns prime factors excluding 1
+        if isscalar(f)
+            mat_s = p;
+            mat_p = 1;
+        else
+            mat_s = max(f);
+            mat_p = n/mat_s;
+        end
         for i = 1:n_mat
-            XX{i} = create_piled_matrix(m, p, s, options.scale(i));
+            XX{i} = create_piled_matrix(m, mat_p, mat_s, options.scale(i));
         end
 
 end
