@@ -111,9 +111,6 @@ function MakeHeatmap(XXdim, mat, skel, musc, rpltol, verbose)
 % for how to properly cite and reuse this file.
 
 %%
-addpath(genpath('../main/'))                                                % path to main routines
-addpath(genpath('matrices/'))                                               % path to matrix files
-addpath(genpath('auxiliary/'))                                              % path to auxiliary files
 
 % Defaults for inputs
 if nargin == 4

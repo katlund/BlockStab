@@ -11,7 +11,50 @@ config_file = 'roadmap.json';
 run_data = RunKappaPlot(mat_type, options, config_file);
 close all;
 
-%% Stepwise plots for paper
+% Stepwise plots for paper
+run_data.options.save_eps = true;
+run_data.options.save_pdf = true;
+run_data.options.save_fig = false;
+
+% BCGS(HouseQR, CholQR) up to BCGSI+(HouseQR, CholQR)
+new_dir_str = sprintf('%s/1_bcgs_to_iro', run_data.dir_str);
+mkdir(new_dir_str);
+ind = 1:6;
+gen_plots(mod_run_data(run_data, ind), new_dir_str);
+close all;
+
+% BCGSI+(HouseQR, CholQR) up to BCGSI+A(HouseQR, CholQR)
+new_dir_str = sprintf('%s/2_iro_to_iro_a', run_data.dir_str);
+mkdir(new_dir_str);
+ind = 5:8;
+gen_plots(mod_run_data(run_data, ind), new_dir_str);
+close all;
+
+% BCGSI+A(HouseQR, CholQR) up to BCGSI+A-3S(HouseQR, CholQR)
+new_dir_str = sprintf('%s/3_a4s_to_a3s', run_data.dir_str);
+mkdir(new_dir_str);
+ind = 7:10;
+gen_plots(mod_run_data(run_data, ind), new_dir_str);
+close all;
+
+% BCGSI+A-3S(CholQR) up to BCGSI+A-1S(CholQR)
+new_dir_str = sprintf('%s/4_a3s_to_a1s', run_data.dir_str);
+mkdir(new_dir_str);
+ind = 10:12;
+gen_plots(mod_run_data(run_data, ind), new_dir_str);
+close all;
+
+%% Again but for piled matrices
+mat_type = 'piled';
+options.scale = 4:13; % default scale leads to redundant condition numbers
+options.num_rows = 1000;
+options.num_partitions = 10;
+options.block_size = 10;
+config_file = 'roadmap.json';
+run_data = RunKappaPlot(mat_type, options, config_file);
+close all;
+
+% Stepwise plots for paper
 run_data.options.save_eps = true;
 run_data.options.save_pdf = true;
 run_data.options.save_fig = false;
@@ -48,4 +91,27 @@ close all;
 mat_type = 'default';
 config_file = 'roadmap.json';
 run_data = RunKappaPlot(mat_type, [], config_file);
+close all;
+
+%% Column version on piled matrices
+mat_type = 'piled';
+options.scale = 4:13; % default scale leads to redundant condition numbers
+options.num_rows = 1000;
+options.num_partitions = 100;
+options.block_size = 1;
+config_file = 'roadmap.json';
+run_data = RunKappaPlot(mat_type, options, config_file);
+close all;
+
+% Stepwise plots for paper
+run_data.options.save_eps = true;
+run_data.options.save_pdf = true;
+run_data.options.save_fig = false;
+
+% Extract only methods with CholQR and remove redundancies (e.g., BCGS =
+% BCGS-A, etc)
+new_dir_str = sprintf('%s/unique', run_data.dir_str);
+mkdir(new_dir_str);
+ind = [4 8 10 11:13];
+gen_plots(mod_run_data(run_data, ind), new_dir_str);
 close all;

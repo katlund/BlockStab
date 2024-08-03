@@ -148,6 +148,9 @@ I = eye(n);
 %% Build algorithm configurations
 [skel, musc, param] = alg_config(config_file);
 
+% Set up storage for musc IDs
+musc_id = cell(size(musc));
+
 %% Set up matrices
 n_mat = length(options.scale);
 XX = cell(n_mat,1);
@@ -204,8 +207,18 @@ switch lower(mat_type)
         end
 
     case 'piled'
+        % Find mat_p and mat_s to be independent of partitioning; we can
+        % see worse behavior for s large
+        f = factor(p*s); % returns prime factors excluding 1
+        if isscalar(f)
+            mat_s = p;
+            mat_p = 1;
+        else
+            mat_s = max(f);
+            mat_p = n/mat_s;
+        end
         for i = 1:n_mat
-            XX{i} = create_piled_matrix(m, p, s, options.scale(i));
+            XX{i} = create_piled_matrix(m, mat_p, mat_s, options.scale(i));
         end
 
 end
@@ -229,12 +242,18 @@ for i = 1:n_mat
     normXX(i) = norm(XX{i}, 2);
 
     for j = 1:n_alg
+        % Extra musc_id from multiIOs
+        if isstruct(musc{j})
+            musc_id{j} = musc{j}.id;
+        else
+            musc_id{j} = musc{j};
+        end
         if isempty(skel{j})
             % Call IntraOrtho muscle
             [QQ, RR] = IntraOrtho(XX{i}, musc{j}, param{j});
 
             % Display algorithm configuration
-            fprintf('(%d) musc: %s\n', j, musc{j});
+            fprintf('(%d) musc: %s\n', j, musc_id{j});
             if ~isempty(param{j})
                 disp(param{j})
             else
@@ -250,7 +269,7 @@ for i = 1:n_mat
             if isempty(musc{j})
                 fprintf('musc: default\n');
             else
-                fprintf('musc: %s\n', musc{j});
+                fprintf('musc: %s\n', musc_id{j});
             end
                 
             if ~isempty(param{j})
@@ -322,6 +341,7 @@ run_data = struct( ...
     'loss_ortho', {loss_ortho}, ...
     'mat_type', mat_type, ...
     'musc', {musc}, ...
+    'musc_id', {musc_id}, ...
     'normXX', {normXX}, ...
     'options', options, ...
     'param', {param}, ...

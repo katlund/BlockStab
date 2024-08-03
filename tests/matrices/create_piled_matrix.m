@@ -18,7 +18,7 @@ if nargin == 4
 end
 
 rng(1); U = orth(randn(m, s));
-rng(100); V = qr(randn(s, s));
+rng(100); V = orth(randn(s, s));
 D = diag(logspace(0, 4, s));
 
 n = p*s;
