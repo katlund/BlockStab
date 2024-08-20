@@ -232,8 +232,8 @@ Several works are associated with this repository:
 
 * [Carson, et al. 2021](https://doi.org/10.1137/21M1394424): Carson, E., Lund, K., and Rozložník, M.  The stability of block variants of classical Gram-Schmidt.  SIAM Journal on Matrix Analysis and Applications. Vol. 42, 3, pp 1365--1380, 2021. DOI: 10.1137/21M1394424.
 * [Carson, et al. 2024 A](https://doi.org/10.48550/arXiv.2405.01298): Carson, E., Lund, K., Ma, Y., and Oktay, E.  Reorthogonalized Pythagorean variants of block classical Gram-Schmidt. arXiv:2405.01298, 2024. DOI: 10.48550/arXiv.2405.01298.
-* [Carson, et al. 2024 B]: Carson, E., Lund, K., Ma, Y., and Oktay, E.  On the loss of orthogonality of low-synchronization variants of reorthogonalized block Gram-Schmidt.  In preparation, 2024. DOI: TBD.
-* [Oktay 2024]: Ph.D. thesis. Faculty of Mathematics and Physics, Charles University, Prague, 2024.
+* [Carson, et al. 2024 B](https://doi.org/10.48550/arXiv.2408.10109): Carson, E., Lund, K., Ma, Y., and Oktay, E.  On the loss of orthogonality in low-synchronization variants of reorthogonalized block classical Gram-Schmidt. arXiv:2408.10109, 2024. DOI: 10.48550/arXiv.2408.10109.
+* [Oktay 2024](https://dspace.cuni.cz/bitstream/handle/20.500.11956/191480/140119625.pdf?sequence=1): Ph.D. thesis. Faculty of Mathematics and Physics, Charles University, Prague, 2024.
 * [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060): Okay, E. and Carson, E.  Using mixed precision in low-synchronization reorthogonalized block classical Gram-Schmidt. PAMM. Vol 23, 1, pp e202200060, 2023.  DOI: 10.1002/pamm.202200060
 
 If you are using results from a specific paper, please cite the paper and the version of this software you are using by referring, e.g., to a tag or specific commit.
