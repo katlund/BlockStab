@@ -207,14 +207,14 @@ Setting up the JSON configuration file is a bit tricky, but a number of template
 
 * Redundancies in skeleton-muscle combinations are avoided, in particular, for skeletons like `bcgs_sror` and `bcgs_iro_ls`, which take only one muscle or none, respectively.
 * Direct comparisons between muscles and skeleton-muscle algorithms can be made.  For example, we can plot `cholqr` and `bmgs`$\circ$`houseqr` on the same $\kappa$ plot.
-* Direct comparisons between different implementations of the same algorithm are possible.  For example, Cholesky-based routines can be implemented with `chol_nan` or `chol_aree`.  `demo.json` encodes both configurations for several algorithms.
+* Direct comparisons between different implementations of the same algorithm are possible.  For example, Cholesky-based routines can be implemented with `chol_nan` or `chol_free`.  `demo.json` encodes both configurations for several algorithms.
 * Direct comparisons between multi-precision and standard double precision implementations of algorithms are also possible.  Again, see `demo.json` for examples.
 
 If you are unfamiliar with JSON, have a look at [JSON formatter](https://jsonformatter.org/json-parser), which provides a nice GUI for parsing and formatting files.
 
 ### New plot customization features
 
-`roadmap.m` demonstrates how to use subroutines `gen_plots.m` and `mod_run_data.m` to plot subsets of a previous run, without re-running the tests.  This can be beneficial when running a huge panel of tests that are not easily displayed on the same axis.  (Indeed, choosing colors and symbols for making lines legible is nontrivial.)  We used this feature in [Carson, et al. 2024 B](TBD) to study a progression of method modifications.
+`test_roadmap.m` demonstrates how to use subroutines `gen_plots.m` and `mod_run_data.m` to plot subsets of a previous run, without re-running the tests.  This can be beneficial when running a huge panel of tests that are not easily displayed on the same axis.  (Indeed, choosing colors and symbols for making lines legible is nontrivial.)  We used this feature in [Carson, et al. 2024 B](TBD) to study a progression of method modifications.
 
 ## Documentation
 
@@ -240,9 +240,8 @@ If you are using results from a specific paper, please cite the paper and the ve
 
 * [v1.2022](https://github.com/katlund/BlockStab/releases/tag/v1.2022): [Carson, et al. 2021](https://doi.org/10.1137/21M1394424) and [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017)
 * [v1.2022.mp](https://github.com/katlund/BlockStab/releases/tag/v1.2022.mp): [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060).
-* [v2.2024-beta](https://github.com/katlund/BlockStab/releases/tag/v2.2024-beta): [Oktay 2024]
-* [v2.2024](https://github.com/katlund/BlockStab/releases/tag/v2.2024): [Carson, et al. 2024 A]
-* [v3.2024](https://github.com/katlund/BlockStab/releases/tag/v3.2024): [Carson, et al. 2024 B]
+* [v2.2024-beta](https://github.com/katlund/BlockStab/releases/tag/v2.2024-beta): [Oktay 2024](https://dspace.cuni.cz/bitstream/handle/20.500.11956/191480/140119625.pdf?sequence=1)
+* [v2.1.2024](https://github.com/katlund/BlockStab/releases/tag/v2.1.2024): [Carson, et al. 2024 A](https://arxiv.org/abs/2405.01298v2) and [Carson, et al. 2024 B](https://arxiv.org/abs/2408.10109)
 
 To cite this package in general, please use the following format:
 
