@@ -199,7 +199,7 @@ As an aside: do not close figures until after the tests are finished running, as
 
 A major difference compared to the previous version is that all $\kappa$ plots are now managed by a single driver, `RunKappaPlot`, which takes three arguments:
 
-* `mat_type`: `'default'`, `'glued'`, `'laeuchli'`, and `'monomial'`
+* `mat_type`: `'default'`, `'glued'`, `'laeuchli'`, `'monomial'`, and `piled`
 * `options`: a struct with fields pertaining to the size and scale of trial matrices, as well as flags for saving figures and generating a TeX report
 * `config_aile`: a JSON file processed by the subroutine [`alg_config`](https://github.com/katlund/BlockStab/blob/master/tests/auxiliary/alg_config.m)
 
