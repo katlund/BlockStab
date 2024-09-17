@@ -231,6 +231,7 @@ Each file contains a descriptive header.  See especially the following core file
 Several works are associated with this repository:
 
 * [Carson, et al. 2021](https://doi.org/10.1137/21M1394424): Carson, E., Lund, K., and Rozložník, M.  The stability of block variants of classical Gram-Schmidt.  SIAM Journal on Matrix Analysis and Applications. Vol. 42, 3, pp 1365--1380, 2021. DOI: 10.1137/21M1394424.
+* [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017): Carson, E., Lund, K., Rozložník, M., and Thomas, S. Block Gram-Schmidt algorithms and their stability properties, Linear Algebra and its Applications. Vol. 638, 20, pp 150-195, 2022. DOI: 10.1016/j.laa.2021.12.017.
 * [Carson, et al. 2024 A](https://doi.org/10.48550/arXiv.2405.01298): Carson, E., Lund, K., Ma, Y., and Oktay, E.  Reorthogonalized Pythagorean variants of block classical Gram-Schmidt. arXiv:2405.01298, 2024. DOI: 10.48550/arXiv.2405.01298.
 * [Carson, et al. 2024 B](https://doi.org/10.48550/arXiv.2408.10109): Carson, E., Lund, K., Ma, Y., and Oktay, E.  On the loss of orthogonality in low-synchronization variants of reorthogonalized block classical Gram-Schmidt. arXiv:2408.10109, 2024. DOI: 10.48550/arXiv.2408.10109.
 * [Oktay 2024](https://dspace.cuni.cz/bitstream/handle/20.500.11956/191480/140119625.pdf?sequence=1): Ph.D. thesis. Faculty of Mathematics and Physics, Charles University, Prague, 2024.
