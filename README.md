@@ -24,10 +24,11 @@ Follow the download options from the Git repository main page.  Then navigate to
 * [`RunKappaPlot`](#new-test-driver): a unified, streamlined test engine that avoids redundant runs of skeleton-muscle combinations, simplifies syntax via an options struct, improves display of figure outputs, allows for toggling how and whether figures are saved (.eps, .pdf, and .fig formats allowed), and auto-generates a timestamped TeX report, which can be easily compiled and shared with collaborators.
 * A new class of test matrices called `piled` matrices: they are similar to `glued`, but can more easily highlight edge-case behavior for some methods.
 * `bcgs_a`, `bcgs_iro_a`, and `bcgs_iro_a_3s` can now accept a [`multiIO`](#multiio) struct for the `musc` argument.  Note that `bcgs_iro_a_2s` and `bcgs_iro_a_1s` already only accept one `musc`.
+* New Pythagorean routines `bcgs_iro_p_1s`, `bcgs_iro_p_2s`, and `bcgs_iro_p_1s_2s` that attain 1 sync, 2 sync, and ~1.5 syncs per iteration with O(eps) loss of orthogonality.
 
 ## `multiIO`
 
-A `multiIO` struct should have the follow form (which can be mapped from JSON to a struct via the `jsonencode` command):
+A `multiIO` struct should have the following form (which can be mapped from JSON to a struct via the `jsonencode` command):
 
 ```json
 {
@@ -234,6 +235,7 @@ Several works are associated with this repository:
 * [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017): Carson, E., Lund, K., Rozložník, M., and Thomas, S. Block Gram-Schmidt algorithms and their stability properties, Linear Algebra and its Applications. Vol. 638, 20, pp 150-195, 2022. DOI: 10.1016/j.laa.2021.12.017.
 * [Carson, et al. 2024 A](https://doi.org/10.48550/arXiv.2405.01298): Carson, E., Lund, K., Ma, Y., and Oktay, E.  Reorthogonalized Pythagorean variants of block classical Gram-Schmidt. arXiv:2405.01298, 2024. DOI: 10.48550/arXiv.2405.01298.
 * [Carson, et al. 2024 B](https://doi.org/10.48550/arXiv.2408.10109): Carson, E., Lund, K., Ma, Y., and Oktay, E.  On the loss of orthogonality in low-synchronization variants of reorthogonalized block classical Gram-Schmidt. arXiv:2408.10109, 2024. DOI: 10.48550/arXiv.2408.10109.
+* [Carson & Ma 2024](https://doi.org/10.48550/arXiv.2411.07077): Carson, E. & Ma, Y. A stable one-synchronization variant of reorthogonalized block classical Gram--Schmidt. arXiv:2411.07077, 2024.  DOI: 10.48550/arXiv.2411.07077.
 * [Oktay 2024](https://dspace.cuni.cz/bitstream/handle/20.500.11956/191480/140119625.pdf?sequence=1): Ph.D. thesis. Faculty of Mathematics and Physics, Charles University, Prague, 2024.
 * [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060): Okay, E. and Carson, E.  Using mixed precision in low-synchronization reorthogonalized block classical Gram-Schmidt. PAMM. Vol 23, 1, pp e202200060, 2023.  DOI: 10.1002/pamm.202200060
 
@@ -243,6 +245,7 @@ If you are using results from a specific paper, please cite the paper and the ve
 * [v1.2022.mp](https://github.com/katlund/BlockStab/releases/tag/v1.2022.mp): [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060).
 * [v2.2024-beta](https://github.com/katlund/BlockStab/releases/tag/v2.2024-beta): [Oktay 2024](https://dspace.cuni.cz/bitstream/handle/20.500.11956/191480/140119625.pdf?sequence=1)
 * [v2.1.2024](https://github.com/katlund/BlockStab/releases/tag/v2.1.2024): [Carson, et al. 2024 A](https://arxiv.org/abs/2405.01298v2) and [Carson, et al. 2024 B](https://arxiv.org/abs/2408.10109)
+* [v2.2.2024](https://github.com/katlund/BlockStab/releases/tag/v2.2.2024): [Carson & Ma, 2024](https://doi.org/10.48550/arXiv.2411.07077)
 
 To cite this package in general, please use the following format:
 
