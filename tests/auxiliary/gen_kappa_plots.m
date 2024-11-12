@@ -1,5 +1,5 @@
-function gen_plots(run_data, new_dir_str, var_eps)
-% GEN_PLOTS(run_data, new_dir_str, var_eps) is a subroutine that generates
+function gen_kappa_plots(run_data, new_dir_str, var_eps)
+% GEN_KAPPA_PLOTS(run_data, new_dir_str, var_eps) is a subroutine that generates
 % plots for RUNKAPPAPLOT given a run_data struct; if new_dir_str is not
 % provided, then the one saved in the .mat file specified by save_str is
 % used.

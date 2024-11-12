@@ -1,6 +1,6 @@
 % This is a script to reproduce plots in bcgs_pip_reortho paper.  Note
 % that more tests are run than are presented in the paper.  The
-% subroutine GEN_PLOTS extracts a subset of results to format for the
+% subroutine GEN_KAPPA_PLOTS extracts a subset of results to format for the
 % paper.
 %
 % If you have the Symbolic Math Toolbox but not Advanpix, you can still
@@ -43,7 +43,7 @@
 % Specify algorithm configuration file
 config_file = 'bcgs_pip_reortho.json';
 
-% Set up options struct to be reused by GEN_PLOTS
+% Set up options struct to be reused by GEN_KAPPA_PLOTS
 options = [];
 options.save_eps = true;
 options.save_pdf = true;
@@ -87,38 +87,38 @@ run_data_piled = RunKappaPlot(mat_type, options_piled, config_file);
 run_data_piled.options = options;
 close all;
 
-%% GEN_PLOTS
+%% GEN_KAPPA_PLOTS
 % Figure 1 (glued)
 new_dir_str = sprintf('%s/pip_vs_ro', run_data_glued.dir_str);
 mkdir(new_dir_str);
 ind = 1:6;
-gen_plots(mod_run_data(run_data_glued, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data_glued, ind), new_dir_str);
 close all;
 
 % Figure 2 (monomial)
 new_dir_str = sprintf('%s/ro_only', run_data_monomial.dir_str);
 mkdir(new_dir_str);
 ind = 3:6;
-gen_plots(mod_run_data(run_data_monomial, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data_monomial, ind), new_dir_str);
 close all;
 
 % Figure 3 (default)
 new_dir_str = sprintf('%s/ro_vs_mp', run_data_default.dir_str);
 mkdir(new_dir_str);
 ind = [3:6 9:12];
-gen_plots(mod_run_data(run_data_default, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data_default, ind), new_dir_str);
 close all;
 
 % Figure 4 (glued)
 new_dir_str = sprintf('%s/ro_vs_mp', run_data_glued.dir_str);
 mkdir(new_dir_str);
 ind = [3:6 9:12];
-gen_plots(mod_run_data(run_data_glued, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data_glued, ind), new_dir_str);
 close all;
 
 % Figure 5 (piled)
 new_dir_str = sprintf('%s/ro_vs_mp/%s', run_data_piled.dir_str);
 mkdir(new_dir_str);
 ind = [3:6 9:12];
-gen_plots(mod_run_data(run_data_piled, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data_piled, ind), new_dir_str);
 close all;

@@ -1,6 +1,6 @@
-function run_data = RunKappaPlot(mat_type, options, config_file, var_eps)
-% run_data = RUNKAPPAPLOT(mat_type, options, config_file, var_eps) is a
-% test manager for all KappaPlot tests.
+function run_data = RunKappaSPlot(mat_type, options, config_file)
+% run_data = RUNKAPPASPLOT(mat_type, options, config_file) is a
+% test manager for all kappa-s-plot tests.
 %
 % INPUTS:
 % - mat_type: 'default', 'glued', 'laeuchli', 'monomial', 'piled';
@@ -10,22 +10,19 @@ function run_data = RunKappaPlot(mat_type, options, config_file, var_eps)
 % - options struct with the following fields:
 %   - .scale: vector determining how condition numbers of specified
 %      mat_type vary
-%      default: built-in for each mat_type; see OPTIONS_INIT
-%   - .num_rows: (m) scalar denoting the number of rows in each trial
-%      matrix
-%      default: 100; 120 for 'monomial'
-%   - .num_partitions: (p) scalar denoting the number of block partitions
-%      in each trial matrix
-%      default: 10; 20 for 'monomial'
-%   - .block_size: (s) scalar denoting size of block partitions in each
-%      trial matrix
-%      default: 2; 6 for 'monomial'
+%      default: built-in for each mat_type; see OPTIONS_INIT; for
+%      'monomial', this script forces [2 4 8 16 32 64]
 %   - .save_eps: boolean for whether to save figures as .eps files
 %      default: false
 %   - .save_fig: boolean for whether to save figures as .fig files
 %      default: false
 %   - .tex_report: boolean for whether to generate a TeX report
 %      default: true
+%   All other fields will be ignored, in particular, the following are
+%   fixed for this script:
+%       m = 1000; options.num_rows = m;
+%       n = 512; options.num_cols = n;
+%       s = [1 2 4 8 16 32 64 128]; options.block_size = s;
 %
 % - config_file: string specifying a .json file encoding algorithm
 %   configurations; tips to keep in mind:
@@ -47,10 +44,6 @@ function run_data = RunKappaPlot(mat_type, options, config_file, var_eps)
 %           - each parameter subfield can be made multivalued by assigning
 %           a cell array; a Cartesian product of all parmeters will be run
 %   default: see demo.json
-%
-% - var_eps: float specifying the desired machine precision; determines
-%   how comparison lines are plotted for O(eps)kappa(X);
-%   default: eps (2^(-52))
 %
 % Note on problem dimensions: trial matrices are constructed with dimension
 % m x ps.  A non-block problem can be constructed from either p = 1 or s =
@@ -92,14 +85,12 @@ if nargin == 0
     mat_type = 'default';
     options = options_init(mat_type);
     config_file = 'demo.json';
-    var_eps = eps;
 elseif nargin == 1
     if isempty(mat_type)
         mat_type = 'default';
     end
     options = options_init(mat_type);
     config_file = 'demo.json';
-    var_eps = eps;
 elseif nargin == 2
     if isempty(mat_type)
         mat_type = 'default';
@@ -110,21 +101,7 @@ elseif nargin == 2
         options = options_init(mat_type, options);
     end
     config_file = 'demo.json';
-    var_eps = eps;
 elseif nargin == 3
-    if isempty(mat_type)
-        mat_type = 'default';
-    end
-    if isempty(options)
-        options = options_init(mat_type);
-    else
-        options = options_init(mat_type, options);
-    end
-    if isempty(config_file)
-        config_file = 'demo.json';
-    end
-    var_eps = eps;
-elseif nargin == 4
     if isempty(mat_type)
         mat_type = 'default';
     end
@@ -138,11 +115,10 @@ elseif nargin == 4
     end
 end
 
-% Extract dimensions
-m = options.num_rows;
-p = options.num_partitions;
-s = options.block_size;
-n = p*s;
+% Fix dimensions
+m = 1000; options.num_rows = m;
+n = 512; options.num_cols = n;
+s = [1 2 4 8 16 32 64 128]; options.block_size = s;
 I = eye(n);
 
 %% Build algorithm configurations
@@ -151,7 +127,7 @@ I = eye(n);
 % Set up storage for musc IDs
 musc_id = cell(size(musc));
 
-%% Set up matrices
+%% Set up matrix
 n_mat = length(options.scale);
 XX = cell(n_mat,1);
 switch lower(mat_type)
@@ -183,6 +159,7 @@ switch lower(mat_type)
         end
         
     case 'monomial'
+        options.scale = [2 4 8 16 32 64];
         A = spdiags(linspace(.1,1,m)',0,m,m);
         for i = 1:n_mat
             mat_s = options.scale(i); mat_p = n/mat_s;
@@ -209,7 +186,7 @@ switch lower(mat_type)
     case 'piled'
         % Find mat_p and mat_s to be independent of partitioning; we can
         % see worse behavior for s large
-        f = factor(p*s); % returns prime factors excluding 1
+        f = factor(n); % returns prime factors excluding 1
         if isscalar(f)
             mat_s = p;
             mat_p = 1;
@@ -225,9 +202,10 @@ end
 
 %% Loop through alg_list and compute loo, rel_res, rel_chol_res
 n_alg = length(skel);
-loss_ortho = zeros(n_mat, n_alg);
-rel_res = zeros(n_mat, n_alg);
-rel_chol_res = zeros(n_mat, n_alg);
+n_s = length(s);
+loss_ortho = zeros(n_mat, n_alg, n_s);
+rel_res = zeros(n_mat, n_alg, n_s);
+rel_chol_res = zeros(n_mat, n_alg, n_s);
 condXX = zeros(n_mat, 1);
 normXX = zeros(n_mat, 1);
 
@@ -248,57 +226,60 @@ for i = 1:n_mat
         else
             musc_id{j} = musc{j};
         end
-        if isempty(skel{j})
-            % Call IntraOrtho muscle
-            [QQ, RR] = IntraOrtho(XX{i}, musc{j}, param{j});
 
-            % Display algorithm configuration
-            fprintf('(%d) musc: %s\n', j, musc_id{j});
-            if ~isempty(param{j})
-                disp(param{j})
-            else
-                fprintf('\n')
-            end
-            
-        else
-            % Call BGS skeleton-muscle configuration
-            [QQ, RR] = BGS(XX{i}, s, skel{j}, musc{j}, param{j});
+        for k = 1:n_s
+            if isempty(skel{j})
+                % Call IntraOrtho muscle
+                [QQ, RR] = IntraOrtho(XX{i}, musc{j}, param{j});
 
-            % Display algorithm configuration
-            fprintf('(%d) skel: %s, ', j, skel{j})
-            if isempty(musc{j})
-                fprintf('musc: default\n');
-            else
-                fprintf('musc: %s\n', musc_id{j});
-            end
+                % Display algorithm configuration
+                fprintf('(%d) musc: %s\n', j, musc_id{j});
+                if ~isempty(param{j})
+                    disp(param{j})
+                else
+                    fprintf('\n')
+                end
                 
-            if ~isempty(param{j})
-                disp(param{j})
             else
-                fprintf('\n')
+                % Call BGS skeleton-muscle configuration
+                [QQ, RR] = BGS(XX{i}, s(k), skel{j}, musc{j}, param{j});
+
+                % Display algorithm configuration
+                fprintf('(%d) skel: %s, ', j, skel{j})
+                if isempty(musc{j})
+                    fprintf('musc: default\n');
+                else
+                    fprintf('musc: %s\n', musc_id{j});
+                end
+                    
+                if ~isempty(param{j})
+                    disp(param{j})
+                else
+                    fprintf('\n')
+                end
             end
+        
+            % Compute loss of orthonormality
+            loss_ortho(i,j,k) = norm(I - InnerProd(QQ, QQ, musc{j}), 2);
+        
+            % Compute relative residual
+            rel_res(i,j,k) = norm(XX{i} - QQ * RR, 2) / normXX(i);
+            
+            % Compute relative residual for Cholesky relation
+            rel_chol_res(i,j,k) = norm(InnerProd(XX{i}, XX{i}, musc{j})...
+                - RR' * RR, 2) / normXX(i)^2;
+            
+            % Clear computed variables before next run
+            clear QQ RR
         end
-    
-        % Compute loss of orthonormality
-        loss_ortho(i,j) = norm(I - InnerProd(QQ, QQ, musc{j}), 2);
-    
-        % Compute relative residual
-        rel_res(i,j) = norm(XX{i} - QQ * RR, 2) / normXX(i);
-        
-        % Compute relative residual for Cholesky relation
-        rel_chol_res(i,j) = norm(InnerProd(XX{i}, XX{i}, musc{j})...
-            - RR' * RR, 2) / normXX(i)^2;
-        
-        % Clear computed variables before next run
-        clear QQ RR
     end
     fprintf('\n')
 end
 
 %% Save run data and plot color and symbol order
 % Create directory
-dir_str = sprintf('results/%s/%s_m%d_p%d_s%d', ...
-    config_file(1:end-5), mat_type, m, p, s);
+dir_str = sprintf('results/%s/%s_m%d_n%d_vary_s', ...
+    config_file(1:end-5), mat_type, m, n);
 mkdir(dir_str)
 
 % Build legend
@@ -335,6 +316,7 @@ end
 run_data = struct( ...
     'condXX', {condXX}, ...
     'config_file', config_file, ...
+    'block_size', s, ...
     'dtnow', dtnow, ...
     'dir_str', dir_str, ...
     'lgd', {lgd}, ...
@@ -357,11 +339,11 @@ save(save_str, 'run_data');
 fprintf('MAT file saved in %s\n', dir_str);
 
 %% Generate plots
-gen_kappa_plots(run_data, [], var_eps);
+gen_kappa_s_plots(run_data);
 
-%% Generate TeX report
-if options.tex_report && (options.save_pdf || options.save_eps)
-    tex_report(run_data);
-    fprintf('TEX file saved in %s\n', dir_str);
-end
+% %% Generate TeX report
+% if options.tex_report && (options.save_pdf || options.save_eps)
+%     tex_report(run_data);
+%     fprintf('TEX file saved in %s\n', dir_str);
+% end
 end

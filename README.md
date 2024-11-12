@@ -4,7 +4,7 @@ The main purpose of this package is to study, verify, and conjecture the stabili
 
 ## Requirements
 
-MATLAB 2020a or higher is required for saving PDFs of plots with minimal whitespace; see [this link](https://de.mathworks.com/help/matlab/creating_plots/save-figure-with-minimal-white-space.html).  For older versions of MATLAB, be sure to set `run_data.options.save_pdf = 0` in the test scripts, or modify `gen_plots.m` directly to save PDFs via a preferred format.
+MATLAB 2020a or higher is required for saving PDFs of plots with minimal whitespace; see [this link](https://de.mathworks.com/help/matlab/creating_plots/save-figure-with-minimal-white-space.html).  For older versions of MATLAB, be sure to set `run_data.options.save_pdf = 0` in the test scripts, or modify `gen_kappa_plots.m` directly to save PDFs via a preferred format.
 
 See [Multiprecision](#multiprecision) for additional package requirements.
 
@@ -214,7 +214,7 @@ If you are unfamiliar with JSON, have a look at [JSON formatter](https://jsonfor
 
 ### New plot customization features
 
-`test_roadmap.m` demonstrates how to use subroutines `gen_plots.m` and `mod_run_data.m` to plot subsets of a previous run, without re-running the tests.  This can be beneficial when running a huge panel of tests that are not easily displayed on the same axis.  (Indeed, choosing colors and symbols for making lines legible is nontrivial.)  We used this feature in [Carson, et al. 2024 B](TBD) to study a progression of method modifications.
+`test_roadmap.m` demonstrates how to use subroutines `gen_kappa_plots.m` and `mod_run_data.m` to plot subsets of a previous run, without re-running the tests.  This can be beneficial when running a huge panel of tests that are not easily displayed on the same axis.  (Indeed, choosing colors and symbols for making lines legible is nontrivial.)  We used this feature in [Carson, et al. 2024 B](TBD) to study a progression of method modifications.
 
 ## Documentation
 

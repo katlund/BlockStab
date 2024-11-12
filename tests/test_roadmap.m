@@ -20,28 +20,28 @@ run_data.options.save_fig = false;
 new_dir_str = sprintf('%s/1_bcgs_to_iro', run_data.dir_str);
 mkdir(new_dir_str);
 ind = 1:6;
-gen_plots(mod_run_data(run_data, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data, ind), new_dir_str);
 close all;
 
 % BCGSI+(HouseQR, CholQR) up to BCGSI+A(HouseQR, CholQR)
 new_dir_str = sprintf('%s/2_iro_to_iro_a', run_data.dir_str);
 mkdir(new_dir_str);
 ind = 5:8;
-gen_plots(mod_run_data(run_data, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data, ind), new_dir_str);
 close all;
 
 % BCGSI+A(HouseQR, CholQR) up to BCGSI+A-3S(HouseQR, CholQR)
 new_dir_str = sprintf('%s/3_a4s_to_a3s', run_data.dir_str);
 mkdir(new_dir_str);
 ind = 7:10;
-gen_plots(mod_run_data(run_data, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data, ind), new_dir_str);
 close all;
 
 % BCGSI+A-3S(CholQR) up to BCGSI+A-1S(CholQR)
 new_dir_str = sprintf('%s/4_a3s_to_a1s', run_data.dir_str);
 mkdir(new_dir_str);
 ind = 10:12;
-gen_plots(mod_run_data(run_data, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data, ind), new_dir_str);
 close all;
 
 %% Again but for piled matrices
@@ -63,28 +63,28 @@ run_data.options.save_fig = false;
 new_dir_str = sprintf('%s/1_bcgs_to_iro', run_data.dir_str);
 mkdir(new_dir_str);
 ind = 1:6;
-gen_plots(mod_run_data(run_data, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data, ind), new_dir_str);
 close all;
 
 % BCGSI+(HouseQR, CholQR) up to BCGSI+A(HouseQR, CholQR)
 new_dir_str = sprintf('%s/2_iro_to_iro_a', run_data.dir_str);
 mkdir(new_dir_str);
 ind = 5:8;
-gen_plots(mod_run_data(run_data, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data, ind), new_dir_str);
 close all;
 
 % BCGSI+A(HouseQR, CholQR) up to BCGSI+A-3S(HouseQR, CholQR)
 new_dir_str = sprintf('%s/3_a4s_to_a3s', run_data.dir_str);
 mkdir(new_dir_str);
 ind = 7:10;
-gen_plots(mod_run_data(run_data, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data, ind), new_dir_str);
 close all;
 
 % BCGSI+A-3S(CholQR) up to BCGSI+A-1S(CholQR)
 new_dir_str = sprintf('%s/4_a3s_to_a1s', run_data.dir_str);
 mkdir(new_dir_str);
 ind = 10:12;
-gen_plots(mod_run_data(run_data, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data, ind), new_dir_str);
 close all;
 
 %% Better behaved example
@@ -113,5 +113,5 @@ run_data.options.save_fig = false;
 new_dir_str = sprintf('%s/unique', run_data.dir_str);
 mkdir(new_dir_str);
 ind = [4 8 10 11:13];
-gen_plots(mod_run_data(run_data, ind), new_dir_str);
+gen_kappa_plots(mod_run_data(run_data, ind), new_dir_str);
 close all;
