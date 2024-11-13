@@ -1,4 +1,19 @@
 function [QQ, RR] = bcgs_iro_p_1s_2s(XX, s, musc, param)
+% [QQ, RR] = BCGS_IRO_P_1S_2S(XX, s, musc, param) performs Block Classical
+% Gram--Schmidt on the m x n matrix XX with p = n/s block partitions each
+% of size s with intra-orthogonalization procedure determined by musc.
+% This subroutine combines BCGS_IRO_P_1S and BCGS_IRO_P_2S to reduce sync 
+% points as much as possible.
+% HouseQR is fixed for the first vector (_a).
+%
+% See Algorithm 4 from [Carson & Ma, 2024] for details.
+%
+% See BGS for more details about the parameters, and INTRAORTHO for musc
+% options.
+%
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
+
 
 [QQ, RR, flag, sk] = bcgs_iro_p_1s_sub(XX, s, musc, param);
 
@@ -9,14 +24,12 @@ end
 end
 
 function [QQ, RR, flag, sk] = bcgs_iro_p_1s_sub(XX, s, musc, param)
-% [QQ, RR] = BCGS_IRO_P_1S(XX, s, musc, param) performs BCGS_IRO_P_1s with
-% HouseQR fixed for the first vector (_a).
-%
-% See BGS for more details about the parameters, and INTRAORTHO for musc
-% options.
-%
-% Part of the BlockStab package documented in [Carson, et al.
-% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
+% [QQ, RR] = BCGS_IRO_P_1S_sub(XX, s, musc, param) performs Block Classical
+% Gram--Schmidt with one sync on the m x n matrix XX with p = n/s block
+% partitions each of size s.
+% This subroutine is similar to BCGS_IRO_P_1S, but employs additional
+% condition to determine when to switch to BCGS_IRO_P_2S iterations
+% adaptively.
 
 %%
 % Default: debugging off
@@ -147,14 +160,12 @@ end
 
 
 function [QQ, RR] = bcgs_iro_p_2s_sub(XX, s, musc, param, QQ, RR, sk)
-% [QQ, RR] = BCGS_IRO_P_2S(XX, s, musc, param) performs BCGS_IRO_P_2s with
-% HouseQR fixed for the first vector (_a).
-%
-% See BGS for more details about the parameters, and INTRAORTHO for musc
-% options.
-%
-% Part of the BlockStab package documented in [Carson, et al.
-% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
+% [QQ, RR] = BCGS_IRO_P_2S_sub(XX, s, musc, param) performs Block Classical
+% Gram--Schmidt with one sync on the matrix XX(:, sk-s+1:n) with
+% p = (n-sk+1)/s block partitions each of size s.
+% This subroutine is similar to BCGS_IRO_P_2S, but only orthogonalizes
+% XX(:, sk-s+1:n). The first sk-s columns has been handled by
+% BCGS_IRO_P_1S_sub.
 
 %%
 % Default: debugging off

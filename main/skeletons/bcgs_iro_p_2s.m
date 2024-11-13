@@ -1,12 +1,17 @@
 function [QQ, RR] = bcgs_iro_p_2s(XX, s, musc, param)
-% [QQ, RR] = BCGS_IRO_P_2S(XX, s, musc, param) performs BCGS_IRO_P_2s with
-% HouseQR fixed for the first vector (_a).
+% [QQ, RR] = BCGS_IRO_P_2S(XX, s, musc, param) performs Block Classical
+% Gram--Schmidt with two sync on the m x n matrix XX with p = n/s block
+% partitions each of size s with intra-orthogonalization procedure
+% determined by musc.
+% HouseQR is fixed for the first vector (_a).
+%
+% See Algorithm 3 from [Carson & Ma, 2024] for details.
 %
 % See BGS for more details about the parameters, and INTRAORTHO for musc
 % options.
 %
-% Part of the BlockStab package documented in [Carson, et al.
-% 2022](https://doi.org/10.1016/j.laa.2021.12.017).
+% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% for how to properly cite and reuse this file.
 
 %%
 % Default: debugging off
