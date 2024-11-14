@@ -71,7 +71,7 @@ switch lower(skel)
         tic;
         [QQ, RR] = bcgs_iro(XX, s, musc, param);
         run_time = toc;
-
+        
 % [Stewart 2008] variant --------------------------------------------------
     case {'bcgs_sror'}
         tic;
@@ -194,6 +194,21 @@ switch lower(skel)
     case {'bcgs_pip_iro'}
         tic;
         [QQ, RR] = bcgs_pip_iro(XX, s, musc, param);
+        run_time = toc;
+
+    case {'bcgs_iro_p_1s'}
+        tic;
+        [QQ, RR] = bcgs_iro_p_1s(XX, s, musc, param);
+        run_time = toc;
+    
+    case {'bcgs_iro_p_2s'}
+        tic;
+        [QQ, RR] = bcgs_iro_p_2s(XX, s, musc, param);
+        run_time = toc;
+
+    case {'bcgs_iro_p_1s_2s'}
+        tic;
+        [QQ, RR] = bcgs_iro_p_1s_2s(XX, s, musc, param);
         run_time = toc;
 		
 % Mixed Precision variants ------------------------------------------------
