@@ -9,7 +9,7 @@
 % (5) BCGSI+P-1s(HouseQR)
 % (6) BCGSI+A-1s(HouseQR)
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 %% SET UP

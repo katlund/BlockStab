@@ -25,7 +25,7 @@ function [y, r, rho, northog] = cgs_step_sror(Q, x, nu, rpltol)
 % Originally written by G. W. Stewart, 2008. Modified by Kathryn Lund,
 % 2020.
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 %%

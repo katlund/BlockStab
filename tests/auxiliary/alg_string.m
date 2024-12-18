@@ -3,7 +3,7 @@ function str = alg_string(skel, musc)
 % the cells skel and musc into unique, legible strings for plots and
 % reports.
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 %%

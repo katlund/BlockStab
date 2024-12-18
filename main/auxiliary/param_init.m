@@ -1,7 +1,7 @@
 function param = param_init(param)
 % Initialize missing parameters for BGS and INTRAORTHO.
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 %%

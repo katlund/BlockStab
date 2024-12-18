@@ -40,7 +40,7 @@ function [QQ, RR, TT, run_time] = BGS(XX, s, skel, musc, param)
 % - run_time: total time elapsed measured by tic and toc; does not exclude
 %   screen outputs from verbose
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 %%

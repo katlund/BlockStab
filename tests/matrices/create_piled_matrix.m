@@ -9,7 +9,7 @@ function A = create_piled_matrix(m, p, s, c, tol)
 % where U and V are unitary, and D is a diagonal matrix with condtion
 % number 10^c. The default value of tol is 1.
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 %%

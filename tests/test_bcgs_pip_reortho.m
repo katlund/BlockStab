@@ -36,7 +36,7 @@
 % (11) BCGS-PIPI+^{MP}(CholQR)
 % (12) BCGS-PIPI+^{MP}(HouseQR)
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 %% SET UP

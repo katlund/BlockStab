@@ -6,10 +6,10 @@ function [Q, R] = sh_cholqr_roro(X, param)
 %
 % See INTRAORTHO and CHOL_SWITCH for more details about the parameters.
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 

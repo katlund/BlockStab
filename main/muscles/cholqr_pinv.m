@@ -3,7 +3,7 @@ function [Q, R] = cholqr_pinv(X)
 % s matrix X with CHOL_FREE instead of Matlab's built-in CHOL, and using
 % the Moore-Penrose pseudoinverse to invert R, instead of direct inversion.
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 %%

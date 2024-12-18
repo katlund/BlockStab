@@ -1,6 +1,6 @@
 % Test for comparing all muscles in BlockStab
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 config_file = 'all_muscles.json';

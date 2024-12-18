@@ -1,6 +1,6 @@
 % Test for all one-sync methods in comparison with BMGS and HouseQR
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 config_file = 'one_sync.json';

@@ -9,7 +9,7 @@ function A = create_glued_matrix(m, p, s, r, t)
 %
 % Stage 2: A = A * kron(I, Sigma_block) * kron(I, V_block)
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 %%

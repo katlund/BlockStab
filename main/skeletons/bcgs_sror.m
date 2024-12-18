@@ -10,7 +10,7 @@ function [QQ, RR] = bcgs_sror(XX, s, rpltol, verbose)
 %
 % See BGS for more details about the parameters.
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 %%

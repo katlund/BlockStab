@@ -6,7 +6,7 @@ function [Q, R] = cgs_sror(X, rpltol, verbose)
 %
 % See INTRAORTHO for more details about the parameters.
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 %%

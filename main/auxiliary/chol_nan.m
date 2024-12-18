@@ -3,7 +3,7 @@ function [R, flag] = chol_nan(R)
 % chol refuses to perform and returns a NaN matrix and flag when R cannot
 % be computed.
 %
-% Part of [BlockStab](https://github.com/katlund) package.  Check README
+% Part of [BlockStab](https://github.com/katlund/BlockStab) package.  Check README
 % for how to properly cite and reuse this file.
 
 %%
