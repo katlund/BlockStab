@@ -232,9 +232,9 @@ Each file contains a descriptive header.  See especially the following core file
 Several works are associated with this repository:
 
 * [Carson, et al. 2021](https://doi.org/10.1137/21M1394424): Carson, E., Lund, K., and Rozložník, M.  The stability of block variants of classical Gram-Schmidt.  SIAM Journal on Matrix Analysis and Applications. Vol. 42, 3, pp 1365--1380, 2021. DOI: 10.1137/21M1394424.
-* [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017): Carson, E., Lund, K., Rozložník, M., and Thomas, S. Block Gram-Schmidt algorithms and their stability properties, Linear Algebra and its Applications. Vol. 638, 20, pp 150-195, 2022. DOI: 10.1016/j.laa.2021.12.017.
-* [Carson, et al. 2024 A](https://doi.org/10.48550/arXiv.2405.01298): Carson, E., Lund, K., Ma, Y., and Oktay, E.  Reorthogonalized Pythagorean variants of block classical Gram-Schmidt. arXiv:2405.01298, 2024. DOI: 10.48550/arXiv.2405.01298.
-* [Carson, et al. 2024 B](https://doi.org/10.48550/arXiv.2408.10109): Carson, E., Lund, K., Ma, Y., and Oktay, E.  On the loss of orthogonality in low-synchronization variants of reorthogonalized block classical Gram-Schmidt. arXiv:2408.10109, 2024. DOI: 10.48550/arXiv.2408.10109.
+* [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017): Carson, E., Lund, K., Rozložník, M., and Thomas, S. Block Gram-Schmidt algorithms and their stability properties. Linear Algebra and its Applications. Vol. 638, 20, pp 150-195, 2022. DOI: 10.1016/j.laa.2021.12.017.
+* [Carson, et al. 2025 A](https://doi.org/10.1137/24M1658723): Carson, E., Lund, K., Ma, Y., and Oktay, E.  Reorthogonalized Pythagorean variants of block classical Gram-Schmidt. SIAM Journal on Matrix Analysis and Applications. Vol. 46, 1, pp 310--340. DOI: 10.1137/24M1658723.
+* [Carson, et al. 2025 B](https://doi.org/10.1016/j.laa.2025.11.018): Carson, E., Lund, K., Ma, Y., and Oktay, E.  On the loss of orthogonality in low-synchronization variants of reorthogonalized block classical Gram-Schmidt. Linear Algebra and its Applications. Vol. 732, pp 162--206, 2025. DOI: 10.1016/j.laa.2025.11.018.
 * [Carson & Ma 2024](https://doi.org/10.48550/arXiv.2411.07077): Carson, E. & Ma, Y. A stable one-synchronization variant of reorthogonalized block classical Gram--Schmidt. arXiv:2411.07077, 2024.  DOI: 10.48550/arXiv.2411.07077.
 * [Oktay 2024](https://dspace.cuni.cz/bitstream/handle/20.500.11956/191480/140119625.pdf?sequence=1): Ph.D. thesis. Faculty of Mathematics and Physics, Charles University, Prague, 2024.
 * [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060): Okay, E. and Carson, E.  Using mixed precision in low-synchronization reorthogonalized block classical Gram-Schmidt. PAMM. Vol 23, 1, pp e202200060, 2023.  DOI: 10.1002/pamm.202200060
@@ -244,16 +244,16 @@ If you are using results from a specific paper, please cite the paper and the ve
 * [v1.2022](https://github.com/katlund/BlockStab/releases/tag/v1.2022): [Carson, et al. 2021](https://doi.org/10.1137/21M1394424) and [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017)
 * [v1.2022.mp](https://github.com/katlund/BlockStab/releases/tag/v1.2022.mp): [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060).
 * [v2.2024-beta](https://github.com/katlund/BlockStab/releases/tag/v2.2024-beta): [Oktay 2024](https://dspace.cuni.cz/bitstream/handle/20.500.11956/191480/140119625.pdf?sequence=1)
-* [v2.1.2024](https://github.com/katlund/BlockStab/releases/tag/v2.1.2024): [Carson, et al. 2024 A](https://arxiv.org/abs/2405.01298v2) and [Carson, et al. 2024 B](https://arxiv.org/abs/2408.10109)
+* [v2.1.2024](https://github.com/katlund/BlockStab/releases/tag/v2.1.2024): [Carson, et al. 2025 A](https://arxiv.org/abs/2405.01298v2) and [Carson, et al. 2025 B](https://arxiv.org/abs/2408.10109)
 * [v2.2.2024](https://github.com/katlund/BlockStab/releases/tag/v2.2.2024): [Carson & Ma, 2024](https://doi.org/10.48550/arXiv.2411.07077)
 
 To cite this package in general, please use the following format:
 
 ```tex
-@misc{LunOCetal24,
+@misc{LunOCetal25,
   title = {{BlockStab}},
   author = {Lund, Kathryn and Oktay, Eda and Carson, Erin C. and Ma, Yuxin},
-  year = {2024},
+  year = {2025},
   url = {https://github.com/katlund/BlockStab}
 }
 ```
