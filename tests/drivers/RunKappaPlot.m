@@ -59,7 +59,7 @@ function run_data = RunKappaPlot(mat_type, options, config_file, var_eps)
 % OUTPUT: run_data struct with the following fields:
 % - condXX: vector of condition numbers of each XX{i}
 % - datetime: date and time when RUNKAPPAPLOT was called
-% - dir_str: directy where plots, run_data, and TeX report are saved
+% - dir_str: directory where plots, run_data, and TeX report are saved
 % - lgd: cell of legend entries corresponding to each algorithm
 %   configuration
 % - loss_ortho: matrix of loss of orthogonality for each XX{i} and
