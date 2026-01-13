@@ -4,7 +4,7 @@ The main purpose of this package is to study, verify, and conjecture the stabili
 
 ## Requirements
 
-MATLAB 2020a or higher is required for saving PDFs of plots with minimal whitespace; see [this link](https://de.mathworks.com/help/matlab/creating_plots/save-figure-with-minimal-white-space.html).  For older versions of MATLAB, be sure to set `run_data.options.save_pdf = 0` in the test scripts, or modify `gen_plots.m` directly to save PDFs via a preferred format.
+MATLAB 2020a or higher is required for saving PDFs of plots with minimal whitespace; see [this link](https://mathworks.com/help/matlab/creating_plots/save-figure-with-minimal-white-space.html).  For older versions of MATLAB, be sure to set `run_data.options.save_pdf = 0` in the test scripts, or modify `gen_plots.m` directly to save PDFs via a preferred format.
 
 See [Multiprecision](#multiprecision) for additional package requirements.
 
@@ -189,7 +189,7 @@ Expected output:
 
 ## Test Routines
 
-There are two main test drivers, [`MakeHeatmap`](https://github.com/katlund/BlockStab/blob/master/tests/MakeHeatmap.m) and [`RunKappaPlot`](https://github.com/katlund/BlockStab/blob/master/tests/RunKappaPlot.m).  `MakeHeatmap` generates heatmaps comparing loss of orthogonality and residual across many skeleton-muscle combinations for the same test matrix.  `RunKappaPlot` plots loss of orthogonality and residual trends against matrices with a range of condition numbers. As the Greek letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these plots as "kappa plots."  See the header for each for full descriptions of their functionalities.  To explore some interesting examples, try the following, and note that `[]` (empty) arguments call default options, which can be quite handy:
+There are two main test drivers, [`MakeHeatmap`](https://github.com/katlund/BlockStab/blob/master/tests/drivers/MakeHeatmap.m) and [`RunKappaPlot`](https://github.com/katlund/BlockStab/blob/master/tests/drivers/RunKappaPlot.m).  `MakeHeatmap` generates heatmaps comparing loss of orthogonality and residual across many skeleton-muscle combinations for the same test matrix.  `RunKappaPlot` plots loss of orthogonality and residual trends against matrices with a range of condition numbers. As the Greek letter $\kappa$ is used to denote the 2-norm condition number of a matrix, we refer to these plots as "kappa plots."  See the header for each for full descriptions of their functionalities.  To explore some interesting examples, try the following, and note that `[]` (empty) arguments call default options, which can be quite handy:
 
 * `MakeHeatmap([100 10 2], 'stewart',  {'BCGS', 'BCGS_IRO', 'BCGS_SROR'}, {'CGS', 'HouseQR'}, 1, 1);`
 * `RunKappaPlot('laeuchli', [], 'demo.json');`
@@ -204,7 +204,7 @@ A major difference compared to the previous version is that all $\kappa$ plots a
 * `options`: a struct with fields pertaining to the size and scale of trial matrices, as well as flags for saving figures and generating a TeX report
 * `config_aile`: a JSON file processed by the subroutine [`alg_config`](https://github.com/katlund/BlockStab/blob/master/tests/auxiliary/alg_config.m)
 
-Setting up the JSON configuration file is a bit tricky, but a number of templates are included.  [`demo.json`](https://github.com/katlund/BlockStab/blob/master/tests/alg_config/demo.json) in particular demonstrates all possible quirks.  There are multiple upsides to the more abstract configuration file:
+Setting up the JSON configuration file is a bit tricky, but a number of templates are included.  [`demo.json`](https://github.com/katlund/BlockStab/blob/master/tests/configs/demo.json) in particular demonstrates all possible quirks.  There are multiple upsides to the more abstract configuration file:
 
 * Redundancies in skeleton-muscle combinations are avoided, in particular, for skeletons like `bcgs_sror` and `bcgs_iro_ls`, which take only one muscle or none, respectively.
 * Direct comparisons between muscles and skeleton-muscle algorithms can be made.  For example, we can plot `cholqr` and `bmgs`$\circ$`houseqr` on the same $\kappa$ plot.
@@ -215,7 +215,7 @@ If you are unfamiliar with JSON, have a look at [JSON formatter](https://jsonfor
 
 ### New plot customization features
 
-`test_roadmap.m` demonstrates how to use subroutines `gen_plots.m` and `mod_run_data.m` to plot subsets of a previous run, without re-running the tests.  This can be beneficial when running a huge panel of tests that are not easily displayed on the same axis.  (Indeed, choosing colors and symbols for making lines legible is nontrivial.)  We used this feature in [Carson, et al. 2024 B](TBD) to study a progression of method modifications.
+`test_roadmap.m` demonstrates how to use subroutines `gen_plots.m` and `mod_run_data.m` to plot subsets of a previous run, without re-running the tests.  This can be beneficial when running a huge panel of tests that are not easily displayed on the same axis.  (Indeed, choosing colors and symbols for making lines legible is nontrivial.)  We used this feature in [Carson, et al. 2026](https://doi.org/10.1016/j.laa.2025.11.018) to study a progression of method modifications.
 
 ## Documentation
 
@@ -233,8 +233,8 @@ Several works are associated with this repository:
 
 * [Carson, et al. 2021](https://doi.org/10.1137/21M1394424): Carson, E., Lund, K., and Rozložník, M.  The stability of block variants of classical Gram-Schmidt.  SIAM Journal on Matrix Analysis and Applications. Vol. 42, 3, pp 1365--1380, 2021. DOI: 10.1137/21M1394424.
 * [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017): Carson, E., Lund, K., Rozložník, M., and Thomas, S. Block Gram-Schmidt algorithms and their stability properties. Linear Algebra and its Applications. Vol. 638, 20, pp 150-195, 2022. DOI: 10.1016/j.laa.2021.12.017.
-* [Carson, et al. 2025 A](https://doi.org/10.1137/24M1658723): Carson, E., Lund, K., Ma, Y., and Oktay, E.  Reorthogonalized Pythagorean variants of block classical Gram-Schmidt. SIAM Journal on Matrix Analysis and Applications. Vol. 46, 1, pp 310--340. DOI: 10.1137/24M1658723.
-* [Carson, et al. 2025 B](https://doi.org/10.1016/j.laa.2025.11.018): Carson, E., Lund, K., Ma, Y., and Oktay, E.  On the loss of orthogonality in low-synchronization variants of reorthogonalized block classical Gram-Schmidt. Linear Algebra and its Applications. Vol. 732, pp 162--206, 2025. DOI: 10.1016/j.laa.2025.11.018.
+* [Carson, et al. 2025](https://doi.org/10.1137/24M1658723): Carson, E., Lund, K., Ma, Y., and Oktay, E.  Reorthogonalized Pythagorean variants of block classical Gram-Schmidt. SIAM Journal on Matrix Analysis and Applications. Vol. 46, 1, pp 310--340. DOI: 10.1137/24M1658723.
+* [Carson, et al. 2026](https://doi.org/10.1016/j.laa.2025.11.018): Carson, E., Lund, K., Ma, Y., and Oktay, E.  On the loss of orthogonality in low-synchronization variants of reorthogonalized block classical Gram-Schmidt. Linear Algebra and its Applications. Vol. 732, pp 162--206, 2025. DOI: 10.1016/j.laa.2025.11.018.
 * [Carson & Ma 2024](https://doi.org/10.48550/arXiv.2411.07077): Carson, E. & Ma, Y. A stable one-synchronization variant of reorthogonalized block classical Gram--Schmidt. arXiv:2411.07077, 2024.  DOI: 10.48550/arXiv.2411.07077.
 * [Oktay 2024](https://dspace.cuni.cz/bitstream/handle/20.500.11956/191480/140119625.pdf?sequence=1): Ph.D. thesis. Faculty of Mathematics and Physics, Charles University, Prague, 2024.
 * [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060): Okay, E. and Carson, E.  Using mixed precision in low-synchronization reorthogonalized block classical Gram-Schmidt. PAMM. Vol 23, 1, pp e202200060, 2023.  DOI: 10.1002/pamm.202200060
@@ -244,19 +244,21 @@ If you are using results from a specific paper, please cite the paper and the ve
 * [v1.2022](https://github.com/katlund/BlockStab/releases/tag/v1.2022): [Carson, et al. 2021](https://doi.org/10.1137/21M1394424) and [Carson, et al. 2022](https://doi.org/10.1016/j.laa.2021.12.017)
 * [v1.2022.mp](https://github.com/katlund/BlockStab/releases/tag/v1.2022.mp): [Oktay & Carson 2023](https://doi.org/10.1002/pamm.202200060).
 * [v2.2024-beta](https://github.com/katlund/BlockStab/releases/tag/v2.2024-beta): [Oktay 2024](https://dspace.cuni.cz/bitstream/handle/20.500.11956/191480/140119625.pdf?sequence=1)
-* [v2.1.2024](https://github.com/katlund/BlockStab/releases/tag/v2.1.2024): [Carson, et al. 2025 A](https://arxiv.org/abs/2405.01298v2) and [Carson, et al. 2025 B](https://arxiv.org/abs/2408.10109)
+* [v2.1.2024](https://github.com/katlund/BlockStab/releases/tag/v2.1.2024): [Carson, et al. 2025](https://doi.org/10.1137/24M1658723) and [Carson, et al. 2026](https://doi.org/10.1016/j.laa.2025.11.018)
 * [v2.2.2024](https://github.com/katlund/BlockStab/releases/tag/v2.2.2024): [Carson & Ma, 2024](https://doi.org/10.48550/arXiv.2411.07077)
 
 To cite this package in general, please use the following format:
 
 ```tex
-@misc{LunOCetal25,
+@misc{LunOCetal26,
   title = {{BlockStab}},
   author = {Lund, Kathryn and Oktay, Eda and Carson, Erin C. and Ma, Yuxin},
-  year = {2025},
+  year = {2026},
   url = {https://github.com/katlund/BlockStab}
 }
 ```
+
+In addition, we recommend citing a specific version and/or the relevant paper.
 
 ## How we cite things
 
