@@ -82,7 +82,7 @@ elseif nargin == 1
         if ~isfield(param, 'mp_pair')
             switch param.mp_package
                 case {'advanpix', 'symbolic math', 'vpa', 'symbolic toolbox'}
-                    warning('.mp_pair not specified.  Set to {''doube'', ''quad''} for MP algorithms.')
+                    warning('.mp_pair not specified.  Set to {''double'', ''quad''} for MP algorithms.')
                     param.mp_pair = {'double', 'quad'};
 
                 otherwise
